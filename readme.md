@@ -1,6 +1,6 @@
 # Food-eye - Revolutionizing Dietary Management
 
-![Food-eye Logo](insert_logo_url_here)
+![Food-eye Logo](https://drive.google.com/file/d/1hvJj1UAiZKAI2iPhKo6tQp-jabylUi0R/view?usp=drive_link)
 
 The **"Food-eye"** project is a groundbreaking and comprehensive initiative aimed at transforming dietary management through the application of cutting-edge Deep Learning and Natural Language Processing (NLP) techniques. This AI-powered smart food analyzer and dietary tracking tool empowers users to effortlessly record and monitor their food intake while providing detailed nutritional information, personalized dietary recommendations, meal suggestions, and advanced analytics.
 
@@ -60,4 +60,3 @@ This project is still under development, and our team is working diligently to b
 
 Thank you for taking an interest in our repository. Your feedback and collaboration are invaluable as we work towards revolutionizing dietary management and promoting healthier eating habits and improved well-being for users.
 
-👉 [Contribute to Food-eye](insert_contribution_link_here)
