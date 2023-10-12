@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, ToastAndroid } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, ToastAndroid, BackHandler } from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,13 +8,12 @@ function Home() {
   const navigation = useRouter();
   const [username, setUsername] = useState("");
   const [displayEmoji, setDisplayEmoji] = useState(false);
+  const checkUserSession = async () => {
+    const user = await AsyncStorage.getItem('name');
+    setUsername(user);
+  };
 
   useEffect(() => {
-    const checkUserSession = async () => {
-      const user = await AsyncStorage.getItem('name');
-      setUsername(user);
-    };
-
     checkUserSession();
   }, []);
 
@@ -34,18 +33,15 @@ function Home() {
   };
 
   useEffect(() => {
-    let timer;
-
-    if (displayEmoji) {
-      timer = setTimeout(() => {
-        setDisplayEmoji(false);
-      }, 2000);
-    }
-
-    return () => {
-      clearTimeout(timer);
+    const backAction = () => {
+      BackHandler.exitApp(); // This will exit the app
+      return true;
     };
-  }, [displayEmoji]);
+
+    BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
+  }, []);
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 100, backgroundColor: 'white' }}>

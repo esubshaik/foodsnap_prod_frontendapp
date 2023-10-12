@@ -1,31 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, Image,Button, TouchableOpacity,ScrollView , StatusBar} from 'react-native';
 import { t } from 'react-native-tailwindcss';
-import {useRouter} from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function App() {
-  const navigation = useRouter() ;
-  const [username,setUsername] = useState("empty") ;
-  async function checkLoginStatus() {
-    try {
-      const token = await AsyncStorage.getItem('token');
-      if (token) {
-        // Token exists, navigate to the home page
-        navigation.push('/Home'); // Change 'Home' to your actual home page route name
-      }
-      else{
-        navigation.push('/Start');
-      }
-    } catch (error) {
-      
-      // Handle AsyncStorage error
-      // console.error('Error reading login token:', error);
-    }
-  }
-  useEffect(() => {
-    checkLoginStatus();
-  }, []);
+function Start() {
+  
   return (
     <ScrollView contentContainerStyle={{  flexGrow: 1, paddingBottom: 100, backgroundColor:'white' }}>
     <View style={[t.p1, t.bgWhite, t.flex, t.flexCol, t.itemsCenter, t.justifyCenter]}>
@@ -70,7 +48,6 @@ function App() {
       Get Started
     </Text>
   </TouchableOpacity>
-<Text>{username}</Text>
 </View>
 
 
@@ -79,4 +56,4 @@ function App() {
   );
 }
 
-export default App;
+export default Start;
