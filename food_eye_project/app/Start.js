@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, Image,Button, TouchableOpacity,ScrollView , StatusBar} from 'react-native';
 import { t } from 'react-native-tailwindcss';
+import {useRouter} from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Start() {
-  
+    const navigation = useRouter() ;
   return (
     <ScrollView contentContainerStyle={{  flexGrow: 1, paddingBottom: 100, backgroundColor:'white' }}>
     <View style={[t.p1, t.bgWhite, t.flex, t.flexCol, t.itemsCenter, t.justifyCenter]}>

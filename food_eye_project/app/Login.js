@@ -75,7 +75,7 @@ function Login() {
               }
             } catch (err) {
               // console.log(err);
-              ToastAndroid.show("An Unknown Error Occured!", ToastAndroid.LONG);
+              ToastAndroid.show("Email Not Found, Please Register!", ToastAndroid.LONG);
             }
             finally{
               // <ActivityIndicator size="large" />

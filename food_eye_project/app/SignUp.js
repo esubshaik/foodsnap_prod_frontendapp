@@ -1,8 +1,9 @@
-import React, {useState,useRef} from 'react';
+import React, {useState,useRef, useEffect} from 'react';
 import { View, Text, Image,Button, TouchableOpacity,TextInput ,Pressable,ScrollView,ToastAndroid,StatusBar,ActivityIndicator} from 'react-native';
 import { t } from 'react-native-tailwindcss';
 // import PhoneInput from "react-native-phone-number-input";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import CheckBox from 'expo-checkbox' ;
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,6 +14,8 @@ function SignUp() {
   const navigation = useRouter() ;
     const [isChecked, setIsChecked] = useState(false);
     const [otp,setotp] = useState("");
+    const [recotp,setrecotp] = useState("");
+    const [ismatched,setismatched] = useState(true);
 
     const [formData, setFormData] = useState({
       name: '',
@@ -21,6 +24,46 @@ function SignUp() {
       password: '',
       confirmPassword: '',
     });
+    
+    const requestOTP = async()=>{
+      
+      const emailData = {
+        email: formData.email
+      };
+      // console.log(emailData);
+      try{
+        const response = await axios.post(     
+          'https://backend-server-lhw8.onrender.com/api/user/send-otp',
+         emailData,{}
+        );
+  
+        console.log(response.data);
+        if (response.status === 200) {
+          const { message,OTP} = response.data ;
+          ToastAndroid.show(`${message}`, ToastAndroid.SHORT);
+          setrecotp(OTP);
+      }
+      else{
+        ToastAndroid.show(`An Unknown Error Occured!`, ToastAndroid.SHORT);
+      }
+    }
+    catch(error){
+      ToastAndroid.show(`Please Request OTP again !`,ToastAndroid.SHORT);
+    }
+    
+  }
+  const handleOTPCheck=()=>{
+    
+    if (otp === recotp ){
+      setismatched(false);
+    }
+    if (otp.length == 5){
+      setismatched(false);
+    }
+  }
+  // useEffect(()=>{
+  //   handleOTPCheck();
+  // },[otp])
 
         const [passwordVisibility1, setPasswordVisibility1] = useState(true);
         const [passwordVisibility2, setPasswordVisibility2] = useState(true);
@@ -49,7 +92,7 @@ function SignUp() {
             
             try {
               setLoading(true);
-              if (!formData.name || !formData.confirmPassword || !formData.email || !formData.phone || !formData.password) {
+              if (!formData.name || !formData.confirmPassword || !formData.email || !formData.phone || !formData.password ) {
                 ToastAndroid.show('Please Fill all details', ToastAndroid.LONG);
                 return;
               }
@@ -96,7 +139,7 @@ function SignUp() {
             } catch (err) {
               // console.log(err);
               // navigation.push("/SignUp");
-              ToastAndroid.show("An Unknown Error Occured!", ToastAndroid.LONG);
+              ToastAndroid.show("User Already Exists!", ToastAndroid.LONG);
             }
             finally{
               // <ActivityIndicator size="large" />
@@ -132,8 +175,9 @@ function SignUp() {
         <TextInput
           style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textLg, t.flex, t.wFull]}
           placeholder="Enter your email"
-          onChangeText={(text) => setFormData({ ...formData, email: text })}
+          onChangeText={(text) => setFormData({ ...formData, email: text })  }
           keyboardType="email-address"
+          editable={ismatched}
         />
       </View>
       { loading ?
@@ -153,7 +197,7 @@ function SignUp() {
       
       <View style={{ width: '40%', height: '7%', marginTop:'2%' , alignSelf:'center'}}>
   <TouchableOpacity
-    onPress={() => setotp("1456")}
+    onPress={() => requestOTP() }
     style={{
       backgroundColor: '#EC0444',
       borderRadius: 20,
@@ -175,13 +219,25 @@ function SignUp() {
   </TouchableOpacity>
 </View>
 <View style={t.mB4}>
+<View style={[t.relative, t.flex, t.wFull]}>
         <TextInput
           style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pT1, t.pX4, t.mT4, t.textLg,t.textCenter, t.flex, t.wFull]}
           placeholder="Enter OTP"
           value={otp}
-          // onChangeText={(text) => setotp(text)}
+          onChangeText={(text) => {
+            setotp(text); // Update the 'otp' state with the new value
+           handleOTPCheck(); // Call the 'handleOTPCheck' function
+          }}
+          editable={ismatched}
           keyboardType="numeric"
         />
+        {
+          ismatched ? null : (
+<Ionicons name="checkmark" size={24} color="green"  style={[t.absolute, t.right0,t.mR2,t.mT6, ]}  />
+          )
+        }
+        
+      </View>
       </View>
       <View style={t.mB4}>
       <Text style={[t.textLg, t.fontBold, t.mB1]}>Password:</Text>

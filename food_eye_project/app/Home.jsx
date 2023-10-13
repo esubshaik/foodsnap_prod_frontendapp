@@ -18,7 +18,7 @@ function Home() {
   }, []);
 
   const handleLogout = async () => {
-    await AsyncStorage.removeItem('userToken');
+    await AsyncStorage.removeItem('token');
     ToastAndroid.show('Logged out Successfully!', ToastAndroid.LONG);
     navigation.push('/Login');
   };
