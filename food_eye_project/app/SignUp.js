@@ -182,8 +182,8 @@ function SignUp() {
       </View>
       { loading ?
       (
-      <ActivityIndicator size="large"/> ): (<></>)
-       }
+         <ActivityIndicator size="large"/> ): (<></>)
+      } 
        
       <View style={t.mB4}>
         <Text style={[t.textLg, t.fontBold, t.mB1]}>Phone:</Text>
@@ -192,13 +192,13 @@ function SignUp() {
           placeholder="Enter your phone number"
           onChangeText={(text) => setFormData({ ...formData, phone: text })}
           keyboardType="numeric"
-        />
+        /> 
       </View>
       
       <View style={{ width: '40%', height: '7%', marginTop:'2%' , alignSelf:'center'}}>
   <TouchableOpacity
-    onPress={() => requestOTP() }
-    style={{
+    onPress={() => requestOTP() } 
+    style={{ 
       backgroundColor: '#EC0444',
       borderRadius: 20,
       justifyContent: 'center',

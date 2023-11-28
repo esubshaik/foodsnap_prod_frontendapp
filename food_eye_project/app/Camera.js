@@ -5,10 +5,13 @@ import {
   View,
   Text,
   TouchableOpacity,
-  SafeAreaView,
+  SafeAreaView, Image
 } from "react-native";
 import { Camera } from "expo-camera";
 import { Video } from "expo-av";
+import * as FileSystem from 'expo-file-system';
+import RenderBoundingBoxes from "./DrawBoundings";
+
 
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 const closeButtonSize = Math.floor(WINDOW_HEIGHT * 0.032);
@@ -26,6 +29,11 @@ export default function ScanFood() {
   const [isVideoRecording, setIsVideoRecording] = useState(false);
   const [videoSource, setVideoSource] = useState(null);
   const cameraRef = useRef();
+  const formData = new FormData();
+  const [imageData,setImageData] = useState(null);
+  const [anim,setanim] = useState(false);
+  const [boolbound,setboolbound] = useState(false);
+  const [results,setresults] = useState({});
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
@@ -35,18 +43,36 @@ export default function ScanFood() {
   const onCameraReady = () => {
     setIsCameraReady(true);
   };
+
+
+  
   const takePicture = async () => {
-    if (cameraRef.current) {
-      const options = { quality: 0.5, base64: true, skipProcessing: true };
-      const data = await cameraRef.current.takePictureAsync(options);
-      const source = data.uri;
-      if (source) {
+    if (cameraRef) {
+      try {
+        const options = { quality: 0.5, base64: false, skipProcessing: true, format: 'jpeg' };
+        const data = await cameraRef.current.takePictureAsync(options);
+  
+        // Pause the camera preview
+        await cameraRef.current.pausePreview();
+  
+        // Read the image file as binary data
+        await FileSystem.readAsStringAsync(data.uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+
         await cameraRef.current.pausePreview();
         setIsPreview(true);
-        console.log("picture source", source);
+        setImageData(data.uri);
+        // Create a FormData object
+        
+      } catch (error) {
+        console.error('Error taking or processing the picture:', error);
       }
     }
   };
+
+
+
   const recordVideo = async () => {
     if (cameraRef.current) {
       try {
@@ -83,19 +109,85 @@ export default function ScanFood() {
         : Camera.Constants.Type.back
     );
   };
+
+
   const cancelPreview = async () => {
     await cameraRef.current.resumePreview();
     setIsPreview(false);
     setVideoSource(null);
+    setboolbound(false);
   };
+
+
+  const GetDetectionResults = async () => {
+    
+    try {
+      setboolbound(false);
+      const formData = new FormData();
+      setanim(true);
+      // Append the image data to FormData with key "image" and value "ourimage.jpg"
+      formData.append('image', {
+        uri: imageData,
+        type: 'image/jpeg',
+        name: 'ourimage.jpg',
+      });
+
+      const response = await fetch('https://backend-server-lhw8.onrender.com/api/user/detect-my-food', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      const responseData = await response.json();
+      console.log(responseData.data.results);
+      if (responseData){
+        setresults(responseData);
+        setboolbound(true);
+      }
+
+
+    } catch (err) {
+      console.log(err);
+      setboolbound(false);
+    //   ToastAndroid.show("An Unknown Error Occured!", ToastAndroid.LONG);
+    }
+    finally{
+      setanim(false);
+    }
+  };
+
+  const drawBoundingBoxes=()=>(
+    <View style={bstyles.container}>
+    <RenderBoundingBoxes results={results} />
+  </View>
+  )
+
   const renderCancelPreviewButton = () => (
-    <TouchableOpacity onPress={cancelPreview} style={styles.closeButton}>
-      <View style={[styles.closeCross, { transform: [{ rotate: "45deg" }] }]} />
-      <View
-        style={[styles.closeCross, { transform: [{ rotate: "-45deg" }] }]}
-      />
-    </TouchableOpacity>
+      <TouchableOpacity onPress={cancelPreview}
+          style={{ width: '30%', height: '5%', position: 'absolute', bottom: 20 , left: 50, backgroundColor: 'white', alignSelf: 'center', backgroundColor: '#EC0444', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Text style={{ color: 'white', fontWeight: '600', fontSize: 15 }}>Retake</Text>
+        </TouchableOpacity>
   );
+
+  const renderGetDetailsButton = () => (
+    <TouchableOpacity onPress={GetDetectionResults}
+        style={{ width: '30%', height: '5%', position: 'absolute', right: 50 ,bottom: 20 , alignSelf: 'center', backgroundColor: '#EC0444', borderRadius: 20, justifyContent: 'center', alignItems: 'center', disabled: anim }}
+      >
+        <Text style={{ color: 'white', fontWeight: '600', fontSize: 15 }}>Detect Food</Text>
+      </TouchableOpacity>
+);
+
+const animationLoader =()=>(
+  <View style={pred_styles.container}>
+  <Image
+    source={require('./assets/pred-loading.gif')} // Replace 'your-gif-file.gif' with the actual file name
+    style={pred_styles.gif}
+    resizeMode="contain"
+  />
+</View>
+)
   const renderVideoPlayer = () => (
     <Video
       source={{ uri: videoSource }}
@@ -132,6 +224,7 @@ export default function ScanFood() {
   }
   return (
     <SafeAreaView style={styles.container}>
+
       <Camera
         ref={cameraRef}
         style={styles.container}
@@ -143,10 +236,13 @@ export default function ScanFood() {
         }}
       />
       <View style={styles.container}>
+        {anim && animationLoader()}
         {isVideoRecording && renderVideoRecordIndicator()}
         {videoSource && renderVideoPlayer()}
-        {isPreview && renderCancelPreviewButton()}
+        {isPreview && renderCancelPreviewButton() }
+        {isPreview && renderGetDetailsButton()}
         {!videoSource && !isPreview && renderCaptureControl()}
+        {boolbound && drawBoundingBoxes()}
       </View>
     </SafeAreaView>
   );
@@ -154,11 +250,18 @@ export default function ScanFood() {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
+    width: '100%',
+    height: '100%',
+    top: '10px',
+    // bottom: '20px'
   },
   closeButton: {
     position: "absolute",
-    top: 35,
-    left: 15,
+    // top: 35,
+    // left: 15,
+    bottom : 30 ,
+    left: '50%',
+    margin: 'auto' ,
     height: closeButtonSize,
     width: closeButtonSize,
     borderRadius: Math.floor(closeButtonSize / 2),
@@ -216,5 +319,24 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#fff",
+  },
+  
+});
+const pred_styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  gif: {
+    width: 400, // Adjust the width as needed
+    height: 400, // Adjust the height as needed
+  },
+});
+const bstyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
