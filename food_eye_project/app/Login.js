@@ -130,14 +130,8 @@ function Login() {
     </View>
    
 <View style={t.mT2}>
-  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-    <CheckBox style={[t.mL1]}
-      value={isChecked}
-      onValueChange={(newValue) => setIsChecked(newValue)}
-    />
-    <Text style={[t.textLg, t.fontBold, t.mB1, t.textGray800, t.mL2, t.mT1, t.textGray800]}>
-     Remember Me
-    </Text>
+  <View style={{ flexDirection: 'row', alignItems: 'right' }}>
+    
     <View>
     <Text style={[t.textLg, t.fontBold, t.mB1, t.textGray800, t.mT1, t.mL16 , t.textGray800]}>
       Forgot Password

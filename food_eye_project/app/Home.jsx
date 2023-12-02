@@ -1,28 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, ToastAndroid, BackHandler } from 'react-native';
+import { View,Text,TouchableOpacity,Image } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { Octicons,Zocial,Entypo,FontAwesome5 } from '@expo/vector-icons';
 import { t } from 'react-native-tailwindcss';
-import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState } from "react";
+import OldHome from './MainHome' ;
+import UserMgmt from './UserMgmt';
+import Empty from "./EmptyPage";
 
-function Home() {
-  const navigation = useRouter();
-  const [username, setUsername] = useState("");
+
+export default function TabsLayout() {
   const [displayEmoji, setDisplayEmoji] = useState(false);
-  const checkUserSession = async () => {
-    const user = await AsyncStorage.getItem('name');
-    setUsername(user);
-  };
-
-  useEffect(() => {
-    checkUserSession();
-  }, []);
-
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem('token');
-    ToastAndroid.show('Logged out Successfully!', ToastAndroid.LONG);
-    navigation.push('/Login');
-  };
-
   const toggleEmojiDisplay = () => {
     setDisplayEmoji(true);
 
@@ -31,23 +18,11 @@ function Home() {
       setDisplayEmoji(false);
     }, 2000);
   };
-
-  useEffect(() => {
-    const backAction = () => {
-      BackHandler.exitApp(); // This will exit the app
-      return true;
-    };
-
-    BackHandler.addEventListener('hardwareBackPress', backAction);
-
-    return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
-  }, []);
-
+  const [view,setview] = useState(1);
   return (
-    <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 100, backgroundColor: 'white' }}>
-      <View style={[t.p1, t.bgWhite, t.flex, t.textCenter, t.flexCol, t.pB100]}>
-        {/* Custom Header */}
-        <TouchableOpacity onPress={toggleEmojiDisplay}>
+    <View style={[t.wFull, t.flex, t.flexCol, t.hFull]}>
+      <View style={[t.h10]}>
+      <TouchableOpacity onPress={toggleEmojiDisplay}>
           <View
             style={{
               position: 'absolute',
@@ -63,29 +38,45 @@ function Home() {
               resizeMode="contain"
             />
           </View>
-        </TouchableOpacity>
+      </TouchableOpacity>
 
-        {/* Emoji Display */}
-        <View style={{ position: 'absolute', top: '70%', left: '50%', transform: [{ translateX: -25 }, { translateY: -25 }], zIndex: 0 }}>
+        <View style={{ position: 'absolute', top: '20%', left: '50%', transform: [{ translateX: -25 }, { translateY: -25 }], zIndex: 0 }}>
           {displayEmoji && <Text style={{ fontSize: 50, paddingTop: 200 }}>😋</Text>}
         </View>
-
-        <Text style={{ fontSize: 20, paddingTop: 50, alignSelf:"center",marginTop:20 }}>Hello {username} !</Text>
-        <TouchableOpacity
-          onPress={handleLogout}
-          style={{ width: '40%', height: '16%', marginTop: '4%',padding:10, alignSelf: 'center', marginTop: '6%', backgroundColor: '#EC0444', borderRadius: 20, justifyContent: 'center', alignItems: 'center', flex: 1 }}
-        >
-          <Text style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>Logout</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => { navigation.push("/Camera") }}
-          style={{ width: '40%', height: '18%',padding:10, marginTop: '4%', alignSelf: 'center', marginTop: '6%', backgroundColor: '#EC0444', borderRadius: 20, justifyContent: 'center', alignItems: 'center', flex: 1 }}
-        >
-          <Text style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>Scan my Food</Text>
-        </TouchableOpacity>
       </View>
-    </ScrollView>
+      <View style={[t.flex1]}>
+        {view== 1 ? (
+          <OldHome/>
+        ):
+        view==4 ?
+       (
+          <UserMgmt/>
+        )
+        :
+        (
+          
+          <Empty/>
+        
+        ) 
+      }
+       
+      </View>
+
+      <View style={[t.wFull, t.h16, t.bgGray100, t.bottom0, t.flex, t.flexRow, t.pT4, t.pB3,t.justifyBetween,t.pL10,t.pR10]}>
+  <TouchableOpacity onPress={() => setview(1)} style={[t.mR6, view === 1 ? t.borderB2 : null]}>
+    <Octicons name="home" size={25} color="black" style={[t.pT1]} />
+  </TouchableOpacity>
+  <TouchableOpacity onPress={() => setview(2)} style={[t.mL6, t.mR6, view === 2 ? t.borderB2 : null]}>
+    <Zocial name="plancast" size={25} color="black" />
+  </TouchableOpacity>
+  <TouchableOpacity onPress={() => setview(3)} style={[t.mL6, t.mR6, view === 3 ? t.borderB2 : null]}>
+    <Entypo name="book" size={25} color="black" style={[t.pT1]} />
+  </TouchableOpacity>
+  <TouchableOpacity onPress={() => setview(4)} style={[t.mL6, view === 4 ? t.borderB2 : null]}>
+    <FontAwesome5 name="user" size={24} color="black" style={[t.pT1]} />
+  </TouchableOpacity>
+</View>
+
+    </View>
   );
 }
-
-export default Home;
