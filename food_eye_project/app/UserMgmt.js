@@ -7,6 +7,7 @@ import { Input,InputField,InputSlot,InputIcon } from '@gluestack-ui/themed';
 import { AntDesign } from '@expo/vector-icons';
 
 
+
 function UserMgmt() {
   const navigation = useRouter();
   const [username, setUsername] = useState("");
@@ -20,17 +21,12 @@ function UserMgmt() {
   useEffect(() => {
     checkUserSession();
   }, []);
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
     ToastAndroid.show('Logged out Successfully!', ToastAndroid.LONG);
     navigation.push('/Login');
   };
-
-
 
   useEffect(() => {
     const backAction = () => {
@@ -51,13 +47,13 @@ function UserMgmt() {
 
         <TouchableOpacity
           onPress={handleLogout}
-          style={{ width: '40%', height: '16%', marginTop: '4%',padding:10, alignSelf: 'center', marginTop: '6%', backgroundColor: '#EC0444', borderRadius: 20, justifyContent: 'center', alignItems: 'center', flex: 1 }}
+          style={{ width: '40%', height: '16%', marginTop: '4%',padding:10, alignSelf: 'center', marginTop: '6%', backgroundColor: '#0C7078', borderRadius: 20, justifyContent: 'center', alignItems: 'center', flex: 1 }}
         >
           <Text style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>Logout</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => { navigation.push("/Camera") }}
-          style={{ width: '40%', height: '18%',padding:10, marginTop: '4%', alignSelf: 'center', marginTop: '6%', backgroundColor: '#EC0444', borderRadius: 20, justifyContent: 'center', alignItems: 'center', flex: 1 }}
+          style={{ width: '40%', height: '18%',padding:10, marginTop: '4%', alignSelf: 'center', marginTop: '6%', backgroundColor: '#0C7078', borderRadius: 20, justifyContent: 'center', alignItems: 'center', flex: 1 }}
         >
           <Text style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>Scan my Food</Text>
         </TouchableOpacity>

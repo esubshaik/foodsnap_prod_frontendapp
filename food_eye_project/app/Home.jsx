@@ -2,51 +2,77 @@ import { View,Text,TouchableOpacity,Image } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Octicons,Zocial,Entypo,FontAwesome5 } from '@expo/vector-icons';
 import { t } from 'react-native-tailwindcss';
-import { useState } from "react";
-import OldHome from './MainHome' ;
+import { useState,useEffect } from "react";
+import MainHome from './MainHome' ;
 import UserMgmt from './UserMgmt';
 import Empty from "./EmptyPage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons,SimpleLineIcons } from '@expo/vector-icons';
 
 
 export default function TabsLayout() {
+  const [username, setUsername] = useState("");
+  const checkUserSession = async () => {
+    const user = await AsyncStorage.getItem('name');
+    setUsername(user);
+  };
+
+  useEffect(() => {
+    checkUserSession();
+  }, []);
   const [displayEmoji, setDisplayEmoji] = useState(false);
   const toggleEmojiDisplay = () => {
     setDisplayEmoji(true);
 
-    // Hide the emoji after 2 seconds
     setTimeout(() => {
       setDisplayEmoji(false);
     }, 2000);
   };
   const [view,setview] = useState(1);
   return (
-    <View style={[t.wFull, t.flex, t.flexCol, t.hFull]}>
-      <View style={[t.h10]}>
-      <TouchableOpacity onPress={toggleEmojiDisplay}>
-          <View
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%', // Added to stretch the header image
-              zIndex: 1,
-            }}
-          >
-            <Image
-              source={require('./assets/logo-white.png')}
-              style={{ width: 130, height: 50 ,left:16}} // Adjust the width
+    <View style={[t.wFull, t.flex, t.flexCol, t.hFull,t.bg=['#F5F5F4']]}>
+      <View style={[t.h16]}>
+        <View style={[t.flex, t.flexRow,t.m1,t.justifyBetween]}>
+        <TouchableOpacity onPress={toggleEmojiDisplay}>
+          <View>
+          <Image
+              source={require('./assets/defaultuser.png')}
+              style={{ width: 40, height: 40 ,margin:10}} // Adjust the width
               resizeMode="contain"
             />
           </View>
-      </TouchableOpacity>
+          </TouchableOpacity>
 
+          <View style={[t.flex, t.flexCol, t.w40,t.h40,t.mT3,t.textGray200]}>
+            <View style={[t.flex, t.flexRow]}>
+            <Image
+              source={require('./assets/Levels/bronze.png')}
+              style={{ width:15, height: 15,marginRight:4}} // Adjust the width
+              resizeMode="contain"
+            />
+            <Text style={[t.fontBold,t.textBase,t.textGray700]}>Bronze III</Text>
+            </View>
+            <View style={[t.h14,t.mT1,t.flex, t.flexRow]}>
+            <Text style={[t.fontBold,t.textBase,t.textGray700]}>👋 Welcome </Text>
+            <Text style={[t.fontBold,t.textBase,t.textGray600]}>{username} !</Text>
+            </View>
+          </View>
+          <View style={[t.m4]}>
+          <Ionicons name="md-notifications-outline" size={24} color="black" />
+          </View>
+          <View style={[t.m4]}>
+          <SimpleLineIcons name="options-vertical" size={24} color="black" />
+          </View>
+          
+        </View>
+      
         <View style={{ position: 'absolute', top: '20%', left: '50%', transform: [{ translateX: -25 }, { translateY: -25 }], zIndex: 0 }}>
           {displayEmoji && <Text style={{ fontSize: 50, paddingTop: 200 }}>😋</Text>}
         </View>
       </View>
       <View style={[t.flex1]}>
         {view== 1 ? (
-          <OldHome/>
+          <MainHome/>
         ):
         view==4 ?
        (
