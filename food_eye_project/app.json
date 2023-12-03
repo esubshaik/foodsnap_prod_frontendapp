@@ -10,18 +10,18 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "extra": {
-      "eas": {
-        "projectId": "9a74c053-51ce-4647-96c0-e3d8d923f47e"
-      },
-      "router": {
-        "origin": false
-      }
-    },
     "plugins": [
       "expo-router",
       "expo-camera"
     ],
-    "owner": "codewithesub"
+    "owner": "codewithesub",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "9a74c053-51ce-4647-96c0-e3d8d923f47e"
+      }
+    }
   }
 }

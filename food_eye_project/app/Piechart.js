@@ -1,49 +1,52 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import Svg, { Circle, G } from 'react-native-svg';
+import { PieChart } from 'react-native-chart-kit';
+import {t} from 'react-native-tailwindcss' ;
 
-const PieChartWithColoredBar = ({ data }) => {
-  const barColor = 'purple';
-  const barTitle = 'Bar Title';
+const getRandomColor = () => {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
 
-  const totalValue = data.reduce((total, slice) => total + slice.value, 0);
-
-  let cumulativePercentage = 0;
+const PieChartExample = ({ data,foodname }) => {
+  const nutrientData = data?.data;
 
   return (
-    <View>
-      {/* Pie Chart */}
-      <Svg height="200" width="200">
-        {data.map((slice) => {
-          const percentage = (slice.value / totalValue) * 100;
-          const startAngle = (cumulativePercentage / 100) * 360;
-          cumulativePercentage += percentage;
+    <View style={{ width:'90%'}}>
+      <Text style={[t.fontSemibold,t.textBase,t.m4]}>{foodname}: Nutrients Per 100 Grams</Text>
+      <PieChart 
+        data={
+          nutrientData
+            ? Object.keys(nutrientData).map((nutrient) => ({
+                name: nutrient,
+                population: nutrientData[nutrient],
+                color: getRandomColor(),
+                legendFontColor: '#7F7F7F',
+                legendFontSize: 11,
+                
+              }))
+            : []
+        }
+        center={[0, 10]}
+        width={300}
+        height={100}
+        chartConfig={{
+          backgroundColor: '#ffffff',
+          backgroundGradientFrom: '#ffffff',
+          backgroundGradientTo: '#ffffff',
+          color: (opacity = 1) => `rgba(5, 22, 26, ${opacity})`,
+          
+        }}
+        accessor="population"
+        backgroundColor="transparent"
 
-          return (
-            <G key={slice.key}>
-              <Circle
-                cx="100"
-                cy="100"
-                r="90"
-                fill="transparent"
-                stroke={slice.color}
-                strokeWidth="20"
-                strokeDasharray={`${percentage} ${100 - percentage}`}
-                strokeLinecap="round"
-                transform={`rotate(${startAngle} 100 100)`}
-              />
-            </G>
-          );
-        })}
-      </Svg>
-
-      {/* Colored Bar with Title */}
-      <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10, marginTop: 10 }}>
-        <View style={{ backgroundColor: barColor, width: 20, height: 20, borderRadius: 10 }} />
-        <Text style={{ marginLeft: 5, color: barColor, fontWeight: 'bold' }}>{barTitle}</Text>
-      </View>
+      />
     </View>
   );
 };
 
-export default PieChartWithColoredBar;
+export default PieChartExample;

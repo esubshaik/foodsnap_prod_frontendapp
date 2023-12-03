@@ -10,8 +10,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons,SimpleLineIcons } from '@expo/vector-icons';
 
 
-export default function TabsLayout() {
+export default function TabsLayout(){
   const [username, setUsername] = useState("");
+
   const checkUserSession = async () => {
     const user = await AsyncStorage.getItem('name');
     setUsername(user);
@@ -33,30 +34,31 @@ export default function TabsLayout() {
     <View style={[t.wFull, t.flex, t.flexCol, t.hFull,t.bg=['#F5F5F4']]}>
       <View style={[t.h16]}>
         <View style={[t.flex, t.flexRow,t.m1,t.justifyBetween]}>
-        <TouchableOpacity onPress={toggleEmojiDisplay}>
-          <View>
+      
+          <View style={[t.flex, t.flexRow]}>
           <Image
               source={require('./assets/defaultuser.png')}
-              style={{ width: 40, height: 40 ,margin:10}} // Adjust the width
+              style={{ width: 45, height: 45 ,margin:8}} // Adjust the width
               resizeMode="contain"
             />
-          </View>
-          </TouchableOpacity>
-
-          <View style={[t.flex, t.flexCol, t.w40,t.h40,t.mT3,t.textGray200]}>
+            <View style={[t.flex, t.flexCol, t.w40,t.h45,t.selfCenter,t.textGray200]}>
             <View style={[t.flex, t.flexRow]}>
             <Image
               source={require('./assets/Levels/bronze.png')}
               style={{ width:15, height: 15,marginRight:4}} // Adjust the width
               resizeMode="contain"
             />
-            <Text style={[t.fontBold,t.textBase,t.textGray700]}>Bronze III</Text>
+            <Text style={[t.fontBold,t.textSm,t.textGray800]}>Bronze III</Text>
             </View>
             <View style={[t.h14,t.mT1,t.flex, t.flexRow]}>
-            <Text style={[t.fontBold,t.textBase,t.textGray700]}>👋 Welcome </Text>
-            <Text style={[t.fontBold,t.textBase,t.textGray600]}>{username} !</Text>
+            <Text style={[t.fontBold,t.textSm,t.textGray800]}>👋 Welcome </Text>
+            <Text style={[t.fontBold,t.textSm,t.textGray600]}>{username} !</Text>
             </View>
           </View>
+          </View>
+      
+
+          
           <View style={[t.m4]}>
           <Ionicons name="md-notifications-outline" size={24} color="black" />
           </View>
@@ -106,3 +108,4 @@ export default function TabsLayout() {
     </View>
   );
 }
+// export default TabsLayout ;

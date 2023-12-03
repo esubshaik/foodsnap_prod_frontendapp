@@ -10,6 +10,8 @@ function App() {
   async function checkLoginStatus() {
     try {
       const token = await AsyncStorage.getItem('token');
+  await AsyncStorage.setItem('nutridata', JSON.stringify([0,0,0,0]));
+  await AsyncStorage.setItem('reqnutridata', JSON.stringify([0,0,0,0]));
       if (token) {
         // Token exists, navigate to the home page
         navigation.push('/Home'); // Change 'Home' to your actual home page route name
