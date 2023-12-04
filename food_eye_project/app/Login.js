@@ -1,13 +1,16 @@
 import React, {useState,useRef} from 'react';
-import { View, Text, Image,Button, TouchableOpacity,TextInput ,Pressable,ScrollView,ToastAndroid,StatusBar,ActivityIndicator} from 'react-native';
+import { View, Text, Image, TouchableOpacity,TextInput ,Pressable,ScrollView,ToastAndroid,StatusBar,ActivityIndicator,Modal} from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import CheckBox from 'expo-checkbox' ;
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useRouter} from 'expo-router' ;
+import { Ionicons } from '@expo/vector-icons';
+// import { Input,Button,ButtonSpinner,ButtonText } from '@gluestack-ui/themed';
 
-function Login() {
+const  Login=({ modalVisible, closeModal,data})=> {
+  // console.log(modalVisible);
   const [loading, setLoading] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
     const navigation = useRouter();
@@ -65,7 +68,7 @@ function Login() {
                 setTimeout(() => {
                   // Navigate to the home screen after 4 seconds
                   navigation.push('/Home'); // Replace 'Home' with your actual route name
-                }, 2000);
+                }, 1000);
               } else if (response.status === 401) {
                 ToastAndroid.show('Invalid Credentials', ToastAndroid.LONG);
               } else if (response.status === 404) {
@@ -83,90 +86,115 @@ function Login() {
             }
           };
   return (
-    <ScrollView contentContainerStyle={{  flexGrow: 1, paddingBottom: 100, backgroundColor:'white' }}>
-      <View style={[t.p1, t.bgWhite, t.flex, t.textCenter, t.flexCol, t.itemsCenter, t.justifyCenter,t.pB100]}>
-      <View style={{ width: 300, height: 150 }}>
-        <Image 
-          source={require('./assets/logo-white.png')}
-          style={{ flex: 1, width: null, height: null }}
-          resizeMode="contain" // or "cover" depending on your preference
-        />
+    <Modal
+      animationType="slide"
+      transparent={true}
+      key={data}
+      visible={modalVisible}
+      onRequestClose={closeModal}
+    >
+      <View style={[t.roundedLg, t.wFull,t.absolute, t.bottom0]}>
+      <ScrollView contentContainerStyle={{ height:'70%', flexGrow: 1, backgroundColor:'#072e33'}}>
+      <View style={[t.p1, t.flex, t.textCenter, t.flexCol, t.itemsCenter,t.pB100,t.roundedTLg]}>
+
+    <View>
+    
+      <View style={[t.flex, t.flexRow, t.justifyBetween,t.mT4, t.mB6]}>
+      <Text style={[t.textXl, t.fontSemibold,t.textWhite]}>Log in</Text>
+      <TouchableOpacity onPress={closeModal}>
+      <Ionicons name="ios-close-sharp" size={24} color="white" />
+      </TouchableOpacity>
       </View>
-      <Text style={[t.text5xl, t.fontBold, t.mB1]}> <Text style={{color:"#ff285b"}}>Welcome Back</Text></Text>
-      <Text style={[t.textLg, t.fontBold, t.mB10, t.textGray600]}>Login to your Account</Text>
       <View style={{ width: 300, height: null }}>
       
 
       <View style={t.mB4}>
-        <Text style={[t.textLg, t.fontBold, t.mB1]}>Email:</Text>
+        <Text style={[t.textBase,t.textWhite ,t.fontBold, t.mB1]}>Email:</Text>
         <TextInput
-          style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textLg, t.flex, t.wFull]}
+          style={[t.border,t.borderWhite, t.rounded, t.pY2, t.pX4, t.textSm, t.flex, t.wFull,t.textWhite,t.fontSemibold]}
           placeholder="Enter your email"
+          placeholderTextColor="white" 
           keyboardType="email-address"
+          autoCapitalize="none" 
           onChangeText={(text) => setFormData({ ...formData, email: text })}
         />
       </View>
-      { loading ?
-      (
-      <ActivityIndicator size="large"/> ): (<></>)
-       }
+     
 
       <View style={t.mB4}>
-      <Text style={[t.textLg, t.fontBold, t.mB1]}>Password:</Text>
+      <Text style={[t.textBase,t.textWhite, t.fontBold, t.mB1]}>Password:</Text>
       <View style={[t.relative, t.flex, t.wFull]}>
         <TextInput
-          style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textLg, t.flex, t.wFull, t.pl10pr10]}
+          style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textSm, t.flex, t.wFull, t.pl10pr10,t.textWhite,t.fontSemibold]}
           placeholder="Enter your password"
           secureTextEntry={passwordVisibility1}
+          autoCapitalize="none" 
+          placeholderTextColor="white" 
           onChangeText={(text) => setFormData({ ...formData, password: text })}
         />
         <Pressable
           onPress={handlePasswordVisibility1}
           style={[t.absolute, t.right0,t.mR2,t.mT3]}
         >
-          <MaterialCommunityIcons name={rightIcon1} size={22} color="#232323" />
+          <MaterialCommunityIcons name={rightIcon1} size={22} color="white" />
         </Pressable>
       </View>
     </View>
    
 <View style={t.mT2}>
-  <View style={{ flexDirection: 'row', alignItems: 'right' }}>
-    
-    <View>
-    <Text style={[t.textLg, t.fontBold, t.mB1, t.textGray800, t.mT1, t.mL16 , t.textGray800]}>
+  <View style={{position:'absolute',right:0}}>
+    <TouchableOpacity>
+    <Text style={[t.textBase, t.fontBold, t.textGray200]}>
       Forgot Password
     </Text>
-    </View>
+    </TouchableOpacity>
   </View>
 </View>
 
-<View style={{ width: '40%', height: '16%', marginTop:'4%' , alignSelf:'center', marginTop:'6%'}}>
+<View style={{ width: '50%', height: '15%', marginTop:'15%', marginBottom:'15%', alignSelf:'center'}}>
+
   <TouchableOpacity
     onPress={handleSubmit}
     style={{
-      backgroundColor: '#EC0444',
+      backgroundColor: 'white',
       borderRadius: 20,
       justifyContent: 'center',
       alignItems: 'center',
+      
       flex: 1,
+      flexDirection:'row'
+    
     }}
   >
+     { loading ?
+      (
+      <ActivityIndicator size="large" color='#072e33'/> ): (<></>)
+       }
     <Text
       style={{
-        color: 'white',
+        color: '#072e33',
         fontWeight: '600',
+        marginLeft:4,
          // Semibold
-        fontSize: 18, // Adjust the font size as needed
+        fontSize: 16, // Adjust the font size as needed
       }}
     >
-      Login
+      {
+        loading ? "Please wait" : "Log in"
+      }
+     
     </Text>
   </TouchableOpacity>
 </View>
 
     </View>
     </View>
+    </View>
     </ScrollView>
+    {/* <Button title='Close' ></Button> */}
+      </View>
+    </Modal>
+    
   );
 }
 

@@ -1,5 +1,5 @@
 import React, {useState,useRef, useEffect} from 'react';
-import { View, Text, Image,Button, TouchableOpacity,TextInput ,Pressable,ScrollView,ToastAndroid,StatusBar,ActivityIndicator} from 'react-native';
+import { View, Text, Image,Button, TouchableOpacity,TextInput ,Pressable,ScrollView,ToastAndroid,StatusBar,ActivityIndicator,Modal} from 'react-native';
 import { t } from 'react-native-tailwindcss';
 // import PhoneInput from "react-native-phone-number-input";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -8,8 +8,15 @@ import CheckBox from 'expo-checkbox' ;
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import Collapsible from 'react-native-collapsible';
 
-function SignUp() {
+
+const SignUp=({ modalVisible, closeModal,data})=> {
+  const [isCollapsed, setCollapsed] = useState(false);
+
+  const toggleCollapsible = () => {
+    setCollapsed(!isCollapsed);
+  };
   const [loading, setLoading] = useState(false);
   const navigation = useRouter() ;
     const [isChecked, setIsChecked] = useState(false);
@@ -42,6 +49,7 @@ function SignUp() {
           const { message,OTP} = response.data ;
           ToastAndroid.show(`${message}`, ToastAndroid.SHORT);
           setrecotp(OTP);
+          toggleCollapsible();
       }
       else{
         ToastAndroid.show(`An Unknown Error Occured!`, ToastAndroid.SHORT);
@@ -53,17 +61,11 @@ function SignUp() {
     
   }
   const handleOTPCheck=()=>{
-    
-    if (otp === recotp ){
-      setismatched(false);
-    }
-    if (otp.length == 5){
+   
+    if (otp.length === 5 && otp === recotp){
       setismatched(false);
     }
   }
-  // useEffect(()=>{
-  //   handleOTPCheck();
-  // },[otp])
 
         const [passwordVisibility1, setPasswordVisibility1] = useState(true);
         const [passwordVisibility2, setPasswordVisibility2] = useState(true);
@@ -121,11 +123,12 @@ function SignUp() {
               if (response.status === 200) {
                 const { message, name, accessToken } = response.data;
         
-                ToastAndroid.show(`Registered Successfully!, Redirecting to Login!`, ToastAndroid.LONG);
-        
+                ToastAndroid.show(`Registered successfully, Please Login`, ToastAndroid.LONG);
+                closeModal();
                 setTimeout(() => {
                   // Navigate to the home screen after 4 seconds
-                navigation.push("/Login"); // Replace 'Home' with your actual route name
+                navigation.push("/MainOptions");
+                 // Replace 'Home' with your actual route name
                 }, 2000); // 4000 milliseconds = 4 seconds
               } else if (response.status === 400) {
                 ToastAndroid.show('Bad Request', ToastAndroid.LONG);
@@ -148,58 +151,72 @@ function SignUp() {
           };
 
   return (
-    <ScrollView contentContainerStyle={{  flexGrow: 1, paddingBottom: 100, backgroundColor:'white' }}>
-      <View style={[t.p1, t.bgWhite, t.flex, t.textCenter, t.flexCol, t.itemsCenter, t.justifyCenter,t.pB100]}>
-      <View style={{ width: 300, height: 150 }}>
-        <Image 
-          source={require('./assets/logo-white.png')}
-          style={{ flex: 1, width: null, height: null }}
-          resizeMode="contain" // or "cover" depending on your preference
-        />
+    <Modal
+      animationType="slide"
+      transparent={true}
+      key={data}
+      visible={modalVisible}
+      onRequestClose={closeModal}
+    >
+      <View style={[t.roundedLg, t.wFull,t.absolute, t.bottom0]}>
+     <ScrollView contentContainerStyle={{ height:'70%', flexGrow: 1, backgroundColor:'#072e33'}}>
+      <View style={[t.p1, t.flex, t.textCenter, t.flexCol, t.itemsCenter,t.pB100,t.roundedTLg]}>
+
+    <View>
+    
+      <View style={[t.flex, t.flexRow, t.justifyBetween,t.mT4, t.mB6]}>
+      <Text style={[t.textXl, t.fontSemibold,t.textWhite]}>Sign up</Text>
+      <TouchableOpacity onPress={closeModal}>
+      <Ionicons name="ios-close-sharp" size={24} color="white" />
+      </TouchableOpacity>
       </View>
-      <Text style={[t.text5xl, t.fontBold, t.mB1]}> <Text style={{color:"#ff285b"}}>SIGN UP</Text></Text>
-      <Text style={[t.textLg, t.fontBold, t.mB1, t.textGray600]}>Create a New Account</Text>
-      <View style={{ width: 300, height: null }}>
+      
+      <View style={{ width: 300, height: '100%' }}>
+      <Collapsible collapsed={isCollapsed}>
       <View style={t.mB4}>
-        <Text style={[t.textLg, t.fontBold, t.mB1]}>Name:</Text>
+        <Text style={[t.textBase,t.textWhite ,t.fontBold, t.mB1]}>Name:</Text>
         <TextInput
-          style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textLg, t.flex, t.wFull]}
+          style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textSm, t.flex, t.wFull, t.pl10pr10,t.textWhite,t.fontSemibold]}
           placeholder="Enter your name"
+          placeholderTextColor="white" 
           onChangeText={(text) => setFormData({ ...formData, name: text })}
           autoFocus
         />
       </View>
 
       <View style={t.mB4}>
-        <Text style={[t.textLg, t.fontBold, t.mB1]}>Email:</Text>
+        <Text style={[t.textBase,t.textWhite ,t.fontBold, t.mB1]}>Email:</Text>
         <TextInput
-          style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textLg, t.flex, t.wFull]}
+          style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textSm, t.flex, t.wFull, t.pl10pr10,t.textWhite,t.fontSemibold]}
           placeholder="Enter your email"
+          placeholderTextColor="white" 
           onChangeText={(text) => setFormData({ ...formData, email: text })  }
           keyboardType="email-address"
           editable={ismatched}
         />
       </View>
-      { loading ?
+      {/* { loading ?
       (
          <ActivityIndicator size="large"/> ): (<></>)
-      } 
+      }  */}
        
       <View style={t.mB4}>
-        <Text style={[t.textLg, t.fontBold, t.mB1]}>Phone:</Text>
+        <Text style={[t.textBase,t.textWhite ,t.fontBold, t.mB1]}>Phone:</Text>
         <TextInput
-          style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textLg, t.flex, t.wFull]}
+          style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textSm, t.flex, t.wFull, t.pl10pr10,t.textWhite,t.fontSemibold]}
           placeholder="Enter your phone number"
+          placeholderTextColor="white" 
           onChangeText={(text) => setFormData({ ...formData, phone: text })}
           keyboardType="numeric"
         /> 
       </View>
+     
       
-      <View style={{ width: '40%', height: '7%', marginTop:'2%' , alignSelf:'center'}}>
+      <View style={{ width: '40%', height: '14%', marginTop:'2%',marginBottom:'20%' , alignSelf:'center'}}>
   <TouchableOpacity
     onPress={() => requestOTP() } 
     style={{ 
-      backgroundColor: '#EC0444',
+      backgroundColor: 'white',
       borderRadius: 20,
       justifyContent: 'center',
       alignItems: 'center',
@@ -208,7 +225,7 @@ function SignUp() {
   >
     <Text
       style={{
-        color: 'white',
+        color: '#072e33',
         fontWeight: '600',
          // Semibold
         fontSize: 18, // Adjust the font size as needed
@@ -218,14 +235,18 @@ function SignUp() {
     </Text>
   </TouchableOpacity>
 </View>
+</Collapsible>
+<Collapsible collapsed={!isCollapsed}>
 <View style={t.mB4}>
 <View style={[t.relative, t.flex, t.wFull]}>
+<Text style={[t.textBase,t.textWhite ,t.fontBold,t.mB1]}>OTP:</Text>
         <TextInput
-          style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pT1, t.pX4, t.mT4, t.textLg,t.textCenter, t.flex, t.wFull]}
+          style={[t.border, t.borderGray100, t.rounded, t.pY2, t.pT1, t.pX4,t.textWhite, t.textBase,t.textCenter, t.flex, t.wFull]}
           placeholder="Enter OTP"
+          placeholderTextColor="white" 
           value={otp}
           onChangeText={(text) => {
-            setotp(text); // Update the 'otp' state with the new value
+          setotp(text); // Update the 'otp' state with the new value
            handleOTPCheck(); // Call the 'handleOTPCheck' function
           }}
           editable={ismatched}
@@ -233,19 +254,19 @@ function SignUp() {
         />
         {
           ismatched ? null : (
-<Ionicons name="checkmark" size={24} color="green"  style={[t.absolute, t.right0,t.mR2,t.mT6, ]}  />
+<Ionicons name="checkmark" size={24} color="white"  style={[t.absolute, t.right0,t.mR2,t.mT6, ]}  />
           )
         }
         
       </View>
       </View>
       <View style={t.mB4}>
-      <Text style={[t.textLg, t.fontBold, t.mB1]}>Password:</Text>
+      <Text style={[t.textBase,t.textWhite ,t.fontBold, t.mB1]}>Password:</Text>
       <View style={[t.relative, t.flex, t.wFull]}>
         <TextInput
-          style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textLg, t.flex, t.wFull, t.pl10pr10]}
+          style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textSm, t.flex, t.wFull, t.pl10pr10,t.textWhite,t.fontSemibold]}
           placeholder="Enter your own password"
-          
+          placeholderTextColor="white" 
           secureTextEntry={passwordVisibility1}
           onChangeText={(text) => setFormData({ ...formData, password: text })}
         />
@@ -258,11 +279,12 @@ function SignUp() {
       </View>
     </View>
     <View style={t.mB4}>
-      <Text style={[t.textLg, t.fontBold, t.mB1]}>Password:</Text>
+      <Text style={[t.textBase,t.textWhite ,t.fontBold, t.mB1]}>Password:</Text>
       <View style={[t.relative, t.flex, t.wFull]}>
         <TextInput
-          style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textLg, t.flex, t.wFull, t.pl10pr10]}
-          placeholder="Conform your own password"
+          style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textSm, t.flex, t.wFull, t.pl10pr10,t.textWhite,t.fontSemibold]}
+          placeholder="Confirm your own password"
+          placeholderTextColor="white" 
           secureTextEntry={passwordVisibility2}
           onChangeText={(text) => setFormData({ ...formData, confirmPassword: text })}
         />
@@ -270,18 +292,19 @@ function SignUp() {
           onPress={handlePasswordVisibility2}
           style={[t.absolute, t.right0,t.mR2,t.mT3]}
         >
-          <MaterialCommunityIcons name={rightIcon2} size={22} color="#232323" />
+          <MaterialCommunityIcons name={rightIcon2} size={22} color="white" />
         </Pressable>
       </View>
     </View>
    
 <View style={t.mT2}>
   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-    <CheckBox style={[t.mL1]}
+    <CheckBox style={[t.mL1,t.textTeal800,t.textWhite]}
+    // color={'#072e33'}
       value={isChecked}
       onValueChange={(newValue) => setIsChecked(newValue)}
     />
-    <Text style={[t.textLg, t.fontBold, t.mB1, t.textGray800, t.mL4, t.mT1]}>
+    <Text style={[t.textSm, t.fontBold, t.mB1, t.textGray100, t.mL4,t.mR4, t.mT1]}>
       By signing up you accept the Terms of service and Privacy Policy
     </Text>
   </View>
@@ -289,33 +312,47 @@ function SignUp() {
 
 
 
-<View style={{ width: '40%', height: '8%', marginTop:'4%' , alignSelf:'center'}}>
+<View style={{ width: '50%', height: '12%', marginTop:'4%',marginBottom:'20%' , alignSelf:'center'}}>
   <TouchableOpacity
     onPress={handleSubmit}
     style={{
-      backgroundColor: '#EC0444',
+      
+      backgroundColor: 'white',
       borderRadius: 20,
       justifyContent: 'center',
       alignItems: 'center',
       flex: 1, // Add this to make the button expand to fill the parent View
+      flexDirection:'row'
     }}
   >
+     { loading ?
+      (
+      <ActivityIndicator size="large" color='#072e33'/> ): (<></>)
+       }
     <Text
       style={{
-        color: 'white',
+        color: '#072e33',
         fontWeight: '600',
+        marginLeft:1,
          // Semibold
-        fontSize: 18, // Adjust the font size as needed
+        fontSize: 16, // Adjust the font size as needed
       }}
     >
-      SignUp
+      {
+        loading ? "Please wait" : "Sign up"
+      }
     </Text>
   </TouchableOpacity>
 </View>
+</Collapsible>
 
     </View>
     </View>
+    </View>
     </ScrollView>
+    </View>
+  </Modal>
+  
   );
 }
 

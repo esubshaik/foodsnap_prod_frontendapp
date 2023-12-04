@@ -28,7 +28,59 @@ function Home() {
     setIsFocused(true);
   };
 
+  const [mynutridata,setmynutridata] = useState([0,0,0,0]);
+  const [usernutri,setusernutri] = useState({}) ;
+
+
+  const fetchNutri = async()=>{
+    const token = await AsyncStorage.getItem('token');
+    const requestOptions = { 
+      method: 'GET', 
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json' }, 
+  };  
+      try { 
+          await fetch( 
+              'https://backend-server-lhw8.onrender.com/api/user/get-nutridata', requestOptions) 
+              .then(response => { 
+                  response.json() 
+                      .then(data => { 
+                          if(data){
+                            const nutridataArray = data.entries.map(entry => entry.nutridata);
+                           
+                            setusernutri(nutridataArray);
+                            const sumArray = nutridataArray[0].map((_, index) =>
+                            nutridataArray.reduce((sum, array) => sum + parseFloat(array[index]), 0)
+                          );
+                          // Need human age specific nutrition info, ex: 20 year old boy
+                            const avgreqnutri = [2500,300,70,56] ;
+                            const resultArray = avgreqnutri.map((reqValue, index) => {
+                              const totValue = sumArray[index];
+                              const prog = Number((totValue / reqValue).toFixed(2))
+                              return prog >=1 ? 1 : prog ;
+                            });
+                            
+                            console.log(resultArray);
+                            
+                            setmynutridata(resultArray);
+                            
+                          }
+                          
+                      }); 
+              }) 
+  
+      } 
+      catch (error) { 
+          console.log(error); 
+      }
+  }
+  const checkUserNutriData = async () => {
+    await fetchNutri();
+  };
+  
   useEffect(() => {
+    checkUserNutriData();
     const backAction = () => {
       BackHandler.exitApp(); // This will exit the app
       return true;
@@ -55,18 +107,22 @@ const analyzeFood  = async () => {
                 response.json() 
                     .then(data => { 
                         console.log(data); 
-                        setModalData(data);
+                        if(data['data']['CALORIES(G)']){
+                          setModalData(data);
+                          openModal();
+                        }
+                        
                     }); 
             }) 
 
-            openModal();
     } 
     catch (error) { 
-        console.error(error); 
+        console.log(error); 
     } 
 } 
+
 const [modalVisible, setModalVisible] = useState(false);
-const [modalData, setModalData] = useState('');
+const [modalData, setModalData] = useState({"data": {"CALORIES(G)": 0, "CARBOHYDRATES(G)": 0, "FAT(G)": 0, "PROTEIN(G)": 0}});
 
 const openModal = () => {
   // setModalData('Hello from Main Component!'); // Set the data you want to send
@@ -97,16 +153,16 @@ const closeModal = () => {
   </Input>
       </View>
       <View>
-      <ProgressChartGrid/>
 
+      <ProgressChartGrid  mynutridata={mynutridata}/>
 
       <ModalComponent
         modalVisible={modalVisible}
         closeModal={closeModal}
         modalData={modalData}
         foodname={myInput}
+        reload = {fetchNutri}
       />
-
 
       </View>
     </ScrollView>

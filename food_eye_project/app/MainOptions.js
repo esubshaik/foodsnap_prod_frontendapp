@@ -2,21 +2,51 @@ import React, {useState} from 'react';
 import { View, Text, Image,Button, TouchableOpacity,ScrollView ,StatusBar} from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import {useRouter} from 'expo-router' ;
+import Login from './Login';
+import SignUp from './SignUp';
 
 function MainOptions() {
   const navigation = useRouter() ;
+  const [val,setval] = useState(0);
+const [LoginVisible, setLoginVisible] = useState(false);
+const [SignupVisible, setSignupVisible] = useState(false);
+// const [modalData, setModalData] = useState('');
+
+const openModal = () => {
+  // setModalData('Hello from Main Component!'); // Set the data you want to send
+  setval(val+1);
+  setLoginVisible(true);
+ 
+};
+
+const closeModal = () => {
+  setLoginVisible(false);
+};
+
+const openSignupModal = () => {
+  // setModalData('Hello from Main Component!'); // Set the data you want to send
+  setval(val+1);
+  setSignupVisible(true);
+  
+};
+
+const closeSignupModal = () => {
+  setSignupVisible(false);
+  
+};
+
+
   return (
-    <ScrollView contentContainerStyle={{  flexGrow: 1, paddingBottom: 100, backgroundColor:'white' }}>
-    <View style={[t.p1, t.bgWhite, t.flex, t.flexCol, t.itemsCenter, t.justifyCenter]}>
-      
-      <View style={{ width: 300, height: 150 }}>
-        <Image 
-          source={require('./assets/logo-white.png')}
-          style={{ flex: 1, width: null, height: null }}
-          resizeMode="contain" // or "cover" depending on your preference
-        />
-        <View></View>
-      </View>
+    <ScrollView contentContainerStyle={{  flexGrow: 1, paddingBottom: 10, backgroundColor:'white' }}>
+    <View style={[t.p1, t.bgWhite, t.flex, t.flexCol, t.itemsCenter]}>
+    <View style={{ height: '20%', width:'50%',display:'flex', flexDirection:'row', alignContent:'flex-start', alignSelf:'flex-start' }}>
+      <Image
+        source={require('./assets/appicon.png')}
+        style={{ flex: 0, width: 40, height: 40, margin:'5%' }}
+        resizeMode="contain"
+      />
+      <Text style={[t.h12,t.alignCenter,t.mT1, t.text2xl, t.fontSemibold,t.textTeal800]}>Food Snap</Text>
+    </View>
       
       <View style={{ width: 300, height: 300 }}>
         <Image 
@@ -25,22 +55,35 @@ function MainOptions() {
           resizeMode="contain" // or "cover" depending on your preference
         />
       </View>
-      <Text style={[t.text4xl, t.m110, t.flex, t.mT4, t.textGray700, t.fontHairline]}>TRACK YOUR HEALTH</Text>
-      <Text style={[t.textSm, t.mT2, t.textGray600]}>Get Meal Plans Designed to Reach your Goals</Text>
+      <Text style={[t.text4xl, t.flex, t.mL4, t.textTeal800,t.selfStart, t.fontHairline,t.fontSemibold]}>Welcome.</Text>
+      <Text style={[t.textBase,t.fontMedium, t.mT2, t.textTeal800,t.mL4,t.selfStart]}>Log your diet and elevate your nutritional journey</Text>
       
-      <View style={{ width: '90%', height: 'auto', marginTop: '20%' }}>
+      <View style={{ width: '90%', height: '20%', marginTop: '20%' }}>
+      <Login
+        modalVisible={LoginVisible}
+        closeModal={closeModal}
+        data = {val}
+      />
+      <SignUp modalVisible={SignupVisible}
+      closeModal={closeSignupModal}
+      data = {val}
+      />
 
-  <View style={[t.wFull, t.flexRow]}>
+  <View style={[t.wFull, t.flexCol,t.relative,t.bottom0]}>
     <TouchableOpacity
-      onPress={()=>{navigation.push("/SignUp")}}
+      // onPress={()=>{navigation.push("/SignUp")}}
+      onPress={openSignupModal}
       style={{
-        backgroundColor: '#EC0444',
+        backgroundColor: '#0C7078',
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        height:40,
-        flex: 1,
-        margin: 5, // Add some margin for spacing between buttons
+        borderWidth:2,
+        borderColor:'#0C7078',
+        padding: 10,
+        width:'100%',
+        
+         // Add some margin for spacing between buttons
       }}
     >
       <Text
@@ -50,28 +93,32 @@ function MainOptions() {
           fontSize: 18,
         }}
       >
-        SignUp
+        Sign up
       </Text>
     </TouchableOpacity>
     <TouchableOpacity
-       onPress={()=>{navigation.push("/Login")}}
+      //  onPress={()=>{navigation.push("/Login")}}
+      onPress={openModal}
       style={{
-        backgroundColor: '#EC0444',
+        // borderColor: '#0C7078',
+        marginTop:20,
+        borderWidth:2,
+        borderColor:'#0C7078',
+        padding: 10,
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        flex: 1,
-        margin: 5,
+        
       }}
     >
       <Text
         style={{
-          color: 'white',
+          color: '#0C7078',
           fontWeight: '600',
           fontSize: 18,
         }}
       >
-        Login
+        Log in
       </Text>
     </TouchableOpacity>
   </View>

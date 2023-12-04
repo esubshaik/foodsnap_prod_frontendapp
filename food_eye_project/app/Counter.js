@@ -4,14 +4,49 @@ import {t} from 'react-native-tailwindcss' ;
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-const CounterApp = ({closeModal,data}) => {
+const CounterApp = ({closeModal,data,reloadnutri}) => {
   const [counter, setCounter] = useState(1);
+
+
+  const StoreinDB=async(record)=>{
+  const nutri = record ;
+  // console.log(nutri);
+  const token = await AsyncStorage.getItem('token');
+  const requestOptions = { 
+    method: 'POST', 
+    headers: { 
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+  
+  }, 
+    body: JSON.stringify({ nutridata: nutri}) 
+
+}; 
+    try { 
+      
+        await fetch( 
+            'https://backend-server-lhw8.onrender.com/api/user/store-nutridata', requestOptions) 
+            .then(response => { 
+              // console.log(response)
+                response.json() 
+                    .then(data=> { 
+                        console.log(data.message); 
+                        // setModalData(data);
+                    }); 
+            }) 
+
+            // openModal();
+    } 
+    catch (error) { 
+        console.error(error); 
+    }
+  }
 
   const multiplyValues = async (dataString, multiplier) => {
     try {
       // Parse the data string into a JavaScript object
       const {data} = dataString;
-    console.log(dataString);
+    // console.log(dataString);
       // Ensure data and multiplier are provided
       if (!data || typeof data !== 'object' || typeof multiplier !== 'number') {
         return [];
@@ -20,7 +55,7 @@ const CounterApp = ({closeModal,data}) => {
       // Multiply each valid numeric value by the multiplier
       const multipliedData = {};
       for (const key in data) {
-        if (Object.hasOwnProperty.call(data, key)) {
+        // if (Object.hasOwnProperty.call(data, key)) {
           const originalValue = data[key];
           // Check if the original value is a valid number
           if (typeof originalValue === 'number' && !isNaN(originalValue)) {
@@ -29,14 +64,18 @@ const CounterApp = ({closeModal,data}) => {
             // Handle non-numeric values (e.g., strings, objects, etc.)
             multipliedData[key] = originalValue;
           }
-        }
+        // }
       }
   
       // Convert the result to an array
       const resultArray = Object.values(multipliedData);
-      console.log(resultArray);
+      // console.log(resultArray);
+      await StoreinDB(resultArray);
+      closeModal();
+      reloadnutri();
+
       await AsyncStorage.setItem('nutridata', JSON.stringify(resultArray));
-      // await AsyncStorage.setItem('reqnutridata', JSON.stringify([2500,300,70,56]));
+
       // return resultArray;
     } catch (error) {
       console.error('Error parsing data string:', error);
@@ -91,10 +130,68 @@ const CounterApp = ({closeModal,data}) => {
       </View>
       <View style={[t.absolute,t.bottom0,t.selfCenter, t.mB4,t.textBase, t.flex, t.flexRow]}>
             <View style={[t.mR10]} >
-            <Button title="Close" onPress={closeModal} />
+            {/* <Button title="Close" onPress={closeModal} style={[t.w32]} /> */}
+            <View style={{ width: 90, height: 44,alignSelf:'center'}}>
+  <TouchableOpacity
+    onPress={closeModal}
+    style={{
+      backgroundColor: '#E70A0A',
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      
+      flex: 1,
+      flexDirection:'row'
+    
+    }}
+  >
+    
+    <Text
+      style={{
+        // #072e33
+        color: 'white',
+        fontWeight: '600',
+        marginLeft:4,
+         // Semibold
+        fontSize: 16, // Adjust the font size as needed
+      }}
+    >
+      Close
+    </Text>
+  </TouchableOpacity>
+</View>
             </View>
           <View style={[t.mL10]}>
-          <Button title="Record My DIET" onPress={(Event)=>multiplyValues(data,counter)} />
+          <View style={{ width: 110, height: 44,alignSelf:'center'}}>
+  <TouchableOpacity
+    onPress={(Event)=>multiplyValues(data,counter)}
+    style={{
+      backgroundColor: '#09BF13',
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      
+      flex: 1,
+      flexDirection:'row'
+    
+    }}
+  >
+    
+    <Text
+      style={{
+        // #072e33
+        color: 'white',
+        fontWeight: '600',
+        marginLeft:4,
+         // Semibold
+        fontSize: 16, // Adjust the font size as needed
+      }}
+    >
+      Record My Diet
+    </Text>
+  </TouchableOpacity>
+</View>
+          {/* <Button title="Record My DIET"  /> */}
           </View>
           </View>
     </View>

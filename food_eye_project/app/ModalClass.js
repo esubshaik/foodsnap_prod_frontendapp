@@ -4,7 +4,7 @@ import {t} from 'react-native-tailwindcss' ;
 import PieChartExample from './PieChart';
 import CounterApp from './Counter' ;
 
-const ModalComponent = ({ modalVisible, closeModal, modalData,foodname }) => {
+const ModalComponent = ({ modalVisible, closeModal, modalData,foodname,reload }) => {
   return (
     <Modal
       animationType="slide"
@@ -18,7 +18,7 @@ const ModalComponent = ({ modalVisible, closeModal, modalData,foodname }) => {
         
             <View style={[t.flex,t.flexCol, t.selfCenter]}>
                 <PieChartExample data={modalData} foodname={foodname}/>
-                <CounterApp closeModal={closeModal} data={modalData}/>
+                <CounterApp closeModal={closeModal} data={modalData} reloadnutri = {reload}/>
             </View>
 
           

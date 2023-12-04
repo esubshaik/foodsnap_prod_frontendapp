@@ -5,21 +5,12 @@ import { ProgressChart, BarChart } from 'react-native-chart-kit';
 import { useState,useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ProgressChartGrid = () => {
-  const [mynutridata,setmynutridata] = useState([0,0,0,0]);
-  const [myreqnutridata,setreqnutridata] = useState([0,0,0,0]);
+const ProgressChartGrid = ({mynutridata}) => {
 
-  const checkUserNutriData = async () => {
-    const nutridata = await AsyncStorage.getItem('nutridata');
-    const reqnutridata = await AsyncStorage.getItem('reqnutridata');
-    setmynutridata(nutridata);
-    setreqnutridata(reqnutridata);
-    console.log(nutridata);
-  };
 
-  useEffect(() => {
-    checkUserNutriData();
-  }, []);
+  // useEffect(() => {
+  //   checkUserNutriData();
+  // }, []);
   return (
     <View style={{backgroundColor:'#F0FCF7',margin:16,borderRadius:15,flexDirection:'row',height:'fit',shadowColor: '#05161A',shadowOpacity: 0.4,
     shadowRadius: 4,elevation: 5}}>
@@ -30,7 +21,7 @@ const ProgressChartGrid = () => {
           <ProgressChart
             data={{
               
-              data: [0],
+              data: [mynutridata[0]],
                // Replace with your actual data
             }}
             width={110}
@@ -51,7 +42,7 @@ const ProgressChartGrid = () => {
           <ProgressChart
              data={{
 
-              data: [0.90],
+              data: [mynutridata[1]],
                // Replace with your actual data
             }}
             width={110}
@@ -75,7 +66,7 @@ const ProgressChartGrid = () => {
           <ProgressChart
              data={{
               
-              data: [0.55],
+              data: [mynutridata[2]],
                // Replace with your actual data
             }}
             width={110}
@@ -96,7 +87,7 @@ const ProgressChartGrid = () => {
           <ProgressChart
              data={{
               
-              data: [0.55],
+              data: [mynutridata[3]],
                // Replace with your actual data
             }}
             width={110}
