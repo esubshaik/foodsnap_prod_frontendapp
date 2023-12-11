@@ -39,7 +39,7 @@ const  Login=({ modalVisible, closeModal,data})=> {
             try {
             setLoading(true);
             if (!formData.email || !formData.password) {
-              ToastAndroid.show('Please enter your registered Email and Password', ToastAndroid.LONG);
+              ToastAndroid.show('Please enter your registered Email and Password', ToastAndroid.SHORT);
               return;
             }
               const response = await axios.post(
@@ -55,12 +55,12 @@ const  Login=({ modalVisible, closeModal,data})=> {
               console.log(response.data);
         
               if (response.status === 400) {
-                ToastAndroid.show('Fill all details', ToastAndroid.LONG);
+                ToastAndroid.show('Fill all details', ToastAndroid.SHORT);
               } else if (response.status === 200) {
-                console.log('entered successfully');
+                // console.log('entered successfully');
                 const { message, name, accessToken } = response.data;
         
-                ToastAndroid.show(`${message}. Welcome, ${name}!`, ToastAndroid.LONG);
+                ToastAndroid.show(`${message}. Welcome, ${name}!`, ToastAndroid.SHORT);
         
                 await AsyncStorage.setItem('token', accessToken);
                 await AsyncStorage.setItem('name', name);
@@ -70,15 +70,15 @@ const  Login=({ modalVisible, closeModal,data})=> {
                   navigation.push('/Home'); // Replace 'Home' with your actual route name
                 }, 1000);
               } else if (response.status === 401) {
-                ToastAndroid.show('Invalid Credentials', ToastAndroid.LONG);
+                ToastAndroid.show('Invalid Credentials', ToastAndroid.SHORT);
               } else if (response.status === 404) {
-                ToastAndroid.show('User Not Found', ToastAndroid.LONG);
+                ToastAndroid.show('User Not Found', ToastAndroid.SHORT);
               } else if (response.status === 500) {
-                ToastAndroid.show('Internal Server Error', ToastAndroid.LONG);
+                ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
               }
             } catch (err) {
               // console.log(err);
-              ToastAndroid.show("Email Not Found, Please Register!", ToastAndroid.LONG);
+              ToastAndroid.show("Email Not Found, Please Register!", ToastAndroid.SHORT);
             }
             finally{
               // <ActivityIndicator size="large" />

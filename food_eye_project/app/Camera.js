@@ -150,7 +150,7 @@ export default function ScanFood() {
     } catch (err) {
       console.log(err);
       setboolbound(false);
-    //   ToastAndroid.show("An Unknown Error Occured!", ToastAndroid.LONG);
+    
     }
     finally{
       setanim(false);

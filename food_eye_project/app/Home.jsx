@@ -1,4 +1,4 @@
-import { View,Text,TouchableOpacity,Image } from "react-native";
+import { View,Text,TouchableOpacity,Image,BackHandler } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Octicons,Zocial,Entypo,FontAwesome5 } from '@expo/vector-icons';
 import { t } from 'react-native-tailwindcss';
@@ -17,6 +17,16 @@ export default function TabsLayout(){
     const user = await AsyncStorage.getItem('name');
     setUsername(user);
   };
+
+  useEffect(() => {
+    const backAction = () => {
+      BackHandler.exitApp(); // This will exit the app
+      return true;
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', backAction);
+    return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
+  }, []);
 
   useEffect(() => {
     checkUserSession();

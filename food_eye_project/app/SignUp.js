@@ -95,15 +95,15 @@ const SignUp=({ modalVisible, closeModal,data})=> {
             try {
               setLoading(true);
               if (!formData.name || !formData.confirmPassword || !formData.email || !formData.phone || !formData.password ) {
-                ToastAndroid.show('Please Fill all details', ToastAndroid.LONG);
+                ToastAndroid.show('Please Fill all details', ToastAndroid.SHORT);
                 return;
               }
               if (!isChecked) {
-                ToastAndroid.show('Please accept the Terms of Service and Privacy Policy', ToastAndroid.LONG);
+                ToastAndroid.show('Please accept the Terms of Service and Privacy Policy', ToastAndroid.SHORT);
                 return;
               }
               if (formData.password !== formData.confirmPassword) {
-                ToastAndroid.show('Passwords do not match', ToastAndroid.LONG);
+                ToastAndroid.show('Passwords do not match', ToastAndroid.SHORT);
                 return;
               }
               // setLoading(true);
@@ -123,7 +123,7 @@ const SignUp=({ modalVisible, closeModal,data})=> {
               if (response.status === 200) {
                 const { message, name, accessToken } = response.data;
         
-                ToastAndroid.show(`Registered successfully, Please Login`, ToastAndroid.LONG);
+                ToastAndroid.show(`Registered successfully, Please Login`, ToastAndroid.SHORT);
                 closeModal();
                 setTimeout(() => {
                   // Navigate to the home screen after 4 seconds
@@ -131,18 +131,18 @@ const SignUp=({ modalVisible, closeModal,data})=> {
                  // Replace 'Home' with your actual route name
                 }, 2000); // 4000 milliseconds = 4 seconds
               } else if (response.status === 400) {
-                ToastAndroid.show('Bad Request', ToastAndroid.LONG);
+                ToastAndroid.show('Bad Request', ToastAndroid.SHORT);
               } else if (response.status === 401) {
-                ToastAndroid.show('Unauthorized', ToastAndroid.LONG);
+                ToastAndroid.show('Unauthorized', ToastAndroid.SHORT);
               } else if (response.status === 409) {
-                ToastAndroid.show('User already exists', ToastAndroid.LONG);
+                ToastAndroid.show('User already exists', ToastAndroid.SHORT);
               } else if (response.status === 500) {
-                ToastAndroid.show('Internal Server Error', ToastAndroid.LONG);
+                ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
               }
             } catch (err) {
               // console.log(err);
               // navigation.push("/SignUp");
-              ToastAndroid.show("User Already Exists!", ToastAndroid.LONG);
+              ToastAndroid.show("User Already Exists!", ToastAndroid.SHORT);
             }
             finally{
               // <ActivityIndicator size="large" />

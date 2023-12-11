@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { View, Text, Image,Button, TouchableOpacity,ScrollView ,StatusBar} from 'react-native';
+import React, {useState,useEffect} from 'react';
+import { View, Text, Image,Button, TouchableOpacity,ScrollView ,StatusBar,BackHandler} from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import {useRouter} from 'expo-router' ;
 import Login from './Login';
@@ -34,6 +34,15 @@ const closeSignupModal = () => {
   setSignupVisible(false);
   
 };
+useEffect(() => {
+  const backAction = () => {
+    BackHandler.exitApp(); // This will exit the app
+    return true;
+  };
+
+  BackHandler.addEventListener('hardwareBackPress', backAction);
+  return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
+}, []);
 
 
   return (
@@ -48,9 +57,9 @@ const closeSignupModal = () => {
       <Text style={[t.h12,t.alignCenter,t.mT1, t.text2xl, t.fontSemibold,t.textTeal800]}>Food Snap</Text>
     </View>
       
-      <View style={{ width: 300, height: 300 }}>
+      <View style={{ width: 350, height: 320 }}>
         <Image 
-          source={require('./assets/banner-1.png')}
+          source={require('./assets/Initialize/RBlue.jpg')}
           style={{ flex: 1, width: null, height: null }}
           resizeMode="contain" // or "cover" depending on your preference
         />

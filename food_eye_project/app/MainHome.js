@@ -1,12 +1,14 @@
 import React, { useState, useEffect,Component } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ToastAndroid, BackHandler,StyleSheet,Dimensions,Alert } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ToastAndroid, BackHandler,StyleSheet,Dimensions,Alert,Image } from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Input,InputField,InputSlot,InputIcon } from '@gluestack-ui/themed';
-import { AntDesign,Ionicons } from '@expo/vector-icons';
+import { AntDesign,Ionicons,Entypo,MaterialIcons } from '@expo/vector-icons';
 import ProgressChartGrid from './SpiralChart';
 import ModalComponent from './ModalClass';
+import UserProgress from './Progress' ;
+
 
 
 function Home() {
@@ -79,19 +81,9 @@ function Home() {
     await fetchNutri();
   };
   
-  useEffect(() => {
-    checkUserNutriData();
-    const backAction = () => {
-      BackHandler.exitApp(); // This will exit the app
-      return true;
-    };
-
-    BackHandler.addEventListener('hardwareBackPress', backAction);
-
-    return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
-  }, []);
-
-
+  useEffect(()=>{
+fetchNutri();
+  },[])
 const analyzeFood  = async () => { 
   const foodid = myInput ;
   console.log(foodid);
@@ -147,14 +139,62 @@ const closeModal = () => {
     
     <View style={{width:'70%',height:'100%'}}>
     <InputField style={[t.textLg,t.hFull,t.fontSemibold,t.textGray600]} onFocus={handleFocus} onChange={(event) => setInput(event.nativeEvent.text)}
- onSubmitEditing={analyzeFood} />
+ onSubmitEditing={analyzeFood}
+ placeholder='Start adding your food item'
+ />
     </View>
-    
   </Input>
       </View>
       <View>
 
       <ProgressChartGrid  mynutridata={mynutridata}/>
+
+      <View style={{backgroundColor:'white',marginLeft:16,marginRight:0,borderRadius:15,flexDirection:'row',height:100,shadowColor: 'white',shadowOpacity: 0.4,
+    shadowRadius: 4,elevation: 5,justifyContent:'space-between',alignItems:'center'}}>
+      <View style={{width:'68%',
+    // backgroundColor: 'skyblue',
+    shadowColor: '#575555',
+    elevation: 2,
+    padding: 1,marginTop:4,marginBottom:4,borderRadius:15}}>
+      <View style={[t.hFull, t.p2,t.bgRed200,t.roundedLg,t.wFull,t.flex,t.flexRow,t.justifyBetween]}>
+        <View style={[t.flex,t.flexCol,t.justifyBetween]}>
+        <Text  style={[t.fontSemibold, t.m2,t.textLg,t.textRed900]}>Challenges</Text>
+        <Text  style={[t.fontSemibold, t.m2,t.textXl,t.textRed900]}>WinterHarvest Eats</Text>
+        </View>
+        <View style={{}}> 
+        <Image
+        source={require('./assets/challengeFood/dates.png')}
+        style={{ flex: 1, width:50 , height:50, margin:'2%' }}
+        resizeMode="contain"
+      />
+        </View>
+       
+        </View>
+      </View>
+
+      <TouchableOpacity style={{width:'100%',height:'100%'}}>
+        <View style={{width:'26%',height:'92%',
+    backgroundColor: '#0096FF',
+    shadowColor: '#575555',
+    elevation: 2,
+    padding: 2,marginTop:4,marginBottom:4,borderRadius:15,marginLeft:8}}>
+        <View style={[t.wFull,t.flex,t.flexRow,t.hFull,t.itemsCenter,t.justifyCenter]}>
+        <Entypo name="cup" size={25} color="white" />
+        <MaterialIcons name="exposure-plus-1" size={26} color="white" />
+        </View>
+        </View>
+        </TouchableOpacity>
+
+        <View>
+
+        </View>
+      </View>
+      
+      <View style={{backgroundColor:'#DFFFFC',margin:16,borderRadius:15,flexDirection:'row',height:100,shadowColor: 'white',shadowOpacity: 0.4,
+    shadowRadius: 4,elevation: 5,justifyContent:'space-between',alignItems:'center'}}>
+      <UserProgress/>
+
+      </View>
 
       <ModalComponent
         modalVisible={modalVisible}

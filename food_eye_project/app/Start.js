@@ -1,11 +1,22 @@
 import React, {useState, useEffect} from 'react';
-import { View, Text, Image,Button, TouchableOpacity,ScrollView , StatusBar} from 'react-native';
+import { View, Text, Image,Button, TouchableOpacity,ScrollView , StatusBar,BackHandler} from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import {useRouter} from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HorizontalStackPage from './HorizantalStack' ;
 function Start() {
     const navigation = useRouter() ;
+
+    useEffect(() => {
+      const backAction = () => {
+        BackHandler.exitApp(); // This will exit the app
+        return true;
+      };
+  
+      BackHandler.addEventListener('hardwareBackPress', backAction);
+  
+      return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
+    }, []);
   return (
     <View style={{ paddingBottom: 10, backgroundColor: '#ffffff' }}>
   <View style={[t.p1, t.flex, t.flexCol, t.itemsCenter, t.hFull]}>
