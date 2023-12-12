@@ -8,7 +8,7 @@ import { AntDesign,Ionicons,Entypo,MaterialIcons } from '@expo/vector-icons';
 import ProgressChartGrid from './SpiralChart';
 import ModalComponent from './ModalClass';
 import UserProgress from './Progress' ;
-
+import DateNavigator from './DateNavigator' ;
 
 
 function Home() {
@@ -62,11 +62,8 @@ function Home() {
                               const prog = Number((totValue / reqValue).toFixed(2))
                               return prog >=1 ? 1 : prog ;
                             });
-                            
                             console.log(resultArray);
-                            
                             setmynutridata(resultArray);
-                            
                           }
                           
                       }); 
@@ -146,7 +143,7 @@ const closeModal = () => {
   </Input>
       </View>
       <View>
-
+      <DateNavigator/>
       <ProgressChartGrid  mynutridata={mynutridata}/>
 
       <View style={{backgroundColor:'white',marginLeft:16,marginRight:0,borderRadius:15,flexDirection:'row',height:100,shadowColor: 'white',shadowOpacity: 0.4,
@@ -184,18 +181,14 @@ const closeModal = () => {
         </View>
         </View>
         </TouchableOpacity>
-
         <View>
 
         </View>
       </View>
-      
-      <View style={{backgroundColor:'#DFFFFC',margin:16,borderRadius:15,flexDirection:'row',height:100,shadowColor: 'white',shadowOpacity: 0.4,
+      <View style={{backgroundColor:'#294D61',margin:16,borderRadius:15,flexDirection:'row',height:100,shadowColor: 'black',shadowOpacity: 0.9,
     shadowRadius: 4,elevation: 5,justifyContent:'space-between',alignItems:'center'}}>
       <UserProgress/>
-
       </View>
-
       <ModalComponent
         modalVisible={modalVisible}
         closeModal={closeModal}
@@ -203,7 +196,6 @@ const closeModal = () => {
         foodname={myInput}
         reload = {fetchNutri}
       />
-
       </View>
     </ScrollView>
   );

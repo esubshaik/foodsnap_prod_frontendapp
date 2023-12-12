@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ToastAndroid, BackHandler } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ToastAndroid, BackHandler, StyleSheet } from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Input,InputField,InputSlot,InputIcon } from '@gluestack-ui/themed';
 import { AntDesign } from '@expo/vector-icons';
+import ImageUpload from './ImageUpload';
 
 
 
 function UserMgmt() {
+
+
   const navigation = useRouter();
   const [username, setUsername] = useState("");
   
@@ -41,9 +44,11 @@ function UserMgmt() {
 
   return (
     <ScrollView contentContainerStyle={{ backgroundColor: 'white' }}>
-      <View style={[t.p1,t.mT10, t.bgWhite, t.flex, t.textCenter, t.flexCol]}>
-      <Text style={{ fontSize: 20, alignSelf:"center",marginBottom:'5%',fontWeight:'bold' }}>USER MANAGEMENT </Text>
-        <Text style={{ fontSize: 16, alignSelf:"center",marginBottom:'100%',fontWeight:'bold' }}>Name: {username} </Text>
+      <View style={[t.p1, t.bgWhite, t.flex, t.textCenter, t.flexCol]}>
+      <View style={styles.container}>
+      <ImageUpload/>
+      <Text style={{marginVertical:20,fontSize:16}}>Welcome, {username} </Text>
+    </View>
 
         <TouchableOpacity
           onPress={handleLogout}
@@ -61,5 +66,13 @@ function UserMgmt() {
     </ScrollView>
   );
 }
+const styles = StyleSheet.create({
+  container: {
+    padding:50,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default UserMgmt;

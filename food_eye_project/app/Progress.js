@@ -17,14 +17,15 @@ const UserProgress = () => {
   const daysArray = [
     1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   ];
-  console.log(daysArray.length);
-
+  // console.log(daysArray.length);
+const percent = 30;
   const firstRow = daysArray.slice(0, numberOfDaysInMonth / 2);
   const secondRow = daysArray.slice(numberOfDaysInMonth / 2);
 
   return (
-    <View>
-        <Text style={[t.textOrange800,t.textBase,t.fontSemibold,t.m4]}>Your Progress</Text>
+    <View style={[t.flex,t.flexRow,t.justifyBetween,t.m4]}>
+      <View style={[t.flex,t.flexCol]}>
+        <Text style={[t.textWhite,t.textLg,t.fontSemibold,t.mL2,t.mB2]}>Your Progress</Text>
       <View style={styles.container}>
         {firstRow.map((day, index) => (
           <View key={index} style={[styles.circle, day === 1 ? styles.circleFilled : null]} />
@@ -34,6 +35,10 @@ const UserProgress = () => {
         {secondRow.map((day, index) => (
           <View key={index} style={[styles.circle, day === 1 ? styles.circleFilled : null]} />
         ))}
+      </View>
+      </View>
+      <View style={[t.flex1,t.mT6,t.mL4]}>
+        <Text style={[t.textWhite,t.text3xl,t.fontSemibold]}>{percent}%</Text>
       </View>
     </View>
   );
