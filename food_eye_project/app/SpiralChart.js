@@ -5,9 +5,9 @@ import { ProgressChart, BarChart } from 'react-native-chart-kit';
 import { useState,useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ProgressChartGrid = ({mynutridata}) => {
+const ProgressChartGrid = ({mynutridata,hydrapercent}) => {
 
-
+const reqhydra = 100-hydrapercent ;
   // useEffect(() => {
   //   checkUserNutriData();
   // }, []);
@@ -86,7 +86,6 @@ const ProgressChartGrid = ({mynutridata}) => {
         <Text style={[t.fontSemibold,t.pX6]}>Carbohydrates</Text>
           <ProgressChart
              data={{
-              
               data: [mynutridata[3]],
                // Replace with your actual data
             }}
@@ -102,14 +101,14 @@ const ProgressChartGrid = ({mynutridata}) => {
             }}
           />
         </View>
-      </View>
+      </View> 
     </View>
     <View>
-    <Text style={[t.fontSemibold,t.mT6,t.pX4]}>Hydration</Text>
+    <Text style={[t.fontSemibold,t.mT6,t.pX6]}>Hydration</Text>
     <View style={[t.border2,t.mT6,t.mB6,t.mL4,t.w16,t.roundedLg,t.h40]}>
-    <View style={{backgroundColor:'transparent',height:'30%',width:'full',borderRadius:20}}></View>
-      <View style={{backgroundColor:'#294D61',height:'70%',width:'full',borderRadius:5}}>
-        <Text style={[t.textWhite,t.selfCenter,t.mT1,t.fontMedium]}>90%</Text>
+    <View style={{backgroundColor:'transparent',height:`${reqhydra}%` ,width:'full',borderRadius:20}}></View>
+      <View style={{backgroundColor:'#294D61',height:`${hydrapercent}%`,width:'full',borderRadius:5}}>
+        <Text style={[t.textWhite,t.selfCenter,t.mT1,t.textBase]}>{hydrapercent}%</Text>
       </View>
     </View>
     </View>

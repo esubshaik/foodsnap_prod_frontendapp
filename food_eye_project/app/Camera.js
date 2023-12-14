@@ -165,7 +165,7 @@ export default function ScanFood() {
 
   const renderCancelPreviewButton = () => (
       <TouchableOpacity onPress={cancelPreview}
-          style={{ width: '30%', height: '5%', position: 'absolute', bottom: 20 , left: 50, backgroundColor: 'white', alignSelf: 'center', backgroundColor: '#EC0444', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}
+          style={{ width: '30%', height: '5%', position: 'absolute', bottom: 20 , left: 50, backgroundColor: 'white', alignSelf: 'center', backgroundColor: '#294D61', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}
         >
           <Text style={{ color: 'white', fontWeight: '600', fontSize: 15 }}>Retake</Text>
         </TouchableOpacity>
@@ -173,7 +173,7 @@ export default function ScanFood() {
 
   const renderGetDetailsButton = () => (
     <TouchableOpacity onPress={GetDetectionResults}
-        style={{ width: '30%', height: '5%', position: 'absolute', right: 50 ,bottom: 20 , alignSelf: 'center', backgroundColor: '#EC0444', borderRadius: 20, justifyContent: 'center', alignItems: 'center', disabled: anim }}
+        style={{ width: '30%', height: '5%', position: 'absolute', right: 50 ,bottom: 20 , alignSelf: 'center', backgroundColor: '#294D61', borderRadius: 20, justifyContent: 'center', alignItems: 'center', disabled: anim }}
       >
         <Text style={{ color: 'white', fontWeight: '600', fontSize: 15 }}>Detect Food</Text>
       </TouchableOpacity>

@@ -38,9 +38,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    marginTop: 5,
-    
-    
+    marginTop: 5, 
   },
   arrow: {
     fontSize: 32,
