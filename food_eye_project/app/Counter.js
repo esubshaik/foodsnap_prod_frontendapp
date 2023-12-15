@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ProgressBarAndroid, StyleSheet,Button } from 'react-native';
+import { View, Text, TouchableOpacity, ProgressBarAndroid,ProgressBar, StyleSheet,Button, ToastAndroid } from 'react-native';
 import {t} from 'react-native-tailwindcss' ;
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-const CounterApp = ({closeModal,data,reloadnutri}) => {
+const CounterApp = ({data}) => {
   const [counter, setCounter] = useState(1);
-
-
   const StoreinDB=async(record)=>{
   const nutri = record ;
   // console.log(nutri);
@@ -31,10 +29,9 @@ const CounterApp = ({closeModal,data,reloadnutri}) => {
                 response.json() 
                     .then(data=> { 
                         console.log(data.message); 
-                        // setModalData(data);
                     }); 
             }) 
-
+            ToastAndroid.show('Diet Recorded Successfully', ToastAndroid.SHORT);
             // openModal();
     } 
     catch (error) { 
@@ -71,8 +68,8 @@ const CounterApp = ({closeModal,data,reloadnutri}) => {
       const resultArray = Object.values(multipliedData);
       // console.log(resultArray);
       await StoreinDB(resultArray);
-      closeModal();
-      reloadnutri();
+      
+      // reloadnutri();
 
       await AsyncStorage.setItem('nutridata', JSON.stringify(resultArray));
 
@@ -112,6 +109,7 @@ const CounterApp = ({closeModal,data,reloadnutri}) => {
 
   return (
     <View style={styles.container}>
+      {/* <Text style={[t.absolute,t.mL10,t.selfStart,t.fontSemibold,t.textLg]}>Food Quantity</Text> */}
       <Text style={styles.status}>{getStatus()}</Text>
       <ProgressBarAndroid
         styleAttr="Horizontal"
@@ -128,40 +126,9 @@ const CounterApp = ({closeModal,data,reloadnutri}) => {
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
       </View>
-      <View style={[t.absolute,t.bottom0,t.selfCenter, t.mB4,t.textBase, t.flex, t.flexRow]}>
-            <View style={[t.mR10]}>
-            {/* <Button title="Close" onPress={closeModal} style={[t.w32]} /> */}
-            <View style={{ width: 90, height: 44,alignSelf:'center'}}>
-  <TouchableOpacity
-    onPress={closeModal}
-    style={{
-      backgroundColor: '#E70A0A',
-      borderRadius: 20,
-      justifyContent: 'center',
-      alignItems: 'center',
-      
-      flex: 1,
-      flexDirection:'row'
-    
-    }}
-  >
-    
-    <Text
-      style={{
-        // #072e33
-        color: 'white',
-        fontWeight: '600',
-        marginLeft:4,
-         // Semibold
-        fontSize: 16, // Adjust the font size as needed
-      }}
-    >
-      Close
-    </Text>
-  </TouchableOpacity>
-</View>
-            </View>
-          <View style={[t.mL10]}>
+      <View style={[t.bottom0,t.selfCenter, t.mB4,t.textBase, t.flex,t.mT12, t.flexCol]}>
+            
+          <View >
           <View style={{ width: 130, height: 44,alignSelf:'center'}}>
   <TouchableOpacity
     onPress={(Event)=>multiplyValues(data,counter)}
@@ -204,6 +171,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent:'flex-start',
     alignItems: 'center',
+    marginTop:40
   },
   status: {
     fontSize: 24,

@@ -27,11 +27,11 @@ const PieChartExample = ({ data,foodname }) => {
           population: nutrientData[nutrient],
           color: getRandomColor(),
           legendFontColor: '#7F7F7F',
-          legendFontSize: 10,
+          legendFontSize: 12,
         }))
       : []
   }
-  width={Dimensions.get('window').width} 
+  width={Dimensions.get('window').width-10} 
   height={180} // Increase the height as needed
   chartConfig={{
     backgroundColor: '#ffffff',
@@ -41,7 +41,7 @@ const PieChartExample = ({ data,foodname }) => {
   }}
   accessor="population"
   backgroundColor="transparent"
-  paddingLeft="2"
+  paddingLeft="1"
   center={[0, 10]}
   // absolute
 />

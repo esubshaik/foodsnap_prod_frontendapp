@@ -67,8 +67,6 @@ export default function TabsLayout(){
           </View>
           </View>
       
-
-          
           <View style={[t.m4]}>
           <Ionicons name="md-notifications-outline" size={24} color="black" />
           </View>
@@ -89,6 +87,9 @@ export default function TabsLayout(){
         view==4 ?
        (
           <UserMgmt/>
+        ) :
+        view==3 ? (
+          <Empty/>
         )
         :
         (

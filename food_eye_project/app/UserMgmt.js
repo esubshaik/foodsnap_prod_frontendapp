@@ -56,12 +56,12 @@ function UserMgmt() {
         >
           <Text style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>Logout</Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => { navigation.push("/Camera") }}
           style={{ width: '40%', height: '18%',padding:10, marginTop: '4%', alignSelf: 'center', marginTop: '6%', backgroundColor: '#0C7078', borderRadius: 20, justifyContent: 'center', alignItems: 'center', flex: 1 }}
         >
           <Text style={{ color: 'white', fontWeight: '600', fontSize: 18 }}>Scan my Food</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </ScrollView>
   );

@@ -35,9 +35,30 @@ function Home() {
 
   const [mynutridata, setmynutridata] = useState([0, 0, 0, 0]);
   const [usernutri, setusernutri] = useState({});
+const [daysarr,setdaysarr] = useState([]);
+
+const getPresenceArray = (timestamps) => {
+  const today = new Date();
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  const presenceArray = Array.from({ length: daysInMonth }, (_, index) => {
+    const day = index + 1;
+    const formattedDay = day < 10 ? `0${day}` : `${day}`;
+    const formattedDate = `${currentYear}-${currentMonth + 1 < 10 ? '0' : ''}${currentMonth + 1}-${formattedDay}`;
+
+    return timestamps.some(timestamp => timestamp.startsWith(formattedDate)) ? 1 : 0;
+  });
+
+  return presenceArray;
+};
 
 
   const fetchNutri = async () => {
+    // const myhydration = await AsyncStorage.getItem("userhydra");
+    // setHydra(parseInt(myhydration));
+    // await calculateHydra() ;////////////////////////////////////
     const token = await AsyncStorage.getItem('token');
     const requestOptions = {
       method: 'GET',
@@ -54,7 +75,9 @@ function Home() {
             .then(data => {
               if (data) {
                 const nutridataArray = data.entries.map(entry => entry.nutridata);
-
+                const alldataArray = data.allentries.map(entry => entry.updatedAt);
+                console.log("all",alldataArray);
+                setdaysarr(getPresenceArray(alldataArray));
                 setusernutri(nutridataArray);
                 const sumArray = nutridataArray[0].map((_, index) =>
                   nutridataArray.reduce((sum, array) => sum + parseFloat(array[index]), 0)
@@ -66,7 +89,7 @@ function Home() {
                   const prog = Number((totValue / reqValue).toFixed(2))
                   return prog >= 1 ? 1 : prog;
                 });
-                console.log(resultArray);
+                // console.log(resultArray);
                 setmynutridata(resultArray);
               }
 
@@ -78,15 +101,38 @@ function Home() {
       console.log(error);
     }
   }
+  
+
   const checkUserNutriData = async () => {
     await fetchNutri();
+   
   };
 
   useEffect(() => {
     fetchNutri();
+    fetchHydration();
+    hydraFetch();
+    
   }, [])
   const analyzeFood = async () => {
     const foodid = myInput;
+    if(foodid.length <=1){
+      Alert.alert(
+        '',
+        'Please Enter the Food name',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'OK',
+            onPress: () => ToastAndroid.show('Thank you ☺️',ToastAndroid.SHORT),
+          },
+        ],
+        { cancelable: false }
+      );
+    }
     console.log(foodid);
     const requestOptions = {
       method: 'POST',
@@ -99,10 +145,11 @@ function Home() {
         .then(response => {
           response.json()
             .then(data => {
-              console.log(data);
+              // console.log(data);
               if (data['data']['CALORIES(G)']) {
-                setModalData(data);
+                setModalData([data]);
                 openModal();
+                // console.log(data);
               }
 
             });
@@ -115,7 +162,7 @@ function Home() {
   }
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalData, setModalData] = useState({ "data": { "CALORIES(G)": 0, "CARBOHYDRATES(G)": 0, "FAT(G)": 0, "PROTEIN(G)": 0 } });
+  const [modalData, setModalData] = useState([{ "data": { "CALORIES(G)": 0, "CARBOHYDRATES(G)": 0, "FAT(G)": 0, "PROTEIN(G)": 0 } }]);
 
   const openModal = () => {
     // setModalData('Hello from Main Component!'); // Set the data you want to send
@@ -213,24 +260,103 @@ function Home() {
   const mhydra = 3700;
   const fhydra = 2700;
   const gender = 'male';
-  const [hydra, setHydra] = useState(0);
+  const dailyHydrationGoal = gender === 'male' ? mhydra : fhydra;
   const[currenthydra,setcurrenthydra] = useState(0);
+  const [hydra, setHydra] = useState(0);
 
-  const calculateHydra = () => {
-    const dailyHydrationGoal = gender === 'male' ? mhydra : fhydra;
-    const increaseAmount = 237;
-    const currentHydra = hydra + increaseAmount;
-  
-    setHydra(currentHydra);
-  
-    if (currentHydra <= dailyHydrationGoal) {
-      const percentage = (currentHydra / dailyHydrationGoal) * 100;
-      setcurrenthydra(parseInt(percentage));
-      console.log('Percentage:', parseInt(percentage));
-    } else {
-      setcurrenthydra(100);
-      alert('You have already reached 100% of your daily hydration goal! 🎉');
+  const hydraFetch= async () => {
+    const token = await AsyncStorage.getItem('token');
+    const requestOptions = {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+    };
+    try {
+      await fetch(
+        'https://backend-server-lhw8.onrender.com/api/user/get-hydrate', requestOptions)
+        .then(response => {
+          response.json()
+            .then(data => {
+              if (data) {
+                // console.log(data);
+                const hydraArray = data.entries.map(entry => entry.hydrate);
+                // console.log(hydraArray);
+                const numericArr = hydraArray.map(value => parseInt(value, 10));
+                const validNumbers = numericArr.filter(value => !isNaN(value));
+                const sum = validNumbers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+                // console.log(sum);
+                
+                setcurrenthydra(sum.toString())
+                
+              }
+
+            });
+        })
+
     }
+    catch (error) {
+      console.log(error);
+    }
+  }
+  const StoreinDB =async(record)=>{
+    const hydra = record ;
+    // console.log(nutri);
+    const token = await AsyncStorage.getItem('token');
+    const requestOptions = { 
+      method: 'POST', 
+      headers: { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+    
+    }, 
+      body: JSON.stringify({ hydratedata : hydra}) 
+  }; 
+      try { 
+        
+          await fetch( 
+              'https://backend-server-lhw8.onrender.com/api/user/store-hydrate', requestOptions) 
+              .then(response => { 
+                // console.log(response)
+                  response.json() 
+                      .then(data=> { 
+                          console.log(data.message); 
+                      }); 
+              }) 
+              ToastAndroid.show('Hydration Status Updated Successfully', ToastAndroid.SHORT);
+              // openModal();
+      } 
+      catch (error) { 
+          console.error(error); 
+      }
+    }
+
+  const fetchHydration =async()=>{
+    const curr_hydrate = await AsyncStorage.getItem('hydration');
+    setcurrenthydra(parseInt(curr_hydrate));
+    const mypercent = (parseInt(curr_hydrate)/dailyHydrationGoal)*100
+    setHydra(parseInt(mypercent));
+  }
+  
+  const calculateHydra = async() => {
+    const curr_amt = currenthydra + 237;
+    if (curr_amt <= dailyHydrationGoal){
+      setcurrenthydra(curr_amt);
+    const mypercent = (parseInt(curr_amt)/dailyHydrationGoal)*100
+    setHydra(parseInt(mypercent));
+      // setHydra()
+      await StoreinDB(237);
+      await AsyncStorage.setItem('hydration',curr_amt.toString());
+      fetchHydration();
+    }
+    else {
+      await StoreinDB(dailyHydrationGoal);
+      await AsyncStorage.setItem('hydration',dailyHydrationGoal.toString());
+      setHydra(parseInt(100));
+        alert('You have already reached 100% of your daily hydration goal! 🎉');
+      }
+
   };
   
   return (
@@ -250,7 +376,7 @@ function Home() {
             </TouchableOpacity>
           </Text>
 
-          <View style={{ width: '70%', height: '100%' }}>
+          <View style={{ width: '55%', height: '100%' }}>
             <InputField style={[t.textLg, t.hFull, t.fontSemibold, t.textGray600]} onFocus={handleFocus} onChange={(event) => setInput(event.nativeEvent.text)}
               onSubmitEditing={analyzeFood}
               placeholder='Start adding your food item'
@@ -260,7 +386,7 @@ function Home() {
       </View>
       <View>
         <DateNavigator /> 
-        <ProgressChartGrid mynutridata={mynutridata} hydrapercent={currenthydra}/>
+        <ProgressChartGrid mynutridata={mynutridata} hydrapercent={hydra}/>
         <View style={{
           backgroundColor: 'white', marginLeft: 16, marginRight: 0, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'white', shadowOpacity: 0.4,
           shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
@@ -310,13 +436,13 @@ function Home() {
           backgroundColor: '#294D61', margin: 16, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'black', shadowOpacity: 0.9,
           shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
         }}>
-        <UserProgress />
+        <UserProgress presentarr = {daysarr} />
         </View>
         <ModalComponent
           modalVisible={modalVisible}
           closeModal={closeModal}
           modalData={modalData}
-          foodname={myInput}
+          foodname={[myInput]}
           reload={fetchNutri}
         />
       </View>

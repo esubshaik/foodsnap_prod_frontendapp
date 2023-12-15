@@ -11,7 +11,8 @@ import { Camera } from "expo-camera";
 import { Video } from "expo-av";
 import * as FileSystem from 'expo-file-system';
 import RenderBoundingBoxes from "./DrawBoundings";
-
+import { useRouter } from "expo-router";
+import ModalComponent from './ModalClass';
 
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 const closeButtonSize = Math.floor(WINDOW_HEIGHT * 0.032);
@@ -20,8 +21,10 @@ const captureSize = Math.floor(WINDOW_HEIGHT * 0.09);
 
 
 export default function ScanFood() {
+  const [modalVisible, setModalVisible] = useState(false);
+  const navigation = useRouter() ;
   // <StatusBar barStyle="dark-content" />
-
+  const [fitems,setfitems] = useState([]) ;
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraType, setCameraType] = useState(Camera.Constants.Type.back);
   const [isPreview, setIsPreview] = useState(false);
@@ -116,13 +119,18 @@ export default function ScanFood() {
     setIsPreview(false);
     setVideoSource(null);
     setboolbound(false);
+    setclassresult([]);
+    setfitems([]);
+    setanim(false);
   };
 
 
   const GetDetectionResults = async () => {
-    
     try {
       setboolbound(false);
+      setresults([]);
+      setclassresult([]);
+    setfitems([]);
       const formData = new FormData();
       setanim(true);
       // Append the image data to FormData with key "image" and value "ourimage.jpg"
@@ -140,9 +148,11 @@ export default function ScanFood() {
         },
       });
       const responseData = await response.json();
-      console.log(responseData.data.results);
+      // console.log(responseData.data.results);
       if (responseData){
+        const nextdata = await responseData.data.results ;
         setresults(responseData);
+        nextOption(nextdata);////
         setboolbound(true);
       }
 
@@ -163,20 +173,114 @@ export default function ScanFood() {
   </View>
   )
 
+ const nextOption = async(results ) => {
+  // console.log(results);
+  // const result = results['data']['results'];
+  const classNames = await Object.keys(results);
+  // console.log(classNames);
+  // Use functional update to avoid unnecessary re-renders
+  setfitems(prevItems => [...prevItems, ...classNames]);
+};
+
+
+  const [classresult,setclassresult] = useState([]);
+  const getnutriinfo=async(foodn)=>{
+    // console.log(foodid);
+    // const foodid = foodn ;
+    // console.log(foodn);
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ foodname: foodn })
+    };
+    try {
+      await fetch(
+        'https://backend-server-lhw8.onrender.com/api/user/analyze-food', requestOptions)
+        .then(response => {
+          response.json()
+            .then(data => {
+              // console.log(data);
+              if (data['data']['CALORIES(G)']) {
+                setclassresult(prevItems => [...prevItems,data])
+                // setclassresult([...classresult,data])
+                // console.log(data);
+                
+              }
+
+            });
+        })
+
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+  const sendAllDataToBackend = async (items) => {
+    try {
+      const promises = await items.map(getnutriinfo);
+      await Promise.all(promises);
+      console.log('All requests completed successfully.');
+    } catch (error) {
+      console.error('Error sending data:', error);
+    }
+  };
+
+  const [finresult,setfinresult] = useState([]);
+  useEffect(()=>{
+    setfinresult(classresult);
+  },[classresult])
+
+  const displayCalorie=async()=>{
+    // const foodid = myInput;
+    // console.log(fitems);
+    setclassresult([]);
+    await sendAllDataToBackend(fitems);
+    setclassresult(prevItems => [...prevItems,""])
+    console.log(classresult);
+
+    openModal();
+    
+    // fitems.forEach((item) => {
+    //   // await getnutriinfo(item);
+    // });
+    // console.log(classresult);
+    
+  }
+  const openModal = () => {
+    // setModalData('Hello from Main Component!'); // Set the data you want to send
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    navigation.push('/Home');
+  };
+  const reloadnutri = ()=>{
+    navigation.push('/Home');
+  }
+
   const renderCancelPreviewButton = () => (
       <TouchableOpacity onPress={cancelPreview}
-          style={{ width: '30%', height: '5%', position: 'absolute', bottom: 20 , left: 50, backgroundColor: 'white', alignSelf: 'center', backgroundColor: '#294D61', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}
+          style={{ width: '30%', height: '5%', position: 'absolute', bottom: 20 , left: 50, backgroundColor: 'white', alignSelf: 'center', backgroundColor: 'white',borderColor:'#294D61', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}
         >
-          <Text style={{ color: 'white', fontWeight: '600', fontSize: 15 }}>Retake</Text>
+          <Text style={{ color: '#294D61', fontWeight: '600', fontSize: 15 }}>Retake</Text>
         </TouchableOpacity>
   );
 
   const renderGetDetailsButton = () => (
     <TouchableOpacity onPress={GetDetectionResults}
-        style={{ width: '30%', height: '5%', position: 'absolute', right: 50 ,bottom: 20 , alignSelf: 'center', backgroundColor: '#294D61', borderRadius: 20, justifyContent: 'center', alignItems: 'center', disabled: anim }}
+        style={{ width: '30%', height: '5%', position: 'absolute', right: 40 ,bottom: 20 , alignSelf: 'center', backgroundColor: 'white',borderColor:'#294D61', borderRadius: 20, justifyContent: 'center', alignItems: 'center', disabled: anim }}
       >
-        <Text style={{ color: 'white', fontWeight: '600', fontSize: 15 }}>Detect Food</Text>
+        <Text style={{ color: '#294D61', fontWeight: '600', fontSize: 15 }}>Detect Food</Text>
       </TouchableOpacity>
+);
+
+const renderNextButton = () => (
+  <TouchableOpacity onPress={displayCalorie}
+      style={{ width: '30%', height: '5%', position: 'absolute', right: 10 ,bottom: 20 , alignSelf: 'center', backgroundColor: 'white',borderColor:'#294D61', borderRadius: 20, justifyContent: 'center', alignItems: 'center', disabled: anim }}
+    >
+      <Text style={{ color: '#294D61', fontWeight: '600', fontSize: 15 }}>Next</Text>
+    </TouchableOpacity>
 );
 
 const animationLoader =()=>(
@@ -224,7 +328,13 @@ const animationLoader =()=>(
   }
   return (
     <SafeAreaView style={styles.container}>
-
+      <ModalComponent
+          modalVisible={modalVisible}
+          closeModal={closeModal}
+          modalData={finresult}
+          foodname={fitems}
+          reload={reloadnutri}
+        /> 
       <Camera
         ref={cameraRef}
         style={styles.container}
@@ -241,6 +351,7 @@ const animationLoader =()=>(
         {videoSource && renderVideoPlayer()}
         {isPreview && renderCancelPreviewButton() }
         {isPreview && renderGetDetailsButton()}
+        {isPreview && renderNextButton()}
         {!videoSource && !isPreview && renderCaptureControl()}
         {boolbound && drawBoundingBoxes()}
       </View>

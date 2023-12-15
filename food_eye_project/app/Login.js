@@ -65,6 +65,7 @@ const  Login=({ modalVisible, closeModal,data})=> {
                 await AsyncStorage.setItem('token', accessToken);
                 await AsyncStorage.setItem('name', name);
                 await AsyncStorage.setItem('email', formData.email);
+                await AsyncStorage.setItem('hydration','0');
                 setTimeout(() => {
                   // Navigate to the home screen after 4 seconds
                   navigation.push('/Home'); // Replace 'Home' with your actual route name

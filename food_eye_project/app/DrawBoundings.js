@@ -59,11 +59,11 @@ import { View, Button, Image, StyleSheet, Text } from 'react-native';
   
       const [x_min, y_min, x_max, y_max] = boundingBox;
       const boxWidth = Math.abs(x_max - x_min) * screenWidth;
-      const boxHeight = Math.abs(y_max - y_min) * screenHeight;
+      const boxHeight = (Math.abs(y_max - y_min) * screenHeight)-60;
       const boxLeft = x_min * screenWidth;
       const boxTop = y_min * screenHeight;
   
-      console.log(`className: ${className}, boxLeft: ${boxLeft}, boxTop: ${boxTop}, boxWidth: ${boxWidth}, boxHeight: ${boxHeight}`);
+      // console.log(`className: ${className}, boxLeft: ${boxLeft}, boxTop: ${boxTop}, boxWidth: ${boxWidth}, boxHeight: ${boxHeight}`);
   
       return (
         <View

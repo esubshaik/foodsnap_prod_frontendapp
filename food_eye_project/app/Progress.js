@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { format, endOfMonth } from 'date-fns';
 import {t} from 'react-native-tailwindcss' ;
 
-const UserProgress = () => {
+const UserProgress = ({presentarr}) => {
   // Get the current date
   const currentDate = new Date();
 
@@ -13,12 +13,17 @@ const UserProgress = () => {
   // Extract the day part from the end of the month
   const numberOfDaysInMonth = format(endOfMonthDate, 'd');
   console.log(numberOfDaysInMonth);
-
-  const daysArray = [
-    1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  ];
+  const daysArray = presentarr ;
+  console.log(presentarr);
+  // const daysArray = [
+  //   1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  // ];
   // console.log(daysArray.length);
-const percent = 30;
+  const numberOfOnes = presentarr.reduce((count, value) => count + value, 0);
+const totalDays = presentarr.length;
+const percentageOfOnes = (numberOfOnes / totalDays) * 100;
+
+const percent = parseInt(percentageOfOnes);
   const firstRow = daysArray.slice(0, numberOfDaysInMonth / 2);
   const secondRow = daysArray.slice(numberOfDaysInMonth / 2);
 
