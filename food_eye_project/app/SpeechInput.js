@@ -11,7 +11,7 @@ const SpeechInput = async ({ boolRecord }) => {
 
       return transcription;
     } catch (error) {
-      console.error('Error transcribing audio', error);
+      // console.error('Error transcribing audio', error);
       return null;
     }
   };
@@ -20,7 +20,7 @@ const SpeechInput = async ({ boolRecord }) => {
     const startRecording = async () => {
       const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
       if (status !== 'granted') {
-        console.error('Permission to record audio was denied');
+        // console.error('Permission to record audio was denied');
         return null;
       }
 
@@ -50,7 +50,7 @@ const SpeechInput = async ({ boolRecord }) => {
         await recording.prepareToRecordAsync(recordingOptions);
         await recording.startAsync();
       } catch (error) {
-        console.error('Failed to start recording', error);
+        // console.error('Failed to start recording', error);
         stopRecording();
         return null;
       }
@@ -62,7 +62,7 @@ const SpeechInput = async ({ boolRecord }) => {
           const transcription = await transcribeAudio(uri);
           return transcription;
         } catch (error) {
-          console.error('Failed to stop recording', error);
+          // console.error('Failed to stop recording', error);
           return null;
         }
       };

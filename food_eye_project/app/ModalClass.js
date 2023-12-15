@@ -5,8 +5,8 @@ import PieChartExample from './PieChart';
 import CounterApp from './Counter';
 
 const ModalComponent = ({ modalVisible, closeModal, modalData, foodname, reload }) => {
-  console.log(modalData)
-  console.log(foodname)
+  // console.log(modalData)
+  // console.log(foodname)
   function cleanArray(inputArray) {
     // Step 1: Remove empty elements
     const arrayWithoutEmpty = inputArray.filter(item => item !== "" && item != "[]");
@@ -18,8 +18,6 @@ const ModalComponent = ({ modalVisible, closeModal, modalData, foodname, reload 
   }
   modalData = cleanArray(modalData)  ;
   foodname = cleanArray(foodname);
-  console.log(modalData.length)
-  console.log(foodname.length)
 
   const [index,setindex]=useState(0) ;
 
@@ -43,7 +41,7 @@ const ModalComponent = ({ modalVisible, closeModal, modalData, foodname, reload 
       <View style={[t.bgWhite, ]}>
         <PieChartExample data={modalData[index]} foodname ={foodname[index]} key={index} />
         </View>
-        <CounterApp data={modalData[index]} reloadnutri={reload}  />
+        <CounterApp data={modalData[index]} fooditem={foodname[index]}  />
        
         {index === modalData.length - 1 ? (
           <View style={{ width: 90, height:44,alignSelf:'center', marginBottom:20}}>

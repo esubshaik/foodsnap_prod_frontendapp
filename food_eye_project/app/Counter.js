@@ -4,8 +4,10 @@ import {t} from 'react-native-tailwindcss' ;
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-const CounterApp = ({data}) => {
-  const [counter, setCounter] = useState(1);
+const CounterApp = ({data,fooditem}) => {
+  
+  const [counter, setCounter] = useState(0);
+
   const StoreinDB=async(record)=>{
   const nutri = record ;
   // console.log(nutri);
@@ -15,9 +17,8 @@ const CounterApp = ({data}) => {
     headers: { 
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
-  
   }, 
-    body: JSON.stringify({ nutridata: nutri}) 
+    body: JSON.stringify({ nutridata: nutri,food_name : fooditem}) 
 
 }; 
     try { 
@@ -35,7 +36,7 @@ const CounterApp = ({data}) => {
             // openModal();
     } 
     catch (error) { 
-        console.error(error); 
+        // console.error(error); 
     }
   }
 
@@ -75,13 +76,15 @@ const CounterApp = ({data}) => {
 
       // return resultArray;
     } catch (error) {
-      console.error('Error parsing data string:', error);
+      // console.error('Error parsing data string:', error);
       return [];
     }
   };
 
   const getStatus = () => {
     switch (counter) {
+      case 0 :
+        return 'None'
       case 1:
         return 'Low';
       case 2:
@@ -102,7 +105,7 @@ const CounterApp = ({data}) => {
   };
 
   const handleDecrement = () => {
-    if (counter > 1) {
+    if (counter > 0) {
       setCounter(counter - 1);
     }
   };

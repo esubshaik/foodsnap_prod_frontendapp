@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ToastAndroid, BackHandler, StyleSheet, Dimensions, Alert, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ToastAndroid, BackHandler, StyleSheet, Dimensions, Alert, Image,ActivityIndicator } from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,6 +12,11 @@ import DateNavigator from './DateNavigator';
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
+// import BarComponent from '/BarChart';
+import BarComponent from './BarChart';
+import FillProfile from './FillProfile';
+// import { AntDesign } from '@expo/vector-icons';
+// import { MaterialIcons } from '@expo/vector-icons';
 
 
 function Home() {
@@ -19,7 +24,7 @@ function Home() {
   const navigation = useRouter();
   const [username, setUsername] = useState("");
   const [myInput, setInput] = useState("");
-
+const [loading,setloading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const checkUserSession = async () => {
     const user = await AsyncStorage.getItem('name');
@@ -54,6 +59,8 @@ const getPresenceArray = (timestamps) => {
   return presenceArray;
 };
 
+const [labels,setlabels] = useState([]);
+// const [data,setdata] = useState([]);
 
   const fetchNutri = async () => {
     // const myhydration = await AsyncStorage.getItem("userhydra");
@@ -68,6 +75,7 @@ const getPresenceArray = (timestamps) => {
       },
     };
     try {
+      
       await fetch(
         'https://backend-server-lhw8.onrender.com/api/user/get-nutridata', requestOptions)
         .then(response => {
@@ -75,13 +83,16 @@ const getPresenceArray = (timestamps) => {
             .then(data => {
               if (data) {
                 const nutridataArray = data.entries.map(entry => entry.nutridata);
+                const foodnamesArray = data.entries.map(entry => entry.foodname);
+                console.log(foodnamesArray)
+                setlabels(foodnamesArray);
                 const alldataArray = data.allentries.map(entry => entry.updatedAt);
-                console.log("all",alldataArray);
+                // console.log("all",alldataArray);
                 setdaysarr(getPresenceArray(alldataArray));
                 setusernutri(nutridataArray);
                 const sumArray = nutridataArray[0].map((_, index) =>
                   nutridataArray.reduce((sum, array) => sum + parseFloat(array[index]), 0)
-                );
+                ); 
                 // Need human age specific nutrition info, ex: 20 year old boy
                 const avgreqnutri = [2500, 300, 70, 56];
                 const resultArray = avgreqnutri.map((reqValue, index) => {
@@ -89,16 +100,15 @@ const getPresenceArray = (timestamps) => {
                   const prog = Number((totValue / reqValue).toFixed(2))
                   return prog >= 1 ? 1 : prog;
                 });
-                // console.log(resultArray);
+                console.log(resultArray);
                 setmynutridata(resultArray);
               }
-
             });
         })
 
     }
     catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
   
@@ -110,8 +120,9 @@ const getPresenceArray = (timestamps) => {
 
   useEffect(() => {
     fetchNutri();
-    fetchHydration();
+    // fetchHydration();
     hydraFetch();
+    
     
   }, [])
   const analyzeFood = async () => {
@@ -157,7 +168,7 @@ const getPresenceArray = (timestamps) => {
 
     }
     catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 
@@ -193,7 +204,7 @@ const getPresenceArray = (timestamps) => {
       setRecording(recording);
       console.log('Recording started');
     } catch (err) {
-      console.error('Failed to start recording', err);
+      // console.error('Failed to start recording', err);
     }
   }
 
@@ -208,7 +219,7 @@ const getPresenceArray = (timestamps) => {
 
       return wavUri;
     } catch (error) {
-      console.error('Error converting to WAV:', error);
+      // console.error('Error converting to WAV:', error);
       return null;
     }
   };
@@ -234,7 +245,7 @@ const getPresenceArray = (timestamps) => {
       // setTranscription(response.data);
     }
      catch (error) {
-      console.error('Error:', error.response ? error.response.data : error.message);
+      // console.error('Error:', error.response ? error.response.data : error.message);
     }
   }
 
@@ -254,7 +265,7 @@ const getPresenceArray = (timestamps) => {
       const stt = await transcribeAudio(wavUri);
       console.log('You Spoke:', stt);
     } catch (error) {
-      console.error('Error in stopRecording:', error);
+      // console.error('Error in stopRecording:', error);
     }
   }
   const mhydra = 3700;
@@ -287,9 +298,18 @@ const getPresenceArray = (timestamps) => {
                 const validNumbers = numericArr.filter(value => !isNaN(value));
                 const sum = validNumbers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
                 // console.log(sum);
-                
-                setcurrenthydra(sum.toString())
-                
+                // setcurrenthydra();
+                const curr_amt = sum.toString()
+                if (curr_amt <= dailyHydrationGoal){
+                setcurrenthydra(parseInt(curr_amt));
+                const mypercent = (parseInt(curr_amt)/dailyHydrationGoal)*100
+                setHydra(parseInt(mypercent));
+                }
+                else {
+                  AsyncStorage.setItem('hydration',dailyHydrationGoal.toString());
+                  setHydra(parseInt(100));
+                    alert('You have already reached 100% of your daily hydration goal! 🎉');
+                  }
               }
 
             });
@@ -299,6 +319,10 @@ const getPresenceArray = (timestamps) => {
     catch (error) {
       console.log(error);
     }
+    finally{
+      await AsyncStorage.setItem('hydration',currenthydra.toString());
+    }
+   
   }
   const StoreinDB =async(record)=>{
     const hydra = record ;
@@ -328,7 +352,7 @@ const getPresenceArray = (timestamps) => {
               // openModal();
       } 
       catch (error) { 
-          console.error(error); 
+          // console.error(error); 
       }
     }
 
@@ -358,32 +382,73 @@ const getPresenceArray = (timestamps) => {
       }
 
   };
+  const [reqnutri,setreqnutri] = useState([0,0,0,0]) ;
+  const [alertstatus,setalertstatus] = useState(false);
+  const [pstatus,setpstatus] = useState(false);
+
+  async function checkProfileStatus() {
+    try {
+      const token = await AsyncStorage.getItem('bmi');
+      if (!token) {
+        setalertstatus(true);
+      }
+      else{
+        setalertstatus(false);
+      }
+    } catch (error) {
+    }
+  }
+  useEffect(() => {
+    checkProfileStatus();
+  }, []);
+
+  const openPS = ()=>{
+    setpstatus(true);
+  }
+  const closePS = ()=>{
+    setpstatus(false);
+  }
   
   return (
     <ScrollView contentContainerStyle={{ backgroundColor: 'white' }}>
       <View style={[t.p1, t.bgWhite, t.flex, t.textCenter, t.flexCol]}>
+        <View style={{position:'absolute',margin: '50%'}}>
+          {loading ? ActivityIndicator : null}
+        </View>
 
         <Input style={[t.flex, t.flexRow, t.border2, t.m4, t.roundedLg, t.h12, isFocused ? t.borderBlue600 : t.borderBlack, t.flex, t.flexRow]}>
           {
             rec ? <Ionicons name="ios-stop-outline" onPress={stopRecording} size={24}  color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '2%' }}   />
-          : <Ionicons name="ios-mic-outline" size={26} onPress={startRecording} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '2%' }} disabled={rec} />
+          : <Ionicons name="ios-mic-outline" size={26} onPress={alertstatus? ( Alert.alert("Please Complete Your Profile!")) :startRecording} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '2%' }} disabled={rec} />
           }
-          <Ionicons name="ios-camera-outline" onPress={() => { navigation.push("/Camera") }} size={24} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '0%' }}/>
+          <Ionicons name="ios-camera-outline" onPress={() => { alertstatus? ( Alert.alert("Please Complete Your Profile!")): navigation.push("/Camera") }} size={24} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '0%' }}/>
           
           <Text style={[t.roundedRSm, t.bgTeal800, t.absolute, t.right0, t.w10, t.hFull, t.pT2, t.pL2]}>
-            <TouchableOpacity onPress={analyzeFood}>
+            <TouchableOpacity onPress={alertstatus? ( Alert.alert("Please Complete Your Profile!")) : analyzeFood}>
               <AntDesign name="search1" size={24} color='white' />
             </TouchableOpacity>
           </Text>
 
           <View style={{ width: '55%', height: '100%' }}>
             <InputField style={[t.textLg, t.hFull, t.fontSemibold, t.textGray600]} onFocus={handleFocus} onChange={(event) => setInput(event.nativeEvent.text)}
-              onSubmitEditing={analyzeFood}
+              onSubmitEditing={alertstatus? ( Alert.alert("Please Complete Your Profile!")):analyzeFood}
               placeholder='Start adding your food item'
             />
           </View>
         </Input>
       </View>
+
+      {
+        alertstatus ?  <View style={[t.flex, t.flexRow, t.mY2, t.justifyCenter, t.alignCenter, t.itemsCenter]}>
+        <MaterialIcons name="label-important" size={20} style={[t.mX2]} color="red" />
+          <Text style={[t.textBase, t.fontSemibold]}>Please Fill Your Profile to Continue! </Text>
+          <TouchableOpacity onPress={openPS}>
+          <AntDesign name="form" size={18} color="#0096FF" style={[t.mX2,t.fontBold]} />
+          </TouchableOpacity>
+          <FillProfile modalVisible={pstatus} closeModal={closePS} reload={checkProfileStatus}/>
+        </View> : null
+      }
+     
       <View>
         <DateNavigator /> 
         <ProgressChartGrid mynutridata={mynutridata} hydrapercent={hydra}/>
@@ -445,6 +510,7 @@ const getPresenceArray = (timestamps) => {
           foodname={[myInput]}
           reload={fetchNutri}
         />
+        <BarComponent labels={labels} data={mynutridata}/>
       </View>
     </ScrollView>
   );

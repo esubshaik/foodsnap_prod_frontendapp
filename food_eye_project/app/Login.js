@@ -51,21 +51,31 @@ const  Login=({ modalVisible, closeModal,data})=> {
                   },
                 }
               );
-                 setLoading(true);
+              setLoading(true);
               console.log(response.data);
         
               if (response.status === 400) {
                 ToastAndroid.show('Fill all details', ToastAndroid.SHORT);
               } else if (response.status === 200) {
                 // console.log('entered successfully');
-                const { message, name, accessToken } = response.data;
+                const { message, name, accessToken,age,height,weight } = response.data;
         
                 ToastAndroid.show(`${message}. Welcome, ${name}!`, ToastAndroid.SHORT);
-        
+                await AsyncStorage.setItem('age',age);
+                await AsyncStorage.setItem('height',height);
+                await AsyncStorage.setItem('weight',weight);
                 await AsyncStorage.setItem('token', accessToken);
                 await AsyncStorage.setItem('name', name);
                 await AsyncStorage.setItem('email', formData.email);
                 await AsyncStorage.setItem('hydration','0');
+                const heightInMeters = height * 0.3048; // 1 foot = 0.3048 meters
+
+        // Calculate BMI
+                if (height.length > 0) {
+                  const bmi = (parseFloat(weight)) / (parseFloat(heightInMeters) * parseFloat(heightInMeters));
+                  await AsyncStorage.setItem('bmi',bmi.toString());
+                }
+                
                 setTimeout(() => {
                   // Navigate to the home screen after 4 seconds
                   navigation.push('/Home'); // Replace 'Home' with your actual route name

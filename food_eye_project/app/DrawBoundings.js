@@ -53,7 +53,7 @@ import { View, Button, Image, StyleSheet, Text } from 'react-native';
   
     return Object.entries(result).map(([className, boundingBox], index) => {
       if (!Array.isArray(boundingBox) || boundingBox.length !== 4) {
-        console.error(`Invalid boundingBox format for class ${className}`);
+        // console.error(`Invalid boundingBox format for class ${className}`);
         return null;
       }
   

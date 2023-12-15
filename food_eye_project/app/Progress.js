@@ -12,9 +12,9 @@ const UserProgress = ({presentarr}) => {
 
   // Extract the day part from the end of the month
   const numberOfDaysInMonth = format(endOfMonthDate, 'd');
-  console.log(numberOfDaysInMonth);
-  const daysArray = presentarr ;
-  console.log(presentarr);
+  // console.log(numberOfDaysInMonth);
+  const daysArray = presentarr  ;
+  // console.log(presentarr); 
   // const daysArray = [
   //   1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   // ];

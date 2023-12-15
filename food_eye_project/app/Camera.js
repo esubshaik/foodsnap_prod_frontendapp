@@ -69,7 +69,7 @@ export default function ScanFood() {
         // Create a FormData object
         
       } catch (error) {
-        console.error('Error taking or processing the picture:', error);
+        // console.error('Error taking or processing the picture:', error);
       }
     }
   };
@@ -221,7 +221,7 @@ export default function ScanFood() {
       await Promise.all(promises);
       console.log('All requests completed successfully.');
     } catch (error) {
-      console.error('Error sending data:', error);
+      // console.error('Error sending data:', error);
     }
   };
 
@@ -277,7 +277,7 @@ export default function ScanFood() {
 
 const renderNextButton = () => (
   <TouchableOpacity onPress={displayCalorie}
-      style={{ width: '30%', height: '5%', position: 'absolute', right: 10 ,bottom: 20 , alignSelf: 'center', backgroundColor: 'white',borderColor:'#294D61', borderRadius: 20, justifyContent: 'center', alignItems: 'center', disabled: anim }}
+      style={{ width: '30%', height: '5%', position: 'absolute', right: 40 ,bottom: 20 , alignSelf: 'center', backgroundColor: 'white',borderColor:'#294D61', borderRadius: 20, justifyContent: 'center', alignItems: 'center', disabled: anim }}
     >
       <Text style={{ color: '#294D61', fontWeight: '600', fontSize: 15 }}>Next</Text>
     </TouchableOpacity>
@@ -350,8 +350,8 @@ const animationLoader =()=>(
         {isVideoRecording && renderVideoRecordIndicator()}
         {videoSource && renderVideoPlayer()}
         {isPreview && renderCancelPreviewButton() }
-        {isPreview && renderGetDetailsButton()}
-        {isPreview && renderNextButton()}
+        {isPreview && (!fitems.length > 0) && renderGetDetailsButton()}
+        {isPreview && (fitems.length > 0) && renderNextButton()}
         {!videoSource && !isPreview && renderCaptureControl()}
         {boolbound && drawBoundingBoxes()}
       </View>
