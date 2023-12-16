@@ -8,7 +8,7 @@ import UserMgmt from './UserMgmt';
 import Empty from "./EmptyPage";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons,SimpleLineIcons } from '@expo/vector-icons';
-
+import DietRecommend from "./DietRecommend";
 
 export default function TabsLayout(){
   const [username, setUsername] = useState("");
@@ -89,6 +89,7 @@ export default function TabsLayout(){
           <UserMgmt/>
         ) :
         view==3 ? (
+          // <DietRecommend/>
           <Empty/>
         )
         :

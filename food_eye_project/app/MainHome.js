@@ -60,7 +60,7 @@ const getPresenceArray = (timestamps) => {
 };
 
 const [labels,setlabels] = useState([]);
-// const [data,setdata] = useState([]);
+const [data,setdata] = useState([]);
 
   const fetchNutri = async () => {
     // const myhydration = await AsyncStorage.getItem("userhydra");
@@ -90,6 +90,8 @@ const [labels,setlabels] = useState([]);
                 // console.log("all",alldataArray);
                 setdaysarr(getPresenceArray(alldataArray));
                 setusernutri(nutridataArray);
+                
+                setdata([prevdata=>[...prevdata,nutridataArray[0]]])
                 const sumArray = nutridataArray[0].map((_, index) =>
                   nutridataArray.reduce((sum, array) => sum + parseFloat(array[index]), 0)
                 ); 
@@ -389,7 +391,7 @@ const [labels,setlabels] = useState([]);
   async function checkProfileStatus() {
     try {
       const token = await AsyncStorage.getItem('bmi');
-      if (!token) {
+      if (parseInt(token)) {
         setalertstatus(true);
       }
       else{
@@ -419,7 +421,7 @@ const [labels,setlabels] = useState([]);
         <Input style={[t.flex, t.flexRow, t.border2, t.m4, t.roundedLg, t.h12, isFocused ? t.borderBlue600 : t.borderBlack, t.flex, t.flexRow]}>
           {
             rec ? <Ionicons name="ios-stop-outline" onPress={stopRecording} size={24}  color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '2%' }}   />
-          : <Ionicons name="ios-mic-outline" size={26} onPress={alertstatus? ( Alert.alert("Please Complete Your Profile!")) :startRecording} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '2%' }} disabled={rec} />
+          : <Ionicons name="ios-mic-outline" size={26} onPress={()=>alertstatus? ( Alert.alert("Please Complete Your Profile!")) :startRecording} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '2%' }} disabled={rec} />
           }
           <Ionicons name="ios-camera-outline" onPress={() => { alertstatus? ( Alert.alert("Please Complete Your Profile!")): navigation.push("/Camera") }} size={24} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '0%' }}/>
           
@@ -431,7 +433,7 @@ const [labels,setlabels] = useState([]);
 
           <View style={{ width: '55%', height: '100%' }}>
             <InputField style={[t.textLg, t.hFull, t.fontSemibold, t.textGray600]} onFocus={handleFocus} onChange={(event) => setInput(event.nativeEvent.text)}
-              onSubmitEditing={alertstatus? ( Alert.alert("Please Complete Your Profile!")):analyzeFood}
+              onSubmitEditing={()=>alertstatus? ( Alert.alert("Please Complete Your Profile!")):analyzeFood}
               placeholder='Start adding your food item'
             />
           </View>
@@ -463,7 +465,7 @@ const [labels,setlabels] = useState([]);
             elevation: 2,
             padding: 1, marginTop: 4, marginBottom: 4, borderRadius: 15
           }}>
-            <View style={[t.hFull, t.p2, t.bgRed200, t.roundedLg, t.wFull, t.flex, t.flexRow, t.justifyBetween]}>
+            <TouchableOpacity onPress={()=>ToastAndroid.show("Challenge is not yet completed",ToastAndroid.SHORT)} style={[t.hFull, t.p2, t.bgRed200, t.roundedLg, t.wFull, t.flex, t.flexRow, t.justifyBetween]}>
               <View style={[t.flex, t.flexCol, t.justifyBetween]}>
                 <Text style={[t.fontSemibold, t.m2, t.textLg, t.textRed900]}>Challenges</Text>
                 <Text style={[t.fontSemibold, t.m2, t.textXl, t.textRed900]}>WinterHarvest Eats</Text>
@@ -476,7 +478,7 @@ const [labels,setlabels] = useState([]);
                 />
               </View>
 
-            </View>
+            </TouchableOpacity>
           </View>
 
           <TouchableOpacity style={{ width: '100%', height: '100%' }} onPress={calculateHydra}>
