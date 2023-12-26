@@ -1,18 +1,32 @@
 import React, {useState,useRef} from 'react';
 import { View, Text, Image, TouchableOpacity,TextInput ,Pressable,ScrollView,ToastAndroid,StatusBar,ActivityIndicator,Modal} from 'react-native';
-import { t } from 'react-native-tailwindcss';
+import { color, t } from 'react-native-tailwindcss';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import CheckBox from 'expo-checkbox' ;
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useRouter} from 'expo-router' ;
 import { Ionicons } from '@expo/vector-icons';
+import { Foundation } from '@expo/vector-icons';
 
 const FillProfile = ({closeModal,modalVisible,reload}) => {
   
 //   const [index,setindex]=useState(0) ;
 
 const [LoadingClose,setLoadingClose] = useState(false);
+const getusercal = async()=>{
+  const str_age = await AsyncStorage.getItem('age');
+  const age = parseInt(str_age);
+  const gender = AsyncStorage.getItem('gender');
+  const user_cal = await axios.get(`https://backend-server-lhw8.onrender.com/api/user/req-calories/${age}/${gender}`);
+  // return user_cal.data
+  // console.log(age);
+  // console.log(user_cal.data.data.max_calories);
+  await AsyncStorage.setItem('min_cal',user_cal.data.data.min_calories.toString()); 
+  await AsyncStorage.setItem('max_cal',user_cal.data.data.max_calories.toString()); 
+  await AsyncStorage.setItem('avg_cal',(((parseInt(user_cal.data.data.max_calories)+parseInt(user_cal.data.data.min_calories))/2)).toString());
+
+}
 
     
 const fetchuserprofile=async()=>{
@@ -35,6 +49,7 @@ const fetchuserprofile=async()=>{
           const height = await response.data.height ;
           const weight = await response.data.weight ;
           const heightInMeters = height * 0.3048;
+          await getusercal();
           await AsyncStorage.setItem('age',age);
             await AsyncStorage.setItem('height',height);
             await AsyncStorage.setItem('weight',weight);
@@ -56,16 +71,20 @@ const fetchuserprofile=async()=>{
   const [formData, setFormData] = useState({
     age: '',
     height: '',
-    weight : ''
+    weight : '',
+    gender : ''
   });
   const [loading, setLoading] = useState(false);
 
   const handleSubmit=async()=>{
     try{
+      console.log(gender)
         if (!formData.age || !formData.height || !formData.weight) {
             ToastAndroid.show('Please Fill All Details', ToastAndroid.SHORT);
             return;
           }
+          setFormData({ ...formData, gender: gender })
+         
           setLoading(true);
           const token = await AsyncStorage.getItem('token');
           const response = await axios.put(
@@ -92,6 +111,7 @@ const fetchuserprofile=async()=>{
     }
     
   }
+  const [gender,setgender] = useState("male");
   return (
     <Modal
       animationType="slide"
@@ -120,6 +140,29 @@ const fetchuserprofile=async()=>{
 <View style={{ width: '90%', height: '65%', marginTop:'5%', marginBottom:'15%', alignSelf:'center'}}>
 
 <View style={t.mB4}>
+        <Text style={[t.textBase,t.textWhite ,t.fontBold, t.mB1]}>Gender: {gender} </Text>
+        <View style={[t.flex, t.flexRow,t.justifyCenter, t.itemsCenter, t.selfCenter, t.wFull]}>
+          <TouchableOpacity onPress={()=>setgender("male")}>
+          <Foundation name="male-symbol" size={60} color={gender === "male" ? '#294D61' : "white"} backgroundColor={gender === "male" ? 'white' : "#294D61"}
+ style={[t.pX5,t.m2,t.border2, t.borderWhite, t.roundedLg]} />
+          </TouchableOpacity>
+        <TouchableOpacity onPress={()=>setgender("female")}>
+        <Foundation name="female-symbol" size={60} color={gender === "female" ? '#294D61' : "white"} backgroundColor={gender === "female" ? 'white' : "#294D61"} style={[t.pX6,t.m2,t.border2, t.borderWhite, t.roundedLg]} />
+        </TouchableOpacity>
+        </View>
+
+        
+        {/* <TextInput
+          style={[t.border,t.borderWhite, t.rounded, t.pY2, t.pX4, t.textSm, t.flex, t.wFull,t.textWhite,t.fontSemibold]}
+          placeholder="Enter your Age"
+          placeholderTextColor="white" 
+          keyboardType="numeric"
+          autoCapitalize="none" 
+          onChangeText={(text) => setFormData({ ...formData, gender: text })}
+        /> */}
+      </View>
+      
+      <View style={t.mB4}>
         <Text style={[t.textBase,t.textWhite ,t.fontBold, t.mB1]}>Age:</Text>
         <TextInput
           style={[t.border,t.borderWhite, t.rounded, t.pY2, t.pX4, t.textSm, t.flex, t.wFull,t.textWhite,t.fontSemibold]}
@@ -130,6 +173,7 @@ const fetchuserprofile=async()=>{
           onChangeText={(text) => setFormData({ ...formData, age: text })}
         />
       </View>
+
       <View style={t.mB4}>
         <Text style={[t.textBase,t.textWhite ,t.fontBold, t.mB1]}>Height:</Text>
         <TextInput

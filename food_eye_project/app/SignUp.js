@@ -32,7 +32,8 @@ const SignUp=({ modalVisible, closeModal,data})=> {
       confirmPassword: '',
       age: '0',
       height: '0',
-      weight : '0'
+      weight : '0',
+      gender : '',
     });
     
     const requestOTP = async()=>{

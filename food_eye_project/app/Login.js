@@ -35,6 +35,20 @@ const  Login=({ modalVisible, closeModal,data})=> {
             password: '',
           });
         
+          const getusercal = async()=>{
+            const str_age = await AsyncStorage.getItem('age');
+            const age = parseInt(str_age);
+            const gender = AsyncStorage.getItem('gender');
+            const user_cal = await axios.get(`https://backend-server-lhw8.onrender.com/api/user/req-calories/${age}/${gender}`);
+            // return user_cal.data
+            // console.log(age);
+            // console.log(user_cal.data.data.max_calories);
+            await AsyncStorage.setItem('min_cal',user_cal.data.data.min_calories.toString()); 
+            await AsyncStorage.setItem('max_cal',user_cal.data.data.max_calories.toString()); 
+            await AsyncStorage.setItem('avg_cal',(((parseInt(user_cal.data.data.max_calories)+parseInt(user_cal.data.data.min_calories))/2)).toString());
+          
+          }
+
           const handleSubmit = async () => {
             try {
             setLoading(true);
@@ -58,7 +72,7 @@ const  Login=({ modalVisible, closeModal,data})=> {
                 ToastAndroid.show('Fill all details', ToastAndroid.SHORT);
               } else if (response.status === 200) {
                 // console.log('entered successfully');
-                const { message, name, accessToken,age,height,weight } = response.data;
+                const { message, name, accessToken,age,height,weight,gender } = response.data;
         
                 ToastAndroid.show(`${message}. Welcome, ${name}!`, ToastAndroid.SHORT);
                 await AsyncStorage.setItem('age',age);
@@ -68,6 +82,9 @@ const  Login=({ modalVisible, closeModal,data})=> {
                 await AsyncStorage.setItem('name', name);
                 await AsyncStorage.setItem('email', formData.email);
                 await AsyncStorage.setItem('hydration','0');
+                await AsyncStorage.setItem('gender',gender);
+                
+                await getusercal();
                 const heightInMeters = height * 0.3048; // 1 foot = 0.3048 meters
 
         // Calculate BMI

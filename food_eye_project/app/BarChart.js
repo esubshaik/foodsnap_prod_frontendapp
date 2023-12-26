@@ -18,7 +18,7 @@ const BarComponent = ({data,labels}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={[t.fontSemibold, t.textLg, t.mT6,t.mB2]}>Today's Food Record</Text>
+      <Text style={[t.fontSemibold, t.textLg, t.mT2,t.mB2]}>Today's Food Record</Text>
       <BarChart
         data={{
           labels: labels,
@@ -44,10 +44,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom:50,
+    paddingBottom:20,
     
     backgroundColor:'white',borderRadius:10,shadowColor: '#05161A',shadowOpacity: 0.4,
-    shadowRadius: 4,elevation: 5, margin:18
+    shadowRadius: 4,elevation: 5, marginLeft:18, marginRight:18, paddingTop:12, marginTop:4
   },
 });
 

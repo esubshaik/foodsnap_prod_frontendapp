@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useMemo } from 'react';
 import { View, Text, Modal, Button,ScrollView,TouchableOpacity } from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import PieChartExample from './PieChart';

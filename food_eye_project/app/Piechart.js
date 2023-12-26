@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import { View, Text,Dimensions } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import {t} from 'react-native-tailwindcss' ;

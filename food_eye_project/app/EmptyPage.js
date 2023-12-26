@@ -22,13 +22,16 @@ function Empty() {
   }, []);
 
   return (
-    <ScrollView contentContainerStyle={{ backgroundColor: 'white',alignContent:'center',alignItems:'center' }}>
-      <View  style={{marginTop:'60%'}}>
-        
-<Text style={[t.fontBold]}>YET TO DEVELOP</Text>
-
-      </View>
-    </ScrollView>
+    <View> 
+      <View style={[t.h16, t.shadowLg, t.bgWhite, t.borderB2, t.borderGray300]}>
+    <View style={[t.flex, t.flexRow,t.m1, t.textCenter,t.justifyStart, t.wFull]}>
+  <Text style={[t.fontBold, t.text2xl, t.textBlack,t.mT4,t.mL4]}>Community</Text>
+    </View>
+  </View>
+    {/* <ScrollView contentContainerStyle={{ backgroundColor: 'white',alignContent:'center',alignItems:'center' }}>
+      
+    </ScrollView> */}
+    </View>
   );
 }
 

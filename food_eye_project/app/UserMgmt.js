@@ -18,16 +18,21 @@ function UserMgmt() {
   const [height,setheight] = useState("");
   const [weight,setweight] = useState("");
   const [bmi,setbmi] = useState("");
+  const [reqcals,setreqcals] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const checkUserSession = async () => {
     const _age = await AsyncStorage.getItem('age');
     const _height = await AsyncStorage.getItem('height');
     const _weight = await AsyncStorage.getItem('weight');
     const _bmi = await AsyncStorage.getItem('bmi');
+    const _min = await AsyncStorage.getItem('min_cal');
+    const _max = await AsyncStorage.getItem('max_cal');
     setage(_age);
     setheight(_height);
     setweight(_weight);
     setbmi(parseFloat(_bmi).toFixed(2));
+    // console.log(_min)
+    setreqcals(_min+' - '+_max);
     const user = await AsyncStorage.getItem('name');
     setUsername(user);
   };
@@ -55,24 +60,33 @@ function UserMgmt() {
 
  
   return (
+    <View>
+       <View style={[t.h16, t.shadowLg, t.bgWhite, t.borderB2, t.borderGray300]}>
+        <View style={[t.flex, t.flexRow,t.m1, t.textCenter,t.justifyStart, t.wFull]}>
+      <Text style={[t.fontBold, t.text2xl, t.textBlack,t.mT4,t.mL4]}>Profile</Text>
+        </View>
+      </View>
+    
     <ScrollView contentContainerStyle={{ backgroundColor: 'white' }}>
       <View style={[t.p1, t.bgWhite, t.flex, t.textCenter, t.flexCol]}>
       <View style={styles.container}>
       <ImageUpload/>
-      <Text style={{marginVertical:20,fontSize:24, fontWeight:'800'}}>Hi, {username} </Text>
+      <Text style={{marginTop:8,fontSize:24, fontWeight:'800'}}>Hi, {username} </Text>
     </View>
-      <View style={[t.mX10, t.bgGray200, t.flex, t.flexRow, t.fontSemibold, t.text4xl, t.itemsCenter, t.justifyCenter, t.roundedLg,t.pY4]}>
+      <View style={[t.mX4,t.pX4, t.bgGray200, t.flex, t.flexRow, t.fontSemibold, t.text4xl, t.itemsCenter, t.justifyCenter, t.roundedLg]}>
         <View>
         <Text style={[t.textLg, t.bgTeal800, t.textWhite, t.p2, t.roundedLg,t.m2]} >Age</Text>
           <Text style={[t.textLg, t.bgTeal800, t.textWhite, t.p2, t.roundedLg,t.m2]}>Height </Text>
           <Text style={[t.textLg, t.bgTeal800, t.textWhite, t.p2, t.roundedLg,t.m2]}>Weight </Text>
           <Text style={[t.textLg, t.bgTeal800, t.textWhite, t.p2, t.roundedLg,t.m2]}>BMI </Text>
+          <Text style={[t.textLg, t.bgTeal800, t.textWhite, t.p2, t.roundedLg,t.m2]}>Required Calories </Text>
         </View>
         <View>
         <Text style={[t.textLg, t.p2, t.m2, t.fontBold]} >  :    {age} Years</Text>
           <Text style={[t.textLg,t.p2, t.m2, t.fontBold]}>  :    {height} Feet</Text>
           <Text style={[t.textLg,t.p2, t.m2,t.fontBold]}>  :    {weight} KG</Text>
           <Text style={[t.textLg,t.p2, t.m2,t.fontBold]}>  :    {bmi}</Text>
+          <Text style={[t.textLg,t.p2, t.m2,t.fontBold]}>  :    {reqcals}</Text>
         </View>
           
       </View>
@@ -92,6 +106,7 @@ function UserMgmt() {
         </TouchableOpacity> */}
       </View>
     </ScrollView>
+    </View>
   );
 }
 const styles = StyleSheet.create({

@@ -32,6 +32,7 @@ const CounterApp = ({data,fooditem}) => {
                         console.log(data.message); 
                     }); 
             }) 
+            
             ToastAndroid.show('Diet Recorded Successfully', ToastAndroid.SHORT);
             // openModal();
     } 
