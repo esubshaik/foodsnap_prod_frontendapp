@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, Image,StyleSheet,Dimensions} from 'react-native';
+import { View, Text, Button, Image,StyleSheet,Dimensions,ActivityIndicator} from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import {t} from 'react-native-tailwindcss' ;
 
@@ -10,10 +10,10 @@ const ImageGallery = () => {
     'Masala Naan', 'Onion Naan', 'Peshwari Naan', 'Roghani Naan', 'Spicy Tomato Naan', 'Butter Naan',
     'Tandoon Naan', 'Aloo Paratha', 'Lachcha Paratha', 'Vegetable Paratha', 'Onion Paratha',
     'Plain Paratha', 'Chicken Tikka Masala', 'Potato Brinjal Curry', 'Potato Beans Curry', 'Aloo Curry',
-    'Mashed eggplant', 'Ladys Finger', 'Chick Peas', 'Methi Aloo', 'Mutter Paneer', 'Pumpkin',
-    'Shahi Paneer', 'Shimla Mirchi Aloo', 'Stuffed Tomato', 'Ridge gound', 'Vegetable Kofta Curry',
-    'Vegetable Korma', 'Pigeon Peas', 'Split Chick Peas', 'Dal Makhani', 'Moong Dal', 'Masoor dal',
-    'Urad dal', 'Sambar', 'White Rice', 'Pulao', 'Kichidi', 'Cow Milk', 'Buffalo Milk', 'Curd',
+    'Mashed Eggplant', 'Ladys Finger', 'Chick Peas', 'Methi Aloo', 'Mutter Paneer', 'Pumpkin',
+    'Shahi Paneer', 'Shimla Mirchi Aloo', 'Stuffed Tomato', 'Ridge Gourd', 'Vegetable Kofta Curry',
+    'Vegetable Korma', 'Pigeon Peas', 'Split Chick Peas', 'Dal Makhani', 'Moong Dal', 'Masoor Dal',
+    'Urad Dal', 'Sambar', 'White Rice', 'Pulao', 'Kichidi', 'Cow Milk', 'Buffalo Milk', 'Curd',
     'Butter Milk', 'Paneer', 'Cheese', 'Lassi', 'Samosa', 'Brinjal Pickle', 'Chilli Pickle',
     'Lime Pickle', 'Mango Pickle', 'Beetroot', 'Bell Pepper', 'Black Olives', 'Broccoli',
     'Brussels Sprouts', 'Cabbage', 'Carrot', 'Cauliflower', 'Celery', 'Cherry Tomato', 'Corn',
@@ -29,42 +29,52 @@ const ImageGallery = () => {
   ];
 
   const [foodNames, setFoodNames] = useState(defaultFoodNames);
-  const [currentFoodIndex, setCurrentFoodIndex] = useState(5);
+  const [currentFoodIndex, setCurrentFoodIndex] = useState(0);
   const [currentImages, setCurrentImages] = useState([]);
+  const [temp,settemp] = useState('null');
+  var findex = 0 ;
 
   useEffect(() => {
-    // Fetch initial set of images
     fetchImages();
-  }, [currentFoodIndex]);
+  }, []);
 
   const fetchImages = async () => {
-    const currentFoodName = foodNames[currentFoodIndex];
+    setLoading(true);
+    for(var i = currentFoodIndex; i < currentFoodIndex+ 10 && i < foodNames.length ; i++){
 
+    const currentFoodName = foodNames[i]; 
+    console.log(currentFoodName);
     try {
       const response = await fetch(`https://query-food-images.onrender.com/get_images?food_name=${currentFoodName}`);
       const data = await response.json();
 
       if (data.error) {
         console.error(data.error);
+        break ;
         // Handle error, e.g., show an error message in your UI
       } else {
-        setCurrentImages(data.images);
+        const oneImg = await data.images[1];
+        setCurrentImages((old) => [...old, oneImg]);
+        findex+=1 ;
       }
     } catch (error) {
       console.error('Error fetching images:', error);
-      // Handle error, e.g., show an error message in your UI
     }
+  }
+  setCurrentFoodIndex(currentFoodIndex+10);
+  setLoading(false);
   };
 
 
   const handleNext = () => {
     // Move to the next set of images
-    setCurrentFoodIndex(currentFoodIndex + 1);
+    fetchImages();
   };
-  const [tab,settab] = useState(1)
+  const [tab,settab] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   return (
-    <View >
+    <View style={[t.flex1]}>
       <View style={[t.h16, t.shadowLg, t.bgWhite, t.borderB2, t.borderGray300]}>
         <View style={[t.flex, t.flexRow,t.m1, t.textCenter,t.justifyStart, t.wFull]}>
       <Text style={[t.fontBold, t.text2xl, t.textBlack,t.mT4,t.mL4]}>Diet Recommendations</Text>
@@ -80,27 +90,33 @@ const ImageGallery = () => {
        </TouchableOpacity>
        </View>
 
-       <ScrollView contentContainerStyle={[t.mB10]} >
-        <View style={[t.w30]}>
-       <View style={[t.flex, t.flexRow, t.bgOrange100, t.roundedLg,t.m2,t.border2,t.borderOrange200,t.shadowLg]}>
-        <Image source={{ uri: `data:image/jpeg;base64,${currentImages[3]}` }} style={styles.image} />
-        <View style={[t.justifyCenter,t.mX6,t.flex1]}>
-        <Text style={[t.fontSemibold,t.textLg, t.mB2]}>{foodNames[currentFoodIndex]}</Text>
-        <Text>Chapati contains whole wheat flour, water, and salt, forming a simple unleavened flatbread staple in Indian cuisine.</Text>
+       <ScrollView contentContainerStyle={{ flexGrow: 1 , minHeight: '100%', paddingBottom:30 }}>
+        <View>
+        {
+          currentImages.map((img,index)=>(
+            <View style={[t.w30]} key={index}>
+            <View style={[t.flex, t.flexRow, t.bgOrange100, t.roundedLg,t.m2,t.border2,t.borderOrange200,t.shadowLg]}>
+             <Image source={{ uri: `data:image/jpeg;base64,${img}` }} style={styles.image} />
+             <View style={[t.justifyCenter,t.mX6,t.flex1]}>
+             <Text style={[t.fontSemibold,t.textLg, t.mB2]}>{foodNames[index]}</Text>
+             <Text>Chapati contains whole wheat flour, water, and salt, forming a simple unleavened flatbread staple in Indian cuisine.</Text>
+             </View>
+             </View>
+             </View>
+          ))
+        }
         </View>
-        </View>
-        </View>
-        <View style={[t.w30]}>
-       <View style={[t.flex, t.flexRow, t.bgOrange100, t.roundedLg,t.m2,t.border2,t.borderOrange200,t.shadowLg]}>
-        <Image source={{ uri: `data:image/jpeg;base64,${currentImages[3]}` }} style={styles.image} />
-        <View style={[t.justifyCenter,t.mX6,t.flex1]}>
-        <Text style={[t.fontSemibold,t.textLg, t.mB2]}>{foodNames[currentFoodIndex]}</Text>
-        <Text>Chapati contains whole wheat flour, water, and salt, forming a simple unleavened flatbread staple in Indian cuisine.</Text>
-        </View>
-        </View>
-        </View>
-
-        <Button title="Next" onPress={handleNext} style={styles.button} />
+      
+      <TouchableOpacity onPress={handleNext} style={[t.w20,t.h8, t.bgTeal800,t.roundedLg,t.justifyCenter,t.selfEnd,t.m4]} disabled={loading} >
+     
+        <Text style={[t.textXl, t.textWhite, t.fontSemibold, t.textCenter]}>
+        { loading ?
+      (
+      <ActivityIndicator size="small" color='white'/> ): (<>Next</>)
+       }
+          
+          </Text>
+      </TouchableOpacity>
        </ScrollView>
 
 
@@ -121,9 +137,11 @@ const styles = StyleSheet.create({
     margin:8,
   },
   button: {
-    shadowColor: 'rgba(0, 0, 0, 0.5)',
-    shadowOffset: { width: 2, height: 2 },
-    shadowRadius: 5,
+    // shadowColor: 'rgba(0, 0, 0, 0.5)',
+    // shadowOffset: { width: 2, height: 2 },
+    // shadowRadius: 5,
+    width:10,
+    height:5
   },
 });
 export default ImageGallery;
