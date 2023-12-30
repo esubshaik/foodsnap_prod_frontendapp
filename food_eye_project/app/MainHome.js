@@ -15,12 +15,13 @@ import axios from 'axios';
 // import BarComponent from '/BarChart';
 import BarComponent from './BarChart';
 import FillProfile from './FillProfile';
+import FoodHistory from './FoodHistory';
 
 // import { AntDesign } from '@expo/vector-icons';
 // import { MaterialIcons } from '@expo/vector-icons';
 
 
-const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,data,calculateHydra,hydra,username}) => {
+const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,bardata,calculateHydra,hydra,username, days,ids}) => {
   // const screenWidth = Dimensions.get("window").width;
   const navigation = useRouter();
   const [myInput, setInput] = useState("");
@@ -48,7 +49,7 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,data,calculat
           },
           {
             text: 'OK',
-            onPress: () => ToastAndroid.show('Thank you ☺️', ToastAndroid.SHORT),
+            // onPress: () => ToastAndroid.show('Thank you ☺️', ToastAndroid.SHORT),
           },
         ],
         { cancelable: false }
@@ -183,9 +184,12 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,data,calculat
   const [reqnutri, setreqnutri] = useState([0, 0, 0, 0]);
   const [alertstatus, setalertstatus] = useState(false);
   const [pstatus, setpstatus] = useState(false);
+  const [dp,setdp] = useState('');
 
   async function checkProfileStatus() {
     try {
+      const userdp = await AsyncStorage.getItem("userprofile");
+      setdp(userdp);
       const token = await AsyncStorage.getItem('bmi');
       if (!parseInt(token)) {
         setalertstatus(true);
@@ -204,6 +208,7 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,data,calculat
   const closePS = () => {
     setpstatus(false);
   }
+  const localImage = require('./assets/defaultuser.png');
 
   return (
     <View>
@@ -212,13 +217,17 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,data,calculat
       
           <View style={[t.flex, t.flexRow]}>
           <Image
-              source={require('./assets/defaultuser.png')}
-              style={{ width: 45, height: 45 ,margin:8}} // Adjust the width
+              // source={require('./assets/defaultuser.png')}
+              source = {dp ? {uri: dp} : require('./assets/defaultuser.png')}
+              // source = {{uri : dp uri : dp : localImage }}
+              style={{ width: 45, height: 45 ,margin:8, borderRadius:40, borderWidth:1, borderColor:'#294D61'}} // Adjust the width
               resizeMode="contain"
             />
+            
             <View style={[t.flex, t.flexCol, t.w40,t.h45,t.selfCenter,t.textGray200]}>
             <View style={[t.flex, t.flexRow]}>
             <Image
+            
               source={require('./assets/Levels/bronze.png')}
               style={{ width:15, height: 15,marginRight:4}} // Adjust the width
               resizeMode="contain"
@@ -262,8 +271,8 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,data,calculat
             </TouchableOpacity>
           </Text>
 
-          <View style={{ width: '55%', height: '100%' }}>
-            <InputField style={[t.textLg, t.hFull, t.fontSemibold, t.textGray600]} onFocus={handleFocus} onChange={(event) => setInput(event.nativeEvent.text)}
+          <View style={{ width: '60%', height: '100%' }}>
+            <InputField style={[t.textBase, t.hFull,t.fontSemibold, t.textGray600]} onFocus={handleFocus} onChange={(event) => setInput(event.nativeEvent.text)}
               onSubmitEditing={() => alertstatus ? (Alert.alert("Please Complete Your Profile!")) : analyzeFood}
               placeholder='Start adding your food item'
             />
@@ -331,7 +340,7 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,data,calculat
           </View>
         </View>
         <View style={{
-          backgroundColor: '#294D61', margin: 16, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'black', shadowOpacity: 0.9,
+          backgroundColor: '#294D61', marginLeft: 16,marginRight:16,marginBottom:14,marginTop:10, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'black', shadowOpacity: 0.9,
           shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
         }}>
           <UserProgress presentarr={daysarr} />
@@ -344,7 +353,9 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,data,calculat
           reload={fetchNutri}
 
         />
-        <BarComponent labels={labels} data={mynutridata} />
+      
+<BarComponent labels={labels} data={bardata} /> 
+        <FoodHistory foodnames = {labels} dates={days} ids={ids} reloadpage={fetchNutri}/>
       </View>
     </ScrollView>
     </View>

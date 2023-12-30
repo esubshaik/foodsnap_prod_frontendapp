@@ -73,8 +73,6 @@ const  Login=({ modalVisible, closeModal,data})=> {
               } else if (response.status === 200) {
                 // console.log('entered successfully');
                 const { message, name, accessToken,age,height,weight,gender } = response.data;
-        
-                ToastAndroid.show(`${message}. Welcome, ${name}!`, ToastAndroid.SHORT);
                 await AsyncStorage.setItem('age',age);
                 await AsyncStorage.setItem('height',height);
                 await AsyncStorage.setItem('weight',weight);
@@ -92,7 +90,7 @@ const  Login=({ modalVisible, closeModal,data})=> {
                   const bmi = (parseFloat(weight)) / (parseFloat(heightInMeters) * parseFloat(heightInMeters));
                   await AsyncStorage.setItem('bmi',bmi.toString());
                 }
-                
+                ToastAndroid.show(`${message}. Welcome, ${name}!`, ToastAndroid.SHORT);
                 setTimeout(() => {
                   // Navigate to the home screen after 4 seconds
                   navigation.push('/Home'); // Replace 'Home' with your actual route name

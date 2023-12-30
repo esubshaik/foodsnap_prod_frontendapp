@@ -14,11 +14,6 @@ const UserProgress = ({presentarr}) => {
   const numberOfDaysInMonth = format(endOfMonthDate, 'd');
   // console.log(numberOfDaysInMonth);
   const daysArray = presentarr  ;
-  // console.log(presentarr); 
-  // const daysArray = [
-  //   1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  // ];
-  // console.log(daysArray.length);
   const numberOfOnes = presentarr.reduce((count, value) => count + value, 0);
 const totalDays = presentarr.length;
 const percentageOfOnes = (numberOfOnes / totalDays) * 100;
@@ -30,7 +25,7 @@ const percent = parseInt(percentageOfOnes);
   return (
     <View style={[t.flex,t.flexRow,t.justifyBetween,t.m4]}>
       <View style={[t.flex,t.flexCol]}>
-        <Text style={[t.textWhite,t.textLg,t.fontSemibold,t.mL2,t.mB2]}>Your Progress</Text>
+        <Text style={[t.textWhite,t.textLg,t.fontSemibold,t.pB2,t.pT1]}>🟢 Your Progress</Text>
       <View style={styles.container}>
         {firstRow.map((day, index) => (
           <View key={index} style={[styles.circle, day === 1 ? styles.circleFilled : null]} />

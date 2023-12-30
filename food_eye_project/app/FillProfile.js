@@ -61,7 +61,7 @@ const fetchuserprofile=async()=>{
           reload();
     }
     catch(error){
-        console.log(error)
+        // console.log(error)
     }
     finally{
         setLoadingClose(false);
@@ -78,7 +78,7 @@ const fetchuserprofile=async()=>{
 
   const handleSubmit=async()=>{
     try{
-      console.log(gender)
+      // console.log(gender)
         if (!formData.age || !formData.height || !formData.weight) {
             ToastAndroid.show('Please Fill All Details', ToastAndroid.SHORT);
             return;

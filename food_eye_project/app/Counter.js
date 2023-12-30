@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ProgressBarAndroid,ProgressBar, StyleSheet,Button, ToastAndroid } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet,Button, ToastAndroid, ProgressBarAndroid } from 'react-native';
 import {t} from 'react-native-tailwindcss' ;
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

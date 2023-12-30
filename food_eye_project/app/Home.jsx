@@ -16,6 +16,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 export default function TabsLayout(){
   const [username, setUsername] = useState("");
   const Tab = createBottomTabNavigator();
+
   const checkUserSession = async () => {
     const user = await AsyncStorage.getItem('name');
     setUsername(user);
@@ -35,7 +36,8 @@ export default function TabsLayout(){
   const [view,setview] = useState(1);
   const [labels, setlabels] = useState([]);
   const [daysarr, setdaysarr] = useState([]);
-
+  const [days,setdays] = useState([]);
+  const [ids,setids] = useState([]);
   const getPresenceArray = (timestamps) => {
     const today = new Date();
     const currentMonth = today.getMonth();
@@ -54,7 +56,7 @@ export default function TabsLayout(){
   };
   const [usernutri, setusernutri] = useState({});
   const [mynutridata, setmynutridata] = useState([0, 0, 0, 0]);
-  const [data, setdata] = useState([]);
+  const [bardata, setbardata] = useState([]);
   
   const fetchNutri = async () => {
     // const myhydration = await AsyncStorage.getItem("userhydra");
@@ -78,14 +80,16 @@ export default function TabsLayout(){
               if (data) {
                 const nutridataArray = data.entries.map(entry => entry.nutridata);
                 const foodnamesArray = data.entries.map(entry => entry.foodname);
-                // console.log(foodnamesArray)
-                setlabels(foodnamesArray);
-                const alldataArray = data.allentries.map(entry => entry.updatedAt);
-
+                // console.log(nutridataArray);
+                  setlabels(foodnamesArray);
+                  setbardata(data.allentries.map(entry => entry.nutridata[0]))
+                  const alldataArray = data.allentries.map(entry => entry.updatedAt);
+                  setdays(alldataArray)
+                  setids(data.allentries.map(entry => entry._id))
+                  // console.log();
                 setdaysarr(getPresenceArray(alldataArray));
-                setusernutri(nutridataArray);
-
-                setdata([prevdata => [...prevdata, nutridataArray[0]]])
+                setusernutri(nutridataArray); 
+                
                 const sumArray = nutridataArray[0].map((_, index) =>
                   nutridataArray.reduce((sum, array) => sum + parseFloat(array[index]), 0)
                 );
@@ -96,9 +100,12 @@ export default function TabsLayout(){
                   const totValue = sumArray[index];
                   const prog = Number((totValue / reqValue).toFixed(2))
                   return prog >= 1 ? 1 : prog;
+                  
                 });
-                // console.log(resultArray);
-                setmynutridata(resultArray);
+                if(resultArray){
+                  setmynutridata(resultArray);
+                }
+
               }
             });
         })
@@ -225,11 +232,68 @@ export default function TabsLayout(){
 
   };
 
+  const defaultFoodNames = [
+    'Chapati', 'Roti', 'Garlic Herb Chapati', 'Garlic Herb Roti', 'Rumali Roti', 'Masala Chapati',
+    'Masala Roti', 'Missi Roti', 'Chicken Korma Naan', 'Garlic Coriander Naan', 'Kuloha Naan',
+    'Masala Naan', 'Onion Naan', 'Peshwari Naan', 'Roghani Naan', 'Spicy Tomato Naan', 'Butter Naan',
+    'Tandoon Naan', 'Aloo Paratha', 'Lachcha Paratha', 'Vegetable Paratha', 'Onion Paratha',
+    'Plain Paratha', 'Chicken Tikka Masala', 'Potato Brinjal Curry', 'Potato Beans Curry', 'Aloo Curry',
+    'Mashed Eggplant', 'Ladys Finger', 'Chick Peas', 'Methi Aloo', 'Mutter Paneer', 'Pumpkin',
+    'Shahi Paneer', 'Shimla Mirchi Aloo', 'Stuffed Tomato', 'Ridge Gourd', 'Vegetable Kofta Curry',
+    'Vegetable Korma', 'Pigeon Peas', 'Split Chick Peas', 'Dal Makhani', 'Moong Dal', 'Masoor Dal',
+    'Urad Dal', 'Sambar', 'White Rice', 'Pulao', 'Kichidi', 'Cow Milk', 'Buffalo Milk', 'Curd',
+    'Butter Milk', 'Paneer', 'Cheese', 'Lassi', 'Samosa', 'Brinjal Pickle', 'Chilli Pickle',
+    'Lime Pickle', 'Mango Pickle', 'Beetroot', 'Bell Pepper', 'Black Olives', 'Broccoli',
+    'Brussels Sprouts', 'Cabbage', 'Carrot', 'Cauliflower', 'Celery', 'Cherry Tomato', 'Corn',
+    'Cucumber', 'Garlic', 'Green Beans', 'Green Olives', 'Green Onion', 'Lettuce', 'Mushrooms',
+    'Onion', 'Peas', 'Potato', 'Pumpkin', 'Radishes', 'Red Cabbage', 'Spinach', 'Sweet Potato',
+    'Tomato', 'Apple', 'Avocado', 'Banana', 'Blackberries', 'Blueberries', 'Cherries',
+    'Custard Apple', 'Dates', 'Grapes', 'Guava', 'Jackfruit', 'Jujube', 'Kiwi', 'Lemon', 'Mango',
+    'Orange', 'Papaya', 'Peach', 'Pear', 'Onion', 'Dal', 'Aloo Gobi', 'Chicken Biryani',
+    'Mutton Biryani', 'Egg Biryani', 'Prawns Biryani', 'Vegetable Biryani', 'Boiled Egg',
+    'Palak Paneer', 'Mint Chutney', 'Coconut Chutney', 'Egg Noodles', 'Veg Noodles', 'Manchurian',
+    'Fried Rice', 'Chicken Fried Rice', 'Chicken Noodles', 'Egg Fried Rice', 'Pani Puri', 'Chaat',
+    'Cake', 'Punugulu', 'Dosa', 'Egg Dosa', 'Idly', 'Mirchi Bajji', 'Vada Recipe', 'Aloo Bajji', 'Butter', 'Puri'
+  ];
+  const [loading, setLoading] = useState(false);
+  const [foodNames, setFoodNames] = useState(defaultFoodNames);
+  const [currentFoodIndex, setCurrentFoodIndex] = useState(0);
+  const [currentImages, setCurrentImages] = useState([]);
+
+  const fetchImages = async () => {
+    setLoading(true);
+    for(var i = currentFoodIndex; i < currentFoodIndex+ 10 && i < foodNames.length ; i++){
+
+    const currentFoodName = foodNames[i]; 
+    // console.log(currentFoodName);
+    try {
+      const response = await fetch(`https://query-food-images.onrender.com/get_images?food_name=${currentFoodName}`);
+      const data = await response.json();
+
+      if (data.error) {
+        
+        break ;
+        
+      } else {
+        const oneImg = await data.images[1];
+        setCurrentImages((old) => [...old, oneImg]);
+        findex+=1 ;
+      }
+    } catch (error) {
+      // console.error('Error fetching images:', error);
+    }
+  }
+  setCurrentFoodIndex(currentFoodIndex+10);
+  setLoading(false);
+  };
+
   useEffect(() => {
     checkUserSession();
     fetchNutri();
     hydraFetch();
-  }, []);
+    fetchImages();
+  }, [username]);
+  
 
   return (
     <View style={[t.wFull, t.flex, t.flexCol, t.hFull,t.bg=['#F5F5F4']]}>
@@ -237,14 +301,14 @@ export default function TabsLayout(){
       
       <View style={[t.flex1]}>
         {view== 1 ? (
-          <MainHome fetchNutri={fetchNutri} labels={labels} daysarr={daysarr} usernutri={usernutri} mynutridata={mynutridata} data={data} calculateHydra = {calculateHydra} hydra = {hydra} username={username}/>
+          <MainHome fetchNutri={fetchNutri} labels={labels} daysarr={daysarr} usernutri={usernutri} mynutridata={mynutridata} bardata={bardata} calculateHydra = {calculateHydra} hydra = {hydra} username={username} days={days} ids = {ids}/>
         ):
         view==4 ?
        (
           <UserMgmt/>
         ) :
         view==2 ? (
-          <DietRecommend/>
+          <DietRecommend fetchImages={fetchImages} currentImages={currentImages} foodNames={foodNames} loading={loading}/>
           // <Empty/>
         )
         :

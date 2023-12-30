@@ -70,7 +70,7 @@ function UserMgmt() {
     <ScrollView contentContainerStyle={{ backgroundColor: 'white' }}>
       <View style={[t.p1, t.bgWhite, t.flex, t.textCenter, t.flexCol]}>
       <View style={styles.container}>
-      <ImageUpload/>
+      <ImageUpload style={{ width: 120, height: 120  }}/>
       <Text style={{marginTop:8,fontSize:24, fontWeight:'800'}}>Hi, {username} </Text>
     </View>
       <View style={[t.mX4,t.pX4, t.bgGray200, t.flex, t.flexRow, t.fontSemibold, t.text4xl, t.itemsCenter, t.justifyCenter, t.roundedLg]}>

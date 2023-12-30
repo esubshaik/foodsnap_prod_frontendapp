@@ -4,22 +4,22 @@ import { BarChart } from 'react-native-chart-kit';
 import {t} from 'react-native-tailwindcss' ;
 
 const BarComponent = ({data,labels}) => {
-  // Sample data and labels
-  // const data = [10, 15, 20, 25, 30];
-  // const labels = ['Label1', 'Label2', 'Label3', 'Label4', 'Label5'];
-
-  // Chart configuration
   const chartConfig = {
-    backgroundGradientFrom: '#fff',
-    backgroundGradientTo: '#fff',
+    backgroundGradientFrom: '#FFFFF0',
+    backgroundGradientTo: '#FFFFF0',
     color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    strokeWidth: 2, // optional, default 3
+    strokeWidth: 3, // optional, default 3
+    barPercentage: 1,
+    decimalPlaces: 0,
+    
   };
 
   return (
     <View style={styles.container}>
-      <Text style={[t.fontSemibold, t.textLg, t.mT2,t.mB2]}>Today's Food Record</Text>
-      <BarChart
+      <Text style={[t.fontSemibold,t.textYellow800, t.textBase, t.mT2,t.mB2,t.mL4,t.pT1]}>🍔 Today's Food Journey🏁</Text>
+      {
+        labels[0] ?
+        <BarChart 
         data={{
           labels: labels,
           datasets: [
@@ -28,13 +28,20 @@ const BarComponent = ({data,labels}) => {
             },
           ],
         }}
-        width={Dimensions.get('window').width-50} 
+        width={Dimensions.get('window').width-40} 
   height={180} 
-        yAxisLabel={'%'}
+  yAxisLabel={''}
+        fromZero
         chartConfig={chartConfig}
-        // verticalLabelRotation={0}
-        
+        // withHorizontalLabels={false}
+        withInnerLines={false}
+        showValuesOnTopOfBars
+        // showBarTops
+        style={[t.mT10, t.mL0,t.relative]}
       />
+   : <View style={[t.border,t.mX4]}></View>
+      }
+      
     </View>
   );
 };
@@ -42,12 +49,10 @@ const BarComponent = ({data,labels}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     paddingBottom:20,
     
-    backgroundColor:'white',borderRadius:10,shadowColor: '#05161A',shadowOpacity: 0.4,
-    shadowRadius: 4,elevation: 5, marginLeft:18, marginRight:18, paddingTop:12, marginTop:4
+    backgroundColor:'#FFFFF0',borderRadius:10,shadowColor: '#05161A',shadowOpacity: 0.4,
+    shadowRadius: 4,elevation: 5, marginLeft:18, marginRight:18, paddingTop:12, marginTop:0
   },
 });
 

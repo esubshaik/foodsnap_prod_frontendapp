@@ -8,11 +8,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const ProgressChartGrid = ({mynutridata,hydrapercent}) => {
 
 const reqhydra = 100-hydrapercent ;
-  // useEffect(() => {
-  //   checkUserNutriData();
-  // }, []);
+
   return (
-    <View style={{backgroundColor:'#F0FCF7',margin:16,borderRadius:15,flexDirection:'row',height:'fit',shadowColor: '#05161A',shadowOpacity: 0.4,
+    <View style={{backgroundColor:'#F0FCF7',marginLeft: 16,marginRight:16,marginBottom:10,marginTop:14,borderRadius:15,flexDirection:'row',height:'fit',shadowColor: '#05161A',shadowOpacity: 0.4,
     shadowRadius: 4,elevation: 5}}>
     <View style={[t.flex, t.flexCol]}>
       <View style={[t.flex, t.flexRow]}>
@@ -20,7 +18,6 @@ const reqhydra = 100-hydrapercent ;
           <Text style={[t.fontSemibold,t.pX6,t.pT6]}>KCal</Text>
           <ProgressChart
             data={{
-              
               data: [mynutridata[0]],
                // Replace with your actual data
             }}
