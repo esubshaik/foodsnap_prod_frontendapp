@@ -16,13 +16,13 @@ import axios from 'axios';
 import BarComponent from './BarChart';
 import FillProfile from './FillProfile';
 import FoodHistory from './FoodHistory';
-import Notifications from './Notifications';
 // import { AntDesign } from '@expo/vector-icons';
 // import { MaterialIcons } from '@expo/vector-icons';
 
 
-const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,bardata,calculateHydra,hydra,username, days,ids}) => {
+const MainHome = ({fetchNutri,formdata,calculateHydra}) => {
   // const screenWidth = Dimensions.get("window").width;
+  // console.log(formdata);
   const navigation = useRouter();
   const [myInput, setInput] = useState("");
   const [loading, setloading] = useState(false);
@@ -235,7 +235,7 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,bardata,calcu
             </View>
             <View style={[t.h14,t.mT1,t.flex, t.flexRow]}>
             <Text style={[t.fontBold,t.textSm,t.textGray800]}>👋 Welcome </Text>
-            <Text style={[t.fontBold,t.textSm,t.textGray600]}>{username} !</Text>
+            <Text style={[t.fontBold,t.textSm,t.textGray600]}>{formdata.username} !</Text>
             </View>
           </View>
           </View>
@@ -273,7 +273,7 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,bardata,calcu
             </TouchableOpacity>
           </Text>
           <View style={{ width: '60%', height: '100%' }}>
-            <InputField style={[t.textLg, t.hFull, t.textGray600]} onFocus={handleFocus} onChange={(event) => setInput(event.nativeEvent.text)}
+            <InputField style={[ t.hFull, t.textGray600]} onFocus={handleFocus} onChange={(event) => setInput(event.nativeEvent.text)}
               onSubmitEditing={alertstatus ? (Alert.alert("Please Complete Your Profile!")) : analyzeFood}
               placeholder='Start adding your food item'
               returnKeyType="search"
@@ -295,7 +295,7 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,bardata,calcu
 
       <View style={[t.mB32]}>
         <DateNavigator />
-        <ProgressChartGrid mynutridata={mynutridata} hydrapercent={hydra} />
+        <ProgressChartGrid mynutridata={formdata.mynutridata} hydrapercent={formdata.hydra} />
         <View style={{
           backgroundColor: 'white', marginLeft: 16, marginRight: 0, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'white', shadowOpacity: 0.4,
           shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
@@ -345,7 +345,7 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,bardata,calcu
           backgroundColor: '#294D61', marginLeft: 16,marginRight:16,marginBottom:14,marginTop:10, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'black', shadowOpacity: 0.9,
           shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
         }}>
-          <UserProgress presentarr={daysarr} />
+          <UserProgress presentarr={formdata.daysarr} />
         </View>
         <ModalComponent
           modalVisible={modalVisible}
@@ -353,11 +353,10 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,bardata,calcu
           modalData={modalData}
           foodname={[myInput]}
           reload={fetchNutri}
-
         />
       
-<BarComponent labels={labels} data={bardata} /> 
-        <FoodHistory foodnames = {labels} dates={days} ids={ids} reloadpage={fetchNutri}/>
+<BarComponent labels={formdata.labels} data={formdata.bardata} /> 
+        <FoodHistory foodnames = {formdata.labels} dates={formdata.days} ids={formdata.ids} reloadpage={fetchNutri}/>
       </View>
     </ScrollView>
     </View>

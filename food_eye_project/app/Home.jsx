@@ -1,43 +1,25 @@
 import { View,Text,TouchableOpacity,Image,BackHandler,ToastAndroid } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-import { Octicons,Zocial,Entypo,FontAwesome5 } from '@expo/vector-icons';
+import { Octicons,Entypo,FontAwesome5 } from '@expo/vector-icons';
 import { t } from 'react-native-tailwindcss';
-import { useState,useEffect } from "react";
+import { useState,useEffect,lazy, Suspense  } from "react";
 import MainHome from './MainHome' ;
 import UserMgmt from './UserMgmt';
 import Empty from "./EmptyPage";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons,SimpleLineIcons } from '@expo/vector-icons';
 import DietRecommend from "./DietRecommend";
-import { Tabs } from 'expo-router/tabs';
 import { Feather } from '@expo/vector-icons';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+const MyHome = lazy(() => import('./MainHome'));
+const Discover = lazy(() => import('./DietRecommend'));
+const Network = lazy(() => import('./EmptyPage'));
+const Profile  = lazy(()=>import('./UserMgmt'));
+
+
+
+
+
 export default function TabsLayout(){
-  const [username, setUsername] = useState("");
-  const Tab = createBottomTabNavigator();
 
-  const checkUserSession = async () => {
-    const user = await AsyncStorage.getItem('name');
-    setUsername(user);
-  };
-
-  useEffect(() => {
-    const backAction = () => {
-      BackHandler.exitApp(); // This will exit the app
-      return true;
-    };
-
-    BackHandler.addEventListener('hardwareBackPress', backAction);
-    return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
-  }, []);
-
- 
   const [view,setview] = useState(1);
-  const [labels, setlabels] = useState([]);
-  const [daysarr, setdaysarr] = useState([]);
-  const [days,setdays] = useState([]);
-  const [ids,setids] = useState([]);
   const getPresenceArray = (timestamps) => {
     const today = new Date();
     const currentMonth = today.getMonth();
@@ -54,14 +36,9 @@ export default function TabsLayout(){
 
     return presenceArray;
   };
-  const [usernutri, setusernutri] = useState({});
-  const [mynutridata, setmynutridata] = useState([0, 0, 0, 0]);
-  const [bardata, setbardata] = useState([]);
+
   
   const fetchNutri = async () => {
-    // const myhydration = await AsyncStorage.getItem("userhydra");
-    // setHydra(parseInt(myhydration));
-    // await calculateHydra() ;////////////////////////////////////
     const token = await AsyncStorage.getItem('token');
     const requestOptions = {
       method: 'GET',
@@ -72,6 +49,8 @@ export default function TabsLayout(){
     };
     try {
       // await getusercal();
+      const user = await AsyncStorage.getItem('name');
+      await hydraFetch();
       await fetch(
         'https://backend-updated-w7a2.onrender.com/api/user/get-nutridata', requestOptions)
         .then(response => {
@@ -80,16 +59,7 @@ export default function TabsLayout(){
               if (data) {
                 const nutridataArray = data.entries.map(entry => entry.nutridata);
                 const foodnamesArray = data.entries.map(entry => entry.foodname);
-                // console.log(nutridataArray);
-                  setlabels(foodnamesArray);
-                  setbardata(data.allentries.map(entry => entry.nutridata[0]))
                   const alldataArray = data.allentries.map(entry => entry.updatedAt);
-                  setdays(alldataArray)
-                  setids(data.allentries.map(entry => entry._id))
-                  // console.log();
-                setdaysarr(getPresenceArray(alldataArray));
-                setusernutri(nutridataArray); 
-                
                 const sumArray = nutridataArray[0].map((_, index) =>
                   nutridataArray.reduce((sum, array) => sum + parseFloat(array[index]), 0)
                 );
@@ -100,12 +70,17 @@ export default function TabsLayout(){
                   const totValue = sumArray[index];
                   const prog = Number((totValue / reqValue).toFixed(2))
                   return prog >= 1 ? 1 : prog;
-                  
                 });
-                if(resultArray){
-                  setmynutridata(resultArray);
-                }
-
+                setMainTransporter((prevState) => ({
+                  ...prevState,
+                labels: foodnamesArray,
+                daysarr : getPresenceArray(alldataArray),
+                mynutridata : resultArray,
+                bardata : data.allentries.map(entry => entry.nutridata[0]),
+                username : user,
+                days : alldataArray,
+                ids : data.allentries.map(entry => entry._id)
+                }));
               }
             });
         })
@@ -125,7 +100,7 @@ export default function TabsLayout(){
   const gender = gethd();
   const dailyHydrationGoal = gender === 'male' ? mhydra : fhydra;
   const [currenthydra, setcurrenthydra] = useState(0);
-  const [hydra, setHydra] = useState(0);
+  
 
   const hydraFetch = async () => {
     const token = await AsyncStorage.getItem('token');
@@ -154,12 +129,18 @@ export default function TabsLayout(){
                 if (curr_amt <= dailyHydrationGoal) {
                   setcurrenthydra(parseInt(curr_amt));
                   const mypercent = (parseInt(curr_amt) / dailyHydrationGoal) * 100
-                  setHydra(parseInt(mypercent));
+                  
+                  setMainTransporter((prevState) => ({
+                    ...prevState,
+                    hydra: parseInt(mypercent),
+                  }));
                 }
                 else {
                   AsyncStorage.setItem('hydration', dailyHydrationGoal.toString());
-                  setHydra(parseInt(100));
-                  alert('You have already reached 100% of your daily hydration goal! 🎉');
+                  setMainTransporter((prevState) => ({
+                    ...prevState,
+                    hydra: 100,
+                  }));
                 }
               }
 
@@ -172,6 +153,7 @@ export default function TabsLayout(){
     }
     finally {
       await AsyncStorage.setItem('hydration', currenthydra.toString());
+      
     }
   }
   const StoreinDB = async (record) => {
@@ -209,7 +191,12 @@ export default function TabsLayout(){
     const curr_hydrate = await AsyncStorage.getItem('hydration');
     setcurrenthydra(parseInt(curr_hydrate));
     const mypercent = (parseInt(curr_hydrate) / dailyHydrationGoal) * 100
-    setHydra(parseInt(mypercent));
+    
+    setMainTransporter((prevState) => ({
+      ...prevState,
+      hydra: parseInt(mypercent),
+    }));
+    
   }
 
   const calculateHydra = async () => {
@@ -217,8 +204,12 @@ export default function TabsLayout(){
     if (curr_amt <= dailyHydrationGoal) {
       setcurrenthydra(curr_amt);
       const mypercent = (parseInt(curr_amt) / dailyHydrationGoal) * 100
-      setHydra(parseInt(mypercent));
-      // setHydra()
+      
+      setMainTransporter((prevState) => ({
+        ...prevState,
+        hydra: parseInt(mypercent),
+      }));
+      
       await StoreinDB(237);
       await AsyncStorage.setItem('hydration', curr_amt.toString());
       fetchHydration();
@@ -226,7 +217,11 @@ export default function TabsLayout(){
     else {
       await StoreinDB(dailyHydrationGoal);
       await AsyncStorage.setItem('hydration', dailyHydrationGoal.toString());
-      setHydra(parseInt(100));
+      
+      setMainTransporter((prevState) => ({
+        ...prevState,
+        hydra: 100,
+      }));
       alert('You have already reached 100% of your daily hydration goal! 🎉');
     }
 
@@ -288,18 +283,47 @@ export default function TabsLayout(){
   };
 
   useEffect(() => {
-    checkUserSession();
+    const backAction = () => {
+      BackHandler.exitApp(); // This will exit the app
+      return true;
+    };
     fetchNutri();
-    hydraFetch();
-    fetchImages();
-  }, [username]);
+    BackHandler.addEventListener('hardwareBackPress', backAction);
+    return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
+    
+    // fetchImages();
+  }, []);
   
+const [mainTransporter, setMainTransporter] = useState({
+  labels: [],
+  daysarr: [],
+  mynutridata: [0, 0, 0, 0],
+  bardata: [],
+  hydra: 0,
+  username: '',
+  days: [],
+  ids: [],
+});
+
+const renderComponent = (key) => {
+  switch (key) {
+    case 1:
+      return <MainHome fetchNutri={fetchNutri} formdata = {mainTransporter} calculateHydra = {calculateHydra}/>;
+    case 2:
+      return <DietRecommend fetchImages={fetchImages} currentImages={currentImages} foodNames={foodNames} loading={loading}/>;
+    case 4:
+      return <UserMgmt/>;
+    // Add more cases for other keys as needed
+    default:
+      return   <Empty/>; // Return a default component or null for unknown keys
+  }
+};
 
   return (
     <View style={[t.wFull, t.flex, t.flexCol, t.hFull,t.bg=['#F5F5F4']]}>
       <View style={[t.flex1]}>
-        {view== 1 ? (
-          <MainHome fetchNutri={fetchNutri} labels={labels} daysarr={daysarr} usernutri={usernutri} mynutridata={mynutridata} bardata={bardata} calculateHydra = {calculateHydra} hydra = {hydra} username={username} days={days} ids = {ids}/>
+        {/* {view== 1 ? (
+          <MainHome fetchNutri={fetchNutri} formdata = {mainTransporter} calculateHydra = {calculateHydra} />
         ):
         view==4 ?
        (
@@ -315,7 +339,11 @@ export default function TabsLayout(){
           <Empty/>
         
         ) : null
-      }
+      } */}
+      
+      <View>
+      {renderComponent(view)}
+      </View>
        
       </View>
       <View style={[t.wFull, t.h18, t.bgGray100, t.bottom0, t.flex, t.flexRow, t.pT2, t.pB2,t.justifyBetween,t.pL10,t.pR10, t.borderT2,t.borderGray300]}>

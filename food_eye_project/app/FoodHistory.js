@@ -67,24 +67,21 @@ const FoodHistory = ({foodnames,dates,ids,reloadpage}) => {
             <TouchableOpacity onPress={()=>handleItemDelete(ids[index])}>
             <AntDesign name="delete" size={25} color="red" style={[t.mL4,t.fontBold,t.mR1]}/>
             </TouchableOpacity>
-            
             </View>
             ) : null
                 )) 
             }
         </View>
-        
-        
       </View>
    
     </View>
         {
             histlimit <= 3 ?  <TouchableOpacity onPress={()=>sethistlimit(totalhist)}>
-            <Text style={[t.fontSemibold,t.textBase, t.textWhite, t.bgTeal800, t.p2,t.wFull,t.h8,t.textCenter,t.roundedBFull,t.mT4,t.selfCenter]}>View all</Text>
+            <Text style={[t.fontSemibold,t.textBase, t.textWhite, t.bgTeal800, t.p2,t.wFull,t.h10,t.textCenter,t.roundedBFull,t.mT4,t.selfCenter]}>View all</Text>
         </TouchableOpacity>  : 
         histlimit > 3 ?
         <TouchableOpacity onPress={()=>sethistlimit(3)}>
-        <Text style={[t.fontSemibold,t.textBase, t.textWhite, t.bgTeal800, t.p2,t.wFull,t.h8,t.textCenter,t.roundedBFull,t.mT4,t.selfCenter]}>Collapse</Text>
+        <Text style={[t.fontSemibold,t.textBase, t.textWhite, t.bgTeal800, t.p2,t.wFull,t.h10,t.textCenter,t.roundedBFull,t.mT4,t.selfCenter]}>Collapse</Text>
     </TouchableOpacity>
         : null
         }
