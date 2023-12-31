@@ -73,7 +73,7 @@ export default function TabsLayout(){
     try {
       // await getusercal();
       await fetch(
-        'https://backend-server-lhw8.onrender.com/api/user/get-nutridata', requestOptions)
+        'https://backend-updated-w7a2.onrender.com/api/user/get-nutridata', requestOptions)
         .then(response => {
           response.json()
             .then(data => {
@@ -138,7 +138,7 @@ export default function TabsLayout(){
     };
     try {
       await fetch(
-        'https://backend-server-lhw8.onrender.com/api/user/get-hydrate', requestOptions)
+        'https://backend-updated-w7a2.onrender.com/api/user/get-hydrate', requestOptions)
         .then(response => {
           response.json()
             .then(data => {
@@ -189,7 +189,7 @@ export default function TabsLayout(){
     };
     try {
       await fetch(
-        'https://backend-server-lhw8.onrender.com/api/user/store-hydrate', requestOptions)
+        'https://backend-updated-w7a2.onrender.com/api/user/store-hydrate', requestOptions)
         .then(response => {
           // console.log(response)
           response.json()
@@ -297,8 +297,6 @@ export default function TabsLayout(){
 
   return (
     <View style={[t.wFull, t.flex, t.flexCol, t.hFull,t.bg=['#F5F5F4']]}>
-    
-      
       <View style={[t.flex1]}>
         {view== 1 ? (
           <MainHome fetchNutri={fetchNutri} labels={labels} daysarr={daysarr} usernutri={usernutri} mynutridata={mynutridata} bardata={bardata} calculateHydra = {calculateHydra} hydra = {hydra} username={username} days={days} ids = {ids}/>
@@ -320,21 +318,23 @@ export default function TabsLayout(){
       }
        
       </View>
-
-      <View style={[t.wFull, t.h16, t.bgGray100, t.bottom0, t.flex, t.flexRow, t.pT4, t.pB3,t.justifyBetween,t.pL10,t.pR10, t.borderT2,t.borderGray300]}>
-  <TouchableOpacity onPress={() => setview(1)} style={[t.mR6, view === 1 ? t.borderB2 : null]}>
+      <View style={[t.wFull, t.h18, t.bgGray100, t.bottom0, t.flex, t.flexRow, t.pT2, t.pB2,t.justifyBetween,t.pL10,t.pR10, t.borderT2,t.borderGray300]}>
+  <TouchableOpacity onPress={() => setview(1)} style={[t.mR6,t.flex,t.flexCol,t.itemsCenter, view === 1 ? t.borderB2 : null]}>
     <Octicons name="home" size={25} color="black" style={[t.pT1]} />
+    <Text>Home</Text>
   </TouchableOpacity>
-  <TouchableOpacity onPress={() => setview(2)} style={[t.mL6, t.mR6, view === 2 ? t.borderB2 : null]}>
+  <TouchableOpacity onPress={() => setview(2)} style={[t.mL2,t.flex,t.flexCol,t.itemsCenter, t.mR6, view === 2 ? t.borderB2 : null]}>
     <Entypo name="book" size={25} color="black" style={[t.pT1]} />
+    <Text>Discover</Text>
   </TouchableOpacity>
-  <TouchableOpacity onPress={() => setview(3)} style={[t.mL6, t.mR6,t.mT1, view === 3 ? t.borderB2 : null]}>
-    
+  <TouchableOpacity onPress={() => setview(3)} style={[t.mL2,t.flex,t.flexCol,t.itemsCenter, t.mR6,t.mT1, view === 3 ? t.borderB2 : null]}>
     <Feather name="globe" size={25} color="black" />
+    <Text>Network</Text>
   </TouchableOpacity>
 
-  <TouchableOpacity onPress={() => setview(4)} style={[t.mL6, view === 4 ? t.borderB2 : null]}>
+  <TouchableOpacity onPress={() => setview(4)} style={[t.flex,t.flexCol,t.itemsCenter, view === 4 ? t.borderB2 : null]}>
     <FontAwesome5 name="user" size={24} color="black" style={[t.pT1]} />
+    <Text>Profile</Text>
   </TouchableOpacity>
 </View>
 

@@ -16,7 +16,7 @@ const FoodHistory = ({foodnames,dates,ids,reloadpage}) => {
           };
           try {
             await fetch(
-              'https://backend-server-lhw8.onrender.com/api/user/delete-nutridata', requestOptions)
+              'https://backend-updated-w7a2.onrender.com/api/user/delete-nutridata', requestOptions)
               .then(response => {
                 response.json()
                   .then(data => {

@@ -140,7 +140,7 @@ export default function ScanFood() {
         name: 'ourimage.jpg',
       });
 
-      const response = await fetch('https://backend-server-lhw8.onrender.com/api/user/detect-my-food', {
+      const response = await fetch('https://backend-updated-w7a2.onrender.com/api/user/detect-my-food', {
         method: 'POST',
         body: formData,
         headers: {
@@ -195,7 +195,7 @@ export default function ScanFood() {
     };
     try {
       await fetch(
-        'https://backend-server-lhw8.onrender.com/api/user/analyze-food', requestOptions)
+        'https://backend-updated-w7a2.onrender.com/api/user/analyze-food', requestOptions)
         .then(response => {
           response.json()
             .then(data => {

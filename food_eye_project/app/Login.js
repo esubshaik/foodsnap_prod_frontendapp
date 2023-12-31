@@ -39,7 +39,7 @@ const  Login=({ modalVisible, closeModal,data})=> {
             const str_age = await AsyncStorage.getItem('age');
             const age = parseInt(str_age);
             const gender = AsyncStorage.getItem('gender');
-            const user_cal = await axios.get(`https://backend-server-lhw8.onrender.com/api/user/req-calories/${age}/${gender}`);
+            const user_cal = await axios.get(`https://backend-updated-w7a2.onrender.com/api/user/req-calories/${age}/${gender}`);
             // return user_cal.data
             // console.log(age);
             // console.log(user_cal.data.data.max_calories);
@@ -57,7 +57,7 @@ const  Login=({ modalVisible, closeModal,data})=> {
               return;
             }
               const response = await axios.post(
-                'https://backend-server-lhw8.onrender.com/api/user/login',
+                'https://backend-updated-w7a2.onrender.com/api/user/login',
                 formData,
                 {
                   headers: {

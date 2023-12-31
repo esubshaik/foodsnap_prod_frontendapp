@@ -18,7 +18,7 @@ const getusercal = async()=>{
   const str_age = await AsyncStorage.getItem('age');
   const age = parseInt(str_age);
   const gender = AsyncStorage.getItem('gender');
-  const user_cal = await axios.get(`https://backend-server-lhw8.onrender.com/api/user/req-calories/${age}/${gender}`);
+  const user_cal = await axios.get(`https://backend-updated-w7a2.onrender.com/api/user/req-calories/${age}/${gender}`);
   // return user_cal.data
   // console.log(age);
   // console.log(user_cal.data.data.max_calories);
@@ -37,7 +37,7 @@ const fetchuserprofile=async()=>{
           
           const response = await axios.get(
             
-            'https://backend-server-lhw8.onrender.com/api/user/get-user-profile',
+            'https://backend-updated-w7a2.onrender.com/api/user/get-user-profile',
             {
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -89,7 +89,7 @@ const fetchuserprofile=async()=>{
           const token = await AsyncStorage.getItem('token');
           const response = await axios.put(
             
-            'https://backend-server-lhw8.onrender.com/api/user/update-profile',
+            'https://backend-updated-w7a2.onrender.com/api/user/update-profile',
             formData,
             {
               headers: {

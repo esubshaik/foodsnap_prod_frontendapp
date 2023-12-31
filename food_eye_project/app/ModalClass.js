@@ -8,12 +8,8 @@ const ModalComponent = ({ modalVisible, closeModal, modalData, foodname, reload 
   // console.log(modalData)
   // console.log(foodname)
   function cleanArray(inputArray) {
-    // Step 1: Remove empty elements
     const arrayWithoutEmpty = inputArray.filter(item => item !== "" && item != "[]");
-  
-    // Step 2: Remove duplicate elements
     const uniqueArray = Array.from(new Set(arrayWithoutEmpty));
-  
     return uniqueArray;
   }
   modalData = cleanArray(modalData)  ;

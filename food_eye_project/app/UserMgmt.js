@@ -20,6 +20,7 @@ function UserMgmt() {
   const [bmi,setbmi] = useState("");
   const [reqcals,setreqcals] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  
   const checkUserSession = async () => {
     const _age = await AsyncStorage.getItem('age');
     const _height = await AsyncStorage.getItem('height');

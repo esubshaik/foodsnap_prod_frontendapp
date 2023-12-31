@@ -16,7 +16,7 @@ import axios from 'axios';
 import BarComponent from './BarChart';
 import FillProfile from './FillProfile';
 import FoodHistory from './FoodHistory';
-
+import Notifications from './Notifications';
 // import { AntDesign } from '@expo/vector-icons';
 // import { MaterialIcons } from '@expo/vector-icons';
 
@@ -63,7 +63,7 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,bardata,calcu
     };
     try {
       await fetch(
-        'https://backend-server-lhw8.onrender.com/api/user/analyze-food', requestOptions)
+        'https://backend-updated-w7a2.onrender.com/api/user/analyze-food', requestOptions)
         .then(response => {
           response.json()
             .then(data => {
@@ -212,14 +212,13 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,bardata,calcu
 
   return (
     <View>
-      <View style={[t.h16, t.shadowLg, t.bgWhite,t.borderB2, t.borderGray300]}>
+      <View style={[t.h17, t.shadowLg, t.bgWhite,t.borderB2, t.borderGray300]}>
         <View style={[t.flex, t.flexRow,t.m1,t.justifyBetween]}>
       
           <View style={[t.flex, t.flexRow]}>
           <Image
               // source={require('./assets/defaultuser.png')}
               source = {dp ? {uri: dp} : require('./assets/defaultuser.png')}
-              // source = {{uri : dp uri : dp : localImage }}
               style={{ width: 45, height: 45 ,margin:8, borderRadius:40, borderWidth:1, borderColor:'#294D61'}} // Adjust the width
               resizeMode="contain"
             />
@@ -242,8 +241,11 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,bardata,calcu
           </View>
       
           <View style={[t.m4]}>
-          <Ionicons name="md-notifications-outline" size={24} color="black" />
+            <TouchableOpacity onPress={()=>navigation.push('/Notifications')}>
+          <Ionicons name="md-notifications-outline" size={25} color="black" style={[t.roundedFull]} />
+          </TouchableOpacity>
           </View>
+          
           <View style={[t.m4]}>
           <SimpleLineIcons name="options-vertical" size={24} color="black" />
           </View>
@@ -270,11 +272,11 @@ const MainHome = ({fetchNutri,labels,daysarr,usernutri,mynutridata,bardata,calcu
               <AntDesign name="search1" size={24} color='white' />
             </TouchableOpacity>
           </Text>
-
           <View style={{ width: '60%', height: '100%' }}>
-            <InputField style={[t.textBase, t.hFull,t.fontSemibold, t.textGray600]} onFocus={handleFocus} onChange={(event) => setInput(event.nativeEvent.text)}
-              onSubmitEditing={() => alertstatus ? (Alert.alert("Please Complete Your Profile!")) : analyzeFood}
+            <InputField style={[t.textLg, t.hFull, t.textGray600]} onFocus={handleFocus} onChange={(event) => setInput(event.nativeEvent.text)}
+              onSubmitEditing={alertstatus ? (Alert.alert("Please Complete Your Profile!")) : analyzeFood}
               placeholder='Start adding your food item'
+              returnKeyType="search"
             />
           </View>
         </Input>

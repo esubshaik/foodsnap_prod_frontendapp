@@ -5,7 +5,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const CounterApp = ({data,fooditem}) => {
-  
   const [counter, setCounter] = useState(0);
 
   const StoreinDB=async(record)=>{
@@ -24,7 +23,7 @@ const CounterApp = ({data,fooditem}) => {
     try { 
       
         await fetch( 
-            'https://backend-server-lhw8.onrender.com/api/user/store-nutridata', requestOptions) 
+            'https://backend-updated-w7a2.onrender.com/api/user/store-nutridata', requestOptions) 
             .then(response => { 
               // console.log(response)
                 response.json() 
@@ -40,6 +39,12 @@ const CounterApp = ({data,fooditem}) => {
         // console.error(error); 
     }
   }
+  console.error = (error) => {
+    if (!error.toString().includes('ProgressBarAndroid')) {
+      // Suppress the specific warning about ProgressBarAndroid
+      console.warn('Suppressed Warning:', error);
+    }
+  };
 
   const multiplyValues = async (dataString, multiplier) => {
     try {

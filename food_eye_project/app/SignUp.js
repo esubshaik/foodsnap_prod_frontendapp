@@ -44,7 +44,7 @@ const SignUp=({ modalVisible, closeModal,data})=> {
       // console.log(emailData);
       try{
         const response = await axios.post(     
-          'https://backend-server-lhw8.onrender.com/api/user/send-otp',
+          'https://backend-updated-w7a2.onrender.com/api/user/send-otp',
          emailData,{}
         );
   
@@ -113,7 +113,7 @@ const SignUp=({ modalVisible, closeModal,data})=> {
               // setLoading(true);
               const response = await axios.post(
                 
-                'https://backend-server-lhw8.onrender.com/api/user/register',
+                'https://backend-updated-w7a2.onrender.com/api/user/register',
                 formData,
                 {
                   headers: {

@@ -16,7 +16,7 @@ const BarComponent = ({data,labels}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={[t.fontSemibold,t.textYellow800, t.textBase, t.mT2,t.mB2,t.mL4,t.pT1]}>🍔 Today's Food Journey🏁</Text>
+      <Text style={[t.fontSemibold,t.textYellow800, t.textLg, t.mT2,t.mB2,t.mL4,t.pT1]}>🍔 Today's Food Journey</Text>
       {
         labels[0] ?
         <BarChart 
