@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ToastAndroid, BackHandler, StyleSheet, Dimensions, Alert, Image, ActivityIndicator } from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import { useRouter } from 'expo-router';
@@ -356,7 +356,7 @@ const MainHome = ({fetchNutri,formdata,calculateHydra}) => {
         />
       
 <BarComponent labels={formdata.labels} data={formdata.bardata} /> 
-        <FoodHistory foodnames = {formdata.labels} dates={formdata.days} ids={formdata.ids} reloadpage={fetchNutri}/>
+        <FoodHistory foodlabels = {formdata.allfoodlabels} dates={formdata.days} ids={formdata.ids} reloadpage={fetchNutri}/>
       </View>
     </ScrollView>
     </View>

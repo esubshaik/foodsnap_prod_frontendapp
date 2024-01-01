@@ -1,20 +1,14 @@
 import { View,Text,TouchableOpacity,Image,BackHandler,ToastAndroid } from "react-native";
 import { Octicons,Entypo,FontAwesome5 } from '@expo/vector-icons';
 import { t } from 'react-native-tailwindcss';
-import { useState,useEffect,lazy, Suspense  } from "react";
+import { useState,useEffect } from "react";
 import MainHome from './MainHome' ;
 import UserMgmt from './UserMgmt';
 import Empty from "./EmptyPage";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DietRecommend from "./DietRecommend";
 import { Feather } from '@expo/vector-icons';
-const MyHome = lazy(() => import('./MainHome'));
-const Discover = lazy(() => import('./DietRecommend'));
-const Network = lazy(() => import('./EmptyPage'));
-const Profile  = lazy(()=>import('./UserMgmt'));
-
-
-
+import React, { useCallback } from 'react';
 
 
 export default function TabsLayout(){
@@ -33,7 +27,6 @@ export default function TabsLayout(){
 
       return timestamps.some(timestamp => timestamp.startsWith(formattedDate)) ? 1 : 0;
     });
-
     return presenceArray;
   };
 
@@ -59,7 +52,8 @@ export default function TabsLayout(){
               if (data) {
                 const nutridataArray = data.entries.map(entry => entry.nutridata);
                 const foodnamesArray = data.entries.map(entry => entry.foodname);
-                  const alldataArray = data.allentries.map(entry => entry.updatedAt);
+                const allfoodlabels  = data.allentries.map(entry => entry.foodname);
+                const alldataArray = data.allentries.map(entry => entry.updatedAt);
                 const sumArray = nutridataArray[0].map((_, index) =>
                   nutridataArray.reduce((sum, array) => sum + parseFloat(array[index]), 0)
                 );
@@ -74,9 +68,10 @@ export default function TabsLayout(){
                 setMainTransporter((prevState) => ({
                   ...prevState,
                 labels: foodnamesArray,
+                allfoodlabels : allfoodlabels,
                 daysarr : getPresenceArray(alldataArray),
                 mynutridata : resultArray,
-                bardata : data.allentries.map(entry => entry.nutridata[0]),
+                bardata : data.entries.map(entry => entry.nutridata[0]),
                 username : user,
                 days : alldataArray,
                 ids : data.allentries.map(entry => entry._id)
@@ -153,7 +148,7 @@ export default function TabsLayout(){
     }
     finally {
       await AsyncStorage.setItem('hydration', currenthydra.toString());
-      
+
     }
   }
   const StoreinDB = async (record) => {
@@ -284,7 +279,7 @@ export default function TabsLayout(){
 
   useEffect(() => {
     const backAction = () => {
-      BackHandler.exitApp(); // This will exit the app
+      BackHandler.exitApp(); 
       return true;
     };
     fetchNutri();
@@ -296,6 +291,7 @@ export default function TabsLayout(){
   
 const [mainTransporter, setMainTransporter] = useState({
   labels: [],
+  allfoodlabels : [],
   daysarr: [],
   mynutridata: [0, 0, 0, 0],
   bardata: [],
@@ -322,7 +318,7 @@ const renderComponent = (key) => {
   return (
     <View style={[t.wFull, t.flex, t.flexCol, t.hFull,t.bg=['#F5F5F4']]}>
       <View style={[t.flex1]}>
-        {/* {view== 1 ? (
+        {view== 1 ? (
           <MainHome fetchNutri={fetchNutri} formdata = {mainTransporter} calculateHydra = {calculateHydra} />
         ):
         view==4 ?
@@ -339,12 +335,11 @@ const renderComponent = (key) => {
           <Empty/>
         
         ) : null
-      } */}
-      
-      <View>
+      }
+      {/* <View>
       {renderComponent(view)}
       </View>
-       
+        */}
       </View>
       <View style={[t.wFull, t.h18, t.bgGray100, t.bottom0, t.flex, t.flexRow, t.pT2, t.pB2,t.justifyBetween,t.pL10,t.pR10, t.borderT2,t.borderGray300]}>
   <TouchableOpacity onPress={() => setview(1)} style={[t.mR6,t.flex,t.flexCol,t.itemsCenter, view === 1 ? t.borderB2 : null]}>

@@ -27,18 +27,21 @@ const percent = parseInt(percentageOfOnes);
       <View style={[t.flex,t.flexCol]}>
         <Text style={[t.textWhite,t.textLg,t.fontSemibold,t.pB2,t.pT1]}>🟢 Your Progress</Text>
       <View style={styles.container}>
-        {firstRow.map((day, index) => (
+        {numberOfOnes ? firstRow.map((day, index) => (
           <View key={index} style={[styles.circle, day === 1 ? styles.circleFilled : null]} />
-        ))}
+        )): <View>
+          <Text style={[t.textWhite,t.textBase,t.pT2]}>LOG YOUR MEAL TO START YOUR STREAK 🔥</Text>
+          </View>
+          }
       </View>
       <View style={styles.container}>
-        {secondRow.map((day, index) => (
+        {numberOfOnes ? secondRow.map((day, index) => (
           <View key={index} style={[styles.circle, day === 1 ? styles.circleFilled : null]} />
-        ))}
+        )) : null}
       </View>
       </View>
       <View style={[t.flex1,t.mT6,t.mL4]}>
-        <Text style={[t.textWhite,t.text3xl,t.fontSemibold]}>{percent}%</Text>
+        <Text style={[t.textWhite,t.text3xl,t.fontSemibold]}>{percent ?percent+'%' : null}</Text>
       </View>
     </View>
   );

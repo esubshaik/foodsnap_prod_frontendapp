@@ -5,8 +5,11 @@ import {t} from 'react-native-tailwindcss' ;
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 
-const FoodHistory = ({foodnames,dates,ids,reloadpage}) => {
-
+const FoodHistory = ({foodlabels,dates,ids,reloadpage}) => {
+  // const foodnames = Array.from(foodlabels).reverse() ;
+  const foodnames = foodlabels.slice().reverse();
+  const fooddate = dates.slice().reverse();
+  const foodids = ids.slice().reverse();
     const DeleteFood=async(itemid)=>{
         
         const requestOptions = {
@@ -21,13 +24,16 @@ const FoodHistory = ({foodnames,dates,ids,reloadpage}) => {
                 response.json()
                   .then(data => {
                     console.log(data.message);
-                    reloadpage();
+                    
                   });
               })
       
           }
           catch (error) {
             // console.log(error);
+          }
+          finally{
+            await reloadpage();
           }
     }
     const handleItemDelete = async(itemid)=>{
@@ -62,9 +68,9 @@ const FoodHistory = ({foodnames,dates,ids,reloadpage}) => {
 <View style={[t.flexRow, t.justifyBetween,  t.itemsCenter, [index%2 == 0 ? t.bgBlue100 : t.bgWhite], t.p1, t.h16,t.borderB]} key={index}>
             <View style={[t.flexCol]}>
             <Text style={[t.fontSemibold, t.textGray900]}>✅ {name}</Text>
-            <Text style={[t.mL4,t.mT1]}>{new Date(dates[index]).toString()}</Text>
+            <Text style={[t.mL4,t.mT1]}>{new Date(fooddate[index]).toString()}</Text>
             </View>
-            <TouchableOpacity onPress={()=>handleItemDelete(ids[index])}>
+            <TouchableOpacity onPress={()=>handleItemDelete(foodids[index])}>
             <AntDesign name="delete" size={25} color="red" style={[t.mL4,t.fontBold,t.mR1]}/>
             </TouchableOpacity>
             </View>
@@ -93,7 +99,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor:'#FAFAFA',shadowColor: '#05161A',shadowOpacity: 0.4,borderTopEndRadius : 10,borderTopStartRadius: 10,borderBottomEndRadius: 40,borderBottomStartRadius: 40,
-      shadowRadius: 4,elevation: 5, marginLeft:18, marginRight:18, paddingTop:12, marginTop:14
+      shadowRadius: 4,elevation: 5, marginLeft:18, marginRight:18, paddingTop:12, marginTop:14,marginBottom: 30
     },
   });
 

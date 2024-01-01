@@ -42,9 +42,9 @@ const dummytext = "Chapati contains whole wheat flour, water, and salt, forming 
        
 
        <ScrollView contentContainerStyle={{ flexGrow: 1 , minHeight: '100%', paddingBottom:30 }}>
-        <View style={[t.flex,t.flexRow,t.selfCenter]}>
+        <View style={[t.flex,t.flexCol,t.selfCenter]}>
        <Text style={[t.textCenter, t.textGray700]}>The suggestions are completely based on BMI, </Text>
-       <Text style={[t.textBlue400,t.fontSemibold]}>Tap to learn more!</Text>
+       <Text style={[t.textBlue400,t.textCenter,t.mT1,t.fontSemibold]}>Tap to learn more!</Text>
        </View>
         <View>
         {
