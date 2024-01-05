@@ -47,7 +47,7 @@ import { View, Button, Image, StyleSheet, Text } from 'react-native';
       return null;
     }
     const result  = results['data']['results'];
-    console.log(result);
+    // console.log(result);
     const screenWidth = 0.1 ;
     const screenHeight = 0.165 ;
   

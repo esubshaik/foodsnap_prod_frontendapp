@@ -38,24 +38,24 @@ const MainHome = ({fetchNutri,formdata,calculateHydra}) => {
   
   const analyzeFood = async () => {
     const foodid = myInput;
-    if (foodid.length <= 1) {
-      Alert.alert(
-        '',
-        'Please Enter the Food name',
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'OK',
-            // onPress: () => ToastAndroid.show('Thank you ☺️', ToastAndroid.SHORT),
-          },
-        ],
-        { cancelable: false }
-      );
-    }
-    console.log(foodid);
+    // if (foodid.length <= 1) {
+    //   Alert.alert(
+    //     '',
+    //     'Please Enter the Food name',
+    //     [
+    //       {
+    //         text: 'Cancel',
+    //         style: 'cancel',
+    //       },
+    //       {
+    //         text: 'OK',
+    //         // onPress: () => ToastAndroid.show('Thank you ☺️', ToastAndroid.SHORT),
+    //       },
+    //     ],
+    //     { cancelable: false }
+    //   );
+    // }
+    // console.log(foodid);
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -191,6 +191,7 @@ const MainHome = ({fetchNutri,formdata,calculateHydra}) => {
       const userdp = await AsyncStorage.getItem("userprofile");
       setdp(userdp);
       const token = await AsyncStorage.getItem('bmi');
+      // console.log(parseInt(token))
       if (!parseInt(token)) {
         setalertstatus(true);
       }
@@ -198,6 +199,7 @@ const MainHome = ({fetchNutri,formdata,calculateHydra}) => {
         setalertstatus(false);
       }
     } catch (error) {
+      // console.log(error);
     }
   }
 
@@ -263,25 +265,27 @@ const MainHome = ({fetchNutri,formdata,calculateHydra}) => {
         <Input style={[t.flex, t.flexRow, t.border2, t.m4, t.roundedLg, t.h12, isFocused ? t.borderBlue600 : t.borderBlack, t.flex, t.flexRow]}>
           {
             rec ? <Ionicons name="ios-stop-outline" onPress={stopRecording} size={24} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '2%' }} />
-              : <Ionicons name="ios-mic-outline" size={26} onPress={() => alertstatus ? (Alert.alert("Please Complete Your Profile!")) : startRecording} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '2%' }} disabled={rec} />
+              : <Ionicons name="ios-mic-outline" size={26} 
+              onPress={() =>startRecording} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '2%' }} disabled={rec} />
           }
-          <Ionicons name="ios-camera-outline" onPress={() => { alertstatus ? (Alert.alert("Please Complete Your Profile!")) : navigation.push("/Camera") }} size={24} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '0%' }} />
+          <Ionicons name="ios-camera-outline" onPress={() => { navigation.push("/Camera") }} size={24} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '0%' }} />
 
           <Text style={[t.roundedRSm, t.bgTeal800, t.absolute, t.right0, t.w10, t.hFull, t.pT2, t.pL2]}>
-            <TouchableOpacity onPress={alertstatus ? (Alert.alert("Please Complete Your Profile!")) : analyzeFood}>
+            <TouchableOpacity 
+            onPress={ analyzeFood}
+            >
               <AntDesign name="search1" size={24} color='white' />
             </TouchableOpacity>
           </Text>
           <View style={{ width: '60%', height: '100%' }}>
             <InputField style={[ t.hFull, t.textGray600]} onFocus={handleFocus} onChange={(event) => setInput(event.nativeEvent.text)}
-              onSubmitEditing={alertstatus ? (Alert.alert("Please Complete Your Profile!")) : analyzeFood}
+              onSubmitEditing={analyzeFood}
               placeholder='Start adding your food item'
               returnKeyType="search"
             />
           </View>
         </Input>
       </View>
-
       {
         alertstatus ? <View style={[t.flex, t.flexRow, t.mY2, t.justifyCenter, t.alignCenter, t.itemsCenter]}>
           <MaterialIcons name="label-important" size={20} style={[t.mX2]} color="red" />

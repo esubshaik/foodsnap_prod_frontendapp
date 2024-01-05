@@ -1,5 +1,4 @@
-import React, {useState,useRef} from 'react';
-import { View, Text, Image, TouchableOpacity,TextInput ,Pressable,ScrollView,ToastAndroid,StatusBar,ActivityIndicator,Modal} from 'react-native';
+import { View, Text, Image, TouchableOpacity,TextInput ,Pressable,ScrollView,ToastAndroid,ActivityIndicator,Modal,StatusBar} from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import CheckBox from 'expo-checkbox' ;
@@ -7,10 +6,66 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useRouter} from 'expo-router' ;
 import { Ionicons } from '@expo/vector-icons';
+import React, {useState,useEffect} from 'react';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+
 // import { Input,Button,ButtonSpinner,ButtonText } from '@gluestack-ui/themed';
 
 const  Login=({ modalVisible, closeModal,data})=> {
-  // console.log(modalVisible);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    pushtoken: '',
+  });
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    }),
+  });
+  
+  
+  async function registerForPushNotificationsAsync() {
+    let token;
+    Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: 'teal',
+    });
+  
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      token = await Notifications.getExpoPushTokenAsync({
+        projectId: Constants.expoConfig.extra.eas.projectId,
+      });
+      // console.log(token.data);
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+    // console.log(token.data);
+    return token.data;
+  }
+  
+    const [expoPushToken, setExpoPushToken] = useState('');
+  
+    useEffect(() => {
+      registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+      registerForPushNotificationsAsync().then(token => setFormData({...formData, pushtoken: token}));
+    }, []);
+
   const [loading, setLoading] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
     const navigation = useRouter();
@@ -30,29 +85,22 @@ const  Login=({ modalVisible, closeModal,data})=> {
             setPasswordVisibility1(!passwordVisibility1);
           }
         }
-          const [formData, setFormData] = useState({
-            email: '',
-            password: '',
-          });
+          
         
           const getusercal = async()=>{
             const str_age = await AsyncStorage.getItem('age');
             const age = parseInt(str_age);
             const gender = AsyncStorage.getItem('gender');
             const user_cal = await axios.get(`https://backend-updated-w7a2.onrender.com/api/user/req-calories/${age}/${gender}`);
-            // return user_cal.data
-            // console.log(age);
-            // console.log(user_cal.data.data.max_calories);
-            await AsyncStorage.setItem('min_cal',user_cal.data.data.min_calories.toString()); 
-            await AsyncStorage.setItem('max_cal',user_cal.data.data.max_calories.toString()); 
-            await AsyncStorage.setItem('avg_cal',(((parseInt(user_cal.data.data.max_calories)+parseInt(user_cal.data.data.min_calories))/2)).toString());
-          
+            await AsyncStorage.setItem('min_cal',age? user_cal.data.data.min_calories.toString(): '0'); 
+            await AsyncStorage.setItem('max_cal',age? user_cal.data.data.max_calories.toString():  '0'); 
+            await AsyncStorage.setItem('avg_cal',age? (((parseInt(user_cal.data.data.max_calories)+parseInt(user_cal.data.data.min_calories))/2)).toString(): '0');
           }
 
           const handleSubmit = async () => {
             try {
             setLoading(true);
-            if (!formData.email || !formData.password) {
+            if (!formData.email || !formData.password || !formData.pushtoken) {
               ToastAndroid.show('Please enter your registered Email and Password', ToastAndroid.SHORT);
               return;
             }
@@ -66,13 +114,13 @@ const  Login=({ modalVisible, closeModal,data})=> {
                 }
               );
               setLoading(true);
-              console.log(response.data);
-        
+              // console.log(response.data);
+                
               if (response.status === 400) {
                 ToastAndroid.show('Fill all details', ToastAndroid.SHORT);
               } else if (response.status === 200) {
                 // console.log('entered successfully');
-                const { message, name, accessToken,age,height,weight,gender } = response.data;
+                const { message, name, accessToken,age,height,weight,gender,pstatus,astatus } = response.data;
                 await AsyncStorage.setItem('age',age);
                 await AsyncStorage.setItem('height',height);
                 await AsyncStorage.setItem('weight',weight);
@@ -81,15 +129,18 @@ const  Login=({ modalVisible, closeModal,data})=> {
                 await AsyncStorage.setItem('email', formData.email);
                 await AsyncStorage.setItem('hydration','0');
                 await AsyncStorage.setItem('gender',gender);
-                
+                await AsyncStorage.setItem('pstatus',pstatus.toString());
+                await AsyncStorage.setItem('astatus',astatus.toString());
+                // await AsyncStorage.setItem('pushtoken',)
                 await getusercal();
-                const heightInMeters = height * 0.3048; // 1 foot = 0.3048 meters
-
+                const heightInMeters = parseFloat(height) * 0.3048; // 1 foot = 0.3048 meters
+                const bmi = (parseFloat(weight)) / (parseFloat(heightInMeters) * parseFloat(heightInMeters));
+                // console.log(bmi);
+                await AsyncStorage.setItem('bmi',bmi.toString());
         // Calculate BMI
-                if (height.length > 0) {
-                  const bmi = (parseFloat(weight)) / (parseFloat(heightInMeters) * parseFloat(heightInMeters));
-                  await AsyncStorage.setItem('bmi',bmi.toString());
-                }
+                // if (height >= 0) {
+                  
+                // }
                 ToastAndroid.show(`${message}. Welcome, ${name}!`, ToastAndroid.SHORT);
                 setTimeout(() => {
                   // Navigate to the home screen after 4 seconds

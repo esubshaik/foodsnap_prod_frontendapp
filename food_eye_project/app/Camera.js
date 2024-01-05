@@ -212,14 +212,14 @@ export default function ScanFood() {
 
     }
     catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
   const sendAllDataToBackend = async (items) => {
     try {
       const promises = await items.map(getnutriinfo);
       await Promise.all(promises);
-      console.log('All requests completed successfully.');
+      // console.log('All requests completed successfully.');
     } catch (error) {
       // console.error('Error sending data:', error);
     }
@@ -236,7 +236,7 @@ export default function ScanFood() {
     setclassresult([]);
     await sendAllDataToBackend(fitems);
     setclassresult(prevItems => [...prevItems,""])
-    console.log(classresult);
+    // console.log(classresult);
 
     openModal();
     

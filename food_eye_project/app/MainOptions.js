@@ -4,6 +4,12 @@ import { t } from 'react-native-tailwindcss';
 import {useRouter} from 'expo-router' ;
 import Login from './Login';
 import SignUp from './SignUp';
+import {Switch } from 'react-native';
+import { Feather } from '@expo/vector-icons';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+
 
 function MainOptions() {
   const navigation = useRouter() ;
@@ -31,6 +37,7 @@ const openSignupModal = () => {
 };
 
 const closeSignupModal = () => {
+  setCollapsed(false);
   setSignupVisible(false);
   
 };
@@ -43,6 +50,17 @@ useEffect(() => {
   BackHandler.addEventListener('hardwareBackPress', backAction);
   return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
 }, []);
+
+
+
+
+
+  const [isEnabled, setIsEnabled] = useState(false);
+
+const toggleSwitch = () => {
+  setIsEnabled((previousState) => !previousState);
+};
+const [isCollapsed, setCollapsed] = useState(false);
 
 
   return (
@@ -76,6 +94,8 @@ useEffect(() => {
       <SignUp modalVisible={SignupVisible}
       closeModal={closeSignupModal}
       data = {val}
+      isCollapsed = {isCollapsed}
+      setCollapsed = {setCollapsed}
       />
 
   <View style={[t.wFull, t.flexCol,t.relative,t.bottom0]}>
@@ -92,7 +112,6 @@ useEffect(() => {
         padding: 10,
         width:'100%',
         
-         // Add some margin for spacing between buttons
       }}
     >
       <Text

@@ -3,7 +3,7 @@ import { View, Text, Button, Image,StyleSheet,Dimensions,ActivityIndicator} from
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import {t} from 'react-native-tailwindcss' ;
 
-const DietRecommend = ({fetchImages, currentImages, foodNames,loading}) => {
+const DietRecommend = ({fetchImages, recommendInfo, loading}) => {
 
   const [temp,settemp] = useState('null');
   var findex = 0 ;
@@ -42,19 +42,36 @@ const dummytext = "Chapati contains whole wheat flour, water, and salt, forming 
        
 
        <ScrollView contentContainerStyle={{ flexGrow: 1 , minHeight: '100%', paddingBottom:30 }}>
-        <View style={[t.flex,t.flexCol,t.selfCenter]}>
+        <View style={[t.flex,t.flexRow,t.selfCenter]}>
        <Text style={[t.textCenter, t.textGray700]}>The suggestions are completely based on BMI, </Text>
-       <Text style={[t.textBlue400,t.textCenter,t.mT1,t.fontSemibold]}>Tap to learn more!</Text>
+       <Text style={[t.textBlue400,t.textCenter,t.fontSemibold]}>Tap to learn more!</Text>
        </View>
         <View>
         {
-          currentImages.map((img,index)=>(
+          recommendInfo.currentImages.map((img,index)=>(
             <TouchableOpacity style={[t.w30]} key={index} >
             <View style={[t.flex, t.flexRow, t.bgOrange100, t.roundedLg,t.m2,t.border2,t.borderOrange200,t.shadowLg]}>
              <Image source={{ uri: `data:image/jpeg;base64,${img}` }} style={styles.image} />
-             <View style={[t.justifyCenter,t.mX6,t.flex1]}>
-             <Text style={[t.fontSemibold,t.textLg, t.mB2]}>{foodNames[index]}</Text>
-             <Text>{dummytext}</Text>
+             <View style={[t.justifyCenter,t.mX2,t.flex1]}>
+             <Text style={[t.fontSemibold,t.textLg, t.mY2]}>{recommendInfo.foodNames[index]}</Text>
+             <Text>{recommendInfo.descriptions[index]}.</Text>
+             <View style={[t.flex, t.flexRow,t.mT2, t.justifyBetween]}>
+              <View style={[t.flexCol,t.itemsCenter]}>
+              <Text style={[t.textXs,t.fontSemibold,t.textOrange800]}>PROTEIN</Text>
+              <Text style={[t.textSm,t.fontSemibold,t.textGreen700,t.mT1]}>{recommendInfo.nutritionInfo[index]['PROTEIN(G)']}%</Text>
+              </View>
+              <View style={[t.flexCol,t.itemsCenter]}>
+              <Text style={[t.textXs,t.fontSemibold,t.textOrange800]}>FATS</Text>
+              <Text style={[t.textSm,t.fontSemibold,t.textGreen700,t.mT1]}>{recommendInfo.nutritionInfo[index]['FAT(G)']}%</Text>
+              
+              </View>
+              <View style={[t.flexCol,t.itemsCenter]}>
+              <Text style={[t.textXs,t.fontSemibold,t.textOrange800]}>CARBOHYDRATES</Text>
+              <Text style={[t.textSm,t.fontSemibold,t.textGreen700,t.mT1]}>{recommendInfo.nutritionInfo[index]['CARBOHYDRATES(G)']}%</Text>
+              </View>
+             </View>
+            
+             
              </View>
              </View>
              </TouchableOpacity>
@@ -84,8 +101,8 @@ const styles = StyleSheet.create({
  
   image: {
 
-    width:120,
-    height:120,
+    width:140,
+    height:140,
     borderRadius: 10,
     margin:8,
   },

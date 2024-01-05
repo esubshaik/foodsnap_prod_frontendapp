@@ -11,9 +11,8 @@ import { useRouter } from 'expo-router';
 import Collapsible from 'react-native-collapsible';
 
 
-const SignUp=({ modalVisible, closeModal,data})=> {
-  const [isCollapsed, setCollapsed] = useState(false);
-
+const SignUp=({ modalVisible, closeModal,data,isCollapsed,setCollapsed})=> {
+  
   const toggleCollapsible = () => {
     setCollapsed(!isCollapsed);
   };
@@ -34,6 +33,9 @@ const SignUp=({ modalVisible, closeModal,data})=> {
       height: '0',
       weight : '0',
       gender : '',
+      pushtoken: '',
+      pstatus : 1,
+      astatus : 1,
     });
     
     const requestOTP = async()=>{
@@ -48,7 +50,7 @@ const SignUp=({ modalVisible, closeModal,data})=> {
          emailData,{}
         );
   
-        console.log(response.data);
+        // console.log(response.data);
         if (response.status === 200) {
           const { message,OTP} = response.data ;
           ToastAndroid.show(`${message}`, ToastAndroid.SHORT);
@@ -122,7 +124,7 @@ const SignUp=({ modalVisible, closeModal,data})=> {
                 }
               );
         
-              console.log(response.data);
+              // console.log(response.data);
         
               if (response.status === 200) {
                 const { message, name, accessToken } = response.data;
@@ -235,7 +237,9 @@ const SignUp=({ modalVisible, closeModal,data})=> {
         fontSize: 18, // Adjust the font size as needed
       }}
     >
-      Send OTP
+       {
+        loading ? "Please wait" : "Send OTP"
+      }
     </Text>
   </TouchableOpacity>
 </View>
