@@ -9,7 +9,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import Collapsible from 'react-native-collapsible';
-
+import HOST_URL from './config';
 
 const SignUp=({ modalVisible, closeModal,data,isCollapsed,setCollapsed})=> {
   
@@ -46,7 +46,7 @@ const SignUp=({ modalVisible, closeModal,data,isCollapsed,setCollapsed})=> {
       // console.log(emailData);
       try{
         const response = await axios.post(     
-          'https://backend-updated-w7a2.onrender.com/api/user/send-otp',
+          HOST_URL+'/api/user/send-otp',
          emailData,{}
         );
   
@@ -115,7 +115,7 @@ const SignUp=({ modalVisible, closeModal,data,isCollapsed,setCollapsed})=> {
               // setLoading(true);
               const response = await axios.post(
                 
-                'https://backend-updated-w7a2.onrender.com/api/user/register',
+                HOST_URL+'/api/user/register',
                 formData,
                 {
                   headers: {

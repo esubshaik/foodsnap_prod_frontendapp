@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Foundation } from '@expo/vector-icons';
+import HOST_URL from './config';
 
 const FillProfile = ({ closeModal, modalVisible, reload }) => {
 
@@ -19,7 +20,7 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
     const str_age = await AsyncStorage.getItem('age');
     const age = parseInt(str_age);
     const gender = AsyncStorage.getItem('gender');
-    const user_cal = await axios.get(`https://backend-updated-w7a2.onrender.com/api/user/req-calories/${age}/${gender}`);
+    const user_cal = await axios.get(HOST_URL+`/api/user/req-calories/${age}/${gender}`);
     await AsyncStorage.setItem('min_cal', user_cal.data.data.min_calories.toString());
     await AsyncStorage.setItem('max_cal', user_cal.data.data.max_calories.toString());
     await AsyncStorage.setItem('avg_cal', (((parseInt(user_cal.data.data.max_calories) + parseInt(user_cal.data.data.min_calories)) / 2)).toString());
@@ -35,7 +36,7 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
 
       const response = await axios.get(
 
-        'https://backend-updated-w7a2.onrender.com/api/user/get-user-profile',
+        HOST_URL+'/api/user/get-user-profile',
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -104,7 +105,7 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
       const token = await AsyncStorage.getItem('token');
       const response = await axios.put(
 
-        'https://backend-updated-w7a2.onrender.com/api/user/update-profile',
+        HOST_URL+'/api/user/update-profile',
         formData,
         {
           headers: {

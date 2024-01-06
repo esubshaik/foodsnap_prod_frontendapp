@@ -13,6 +13,7 @@ import * as FileSystem from 'expo-file-system';
 import RenderBoundingBoxes from "./DrawBoundings";
 import { useRouter } from "expo-router";
 import ModalComponent from './ModalClass';
+import HOST_URL from "./config";
 
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 const closeButtonSize = Math.floor(WINDOW_HEIGHT * 0.032);
@@ -140,7 +141,7 @@ export default function ScanFood() {
         name: 'ourimage.jpg',
       });
 
-      const response = await fetch('https://backend-updated-w7a2.onrender.com/api/user/detect-my-food', {
+      const response = await fetch(HOST_URL+'/api/user/detect-my-food', {
         method: 'POST',
         body: formData,
         headers: {
@@ -195,7 +196,7 @@ export default function ScanFood() {
     };
     try {
       await fetch(
-        'https://backend-updated-w7a2.onrender.com/api/user/analyze-food', requestOptions)
+        HOST_URL+'/api/user/analyze-food', requestOptions)
         .then(response => {
           response.json()
             .then(data => {

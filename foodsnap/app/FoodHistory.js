@@ -4,7 +4,7 @@ import { format, endOfMonth } from 'date-fns';
 import {t} from 'react-native-tailwindcss' ;
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
-
+import HOST_URL from './config';
 const FoodHistory = ({foodlabels,dates,ids,reloadpage}) => {
   // const foodnames = Array.from(foodlabels).reverse() ;
   const foodnames = foodlabels.slice().reverse();
@@ -19,7 +19,7 @@ const FoodHistory = ({foodlabels,dates,ids,reloadpage}) => {
           };
           try {
             await fetch(
-              'https://backend-updated-w7a2.onrender.com/api/user/delete-nutridata', requestOptions)
+              HOST_URL+'/api/user/delete-nutridata', requestOptions)
               .then(response => {
                 response.json()
                   .then(data => {

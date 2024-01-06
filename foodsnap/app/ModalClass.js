@@ -27,7 +27,6 @@ const ModalComponent = ({ modalVisible, closeModal, modalData, foodname, reload 
       <View style={{ alignItems: 'center', justifyContent: 'center', height:'100%' ,backgroundColor:'#F4F4F4'}}>
         <View style={{
            backgroundColor:'#F4F4F4', width: '94%', height: '100%', marginTop: '0%',borderRadius:10,borderColor:'white',
-           
         }}>
           
  <ScrollView>

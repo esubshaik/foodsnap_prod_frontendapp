@@ -11,6 +11,8 @@ import { Feather } from '@expo/vector-icons';
 import React, { useCallback } from 'react';
 
 
+import HOST_URL from "./config";
+
 export default function TabsLayout() {
   const [mainTransporter, setMainTransporter] = useState({
     labels: [],
@@ -23,6 +25,7 @@ export default function TabsLayout() {
     days: [],
     ids: [],
   });
+  const [sploading,setsploading] = useState(false);
 
   const [view, setview] = useState(1);
   const getPresenceArray = (timestamps) => {
@@ -43,6 +46,7 @@ export default function TabsLayout() {
 
 
   const fetchNutri = async () => {
+    setsploading(true);
     const token = await AsyncStorage.getItem('token');
     const requestOptions = {
       method: 'GET',
@@ -57,7 +61,7 @@ export default function TabsLayout() {
 
       await hydraFetch();
       await fetch(
-        'https://backend-updated-w7a2.onrender.com/api/user/get-nutridata', requestOptions)
+        HOST_URL+'/api/user/get-nutridata', requestOptions)
         .then(response => {
           response.json()
             .then(data => {
@@ -111,6 +115,7 @@ export default function TabsLayout() {
         ...prevState,
         username: user,
       }));
+      setsploading(false);
     }
   }
   const mhydra = 3700;
@@ -136,7 +141,7 @@ export default function TabsLayout() {
     };
     try {
       await fetch(
-        'https://backend-updated-w7a2.onrender.com/api/user/get-hydrate', requestOptions)
+        HOST_URL+'/api/user/get-hydrate', requestOptions)
         .then(response => {
           response.json()
             .then(data => {
@@ -194,7 +199,7 @@ export default function TabsLayout() {
     };
     try {
       await fetch(
-        'https://backend-updated-w7a2.onrender.com/api/user/store-hydrate', requestOptions)
+        HOST_URL+'/api/user/store-hydrate', requestOptions)
         .then(response => {
           // console.log(response)
           response.json()
@@ -303,7 +308,7 @@ export default function TabsLayout() {
       };
       try {
         await fetch(
-          'https://backend-updated-w7a2.onrender.com/api/user/get_recommendations', requestOptions)
+          HOST_URL+'/api/user/get_recommendations', requestOptions)
           .then(response => {
             response.json()
               .then(data => {
@@ -344,11 +349,13 @@ export default function TabsLayout() {
       BackHandler.exitApp();
       return true;
     };
+    
     fetchNutri();
+    fetchImages();
     BackHandler.addEventListener('hardwareBackPress', backAction);
     return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
 
-    // fetchImages();
+    // 
   }, []);
 
 
@@ -367,11 +374,12 @@ export default function TabsLayout() {
     }
   };
 
+
   return (
     <View style={[t.wFull, t.flex, t.flexCol, t.hFull, t.bg = ['#F5F5F4']]}>
       <View style={[t.flex1]}>
         {view == 1 ? (
-          <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} />
+          <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} sploading={sploading} />
         ) :
           view == 4 ?
             (
@@ -388,6 +396,7 @@ export default function TabsLayout() {
 
               ) : null
         }
+        
         {/* <View>
       {renderComponent(view)}
       </View>

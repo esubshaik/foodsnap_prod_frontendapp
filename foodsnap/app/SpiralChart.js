@@ -1,17 +1,20 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text , ActivityIndicator} from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import { ProgressChart, BarChart } from 'react-native-chart-kit';
 import { useState,useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ProgressChartGrid = ({mynutridata,hydrapercent}) => {
+const ProgressChartGrid = ({mynutridata,hydrapercent,sploading}) => {
 
 const reqhydra = 100-hydrapercent ;
 
   return (
     <View style={{backgroundColor:'#F0FCF7',marginLeft: 16,marginRight:16,marginBottom:10,marginTop:14,borderRadius:15,flexDirection:'row',height:'fit',shadowColor: '#05161A',shadowOpacity: 0.4,
     shadowRadius: 4,elevation: 5}}>
+      {
+        sploading? <Text style={[t.mY4,t.textCenter, t.wFull]}> <ActivityIndicator size="large" color='#294D61'/> </Text> :
+        <View style={{flexDirection:'row'}}>
     <View style={[t.flex, t.flexCol]}>
       <View style={[t.flex, t.flexRow]}>
         <View style={[t.flex, t.flexCol]}>
@@ -109,6 +112,9 @@ const reqhydra = 100-hydrapercent ;
       </View>
     </View>
     </View>
+            </View>
+      }
+      
     </View>
   );
 };

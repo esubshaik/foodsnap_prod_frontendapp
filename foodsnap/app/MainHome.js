@@ -16,11 +16,12 @@ import axios from 'axios';
 import BarComponent from './BarChart';
 import FillProfile from './FillProfile';
 import FoodHistory from './FoodHistory';
+import HOST_URL from './config';
 // import { AntDesign } from '@expo/vector-icons';
 // import { MaterialIcons } from '@expo/vector-icons';
 
 
-const MainHome = ({fetchNutri,formdata,calculateHydra}) => {
+const MainHome = ({fetchNutri,formdata,calculateHydra, sploading}) => {
   // const screenWidth = Dimensions.get("window").width;
   // console.log(formdata);
   const navigation = useRouter();
@@ -63,7 +64,7 @@ const MainHome = ({fetchNutri,formdata,calculateHydra}) => {
     };
     try {
       await fetch(
-        'https://backend-updated-w7a2.onrender.com/api/user/analyze-food', requestOptions)
+        HOST_URL+'/api/user/analyze-food', requestOptions)
         .then(response => {
           response.json()
             .then(data => {
@@ -299,7 +300,7 @@ const MainHome = ({fetchNutri,formdata,calculateHydra}) => {
 
       <View style={[t.mB32]}>
         <DateNavigator />
-        <ProgressChartGrid mynutridata={formdata.mynutridata} hydrapercent={formdata.hydra} />
+        <ProgressChartGrid mynutridata={formdata.mynutridata} hydrapercent={formdata.hydra} sploading={sploading} />
         <View style={{
           backgroundColor: 'white', marginLeft: 16, marginRight: 0, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'white', shadowOpacity: 0.4,
           shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
@@ -349,7 +350,11 @@ const MainHome = ({fetchNutri,formdata,calculateHydra}) => {
           backgroundColor: '#294D61', marginLeft: 16,marginRight:16,marginBottom:14,marginTop:10, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'black', shadowOpacity: 0.9,
           shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
         }}>
-          <UserProgress presentarr={formdata.daysarr} />
+          {
+            sploading ? <Text style={[t.mY4,t.textCenter, t.wFull]}> <ActivityIndicator size="large" color='white'/> </Text> : 
+            <UserProgress presentarr={formdata.daysarr} />
+          }
+          
         </View>
         <ModalComponent
           modalVisible={modalVisible}

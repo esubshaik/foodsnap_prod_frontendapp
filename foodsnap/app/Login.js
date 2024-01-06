@@ -10,6 +10,7 @@ import React, {useState,useEffect} from 'react';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
+import HOST_URL from './config';
 
 // import { Input,Button,ButtonSpinner,ButtonText } from '@gluestack-ui/themed';
 
@@ -105,7 +106,7 @@ const  Login=({ modalVisible, closeModal,data})=> {
               return;
             }
               const response = await axios.post(
-                'https://backend-updated-w7a2.onrender.com/api/user/login',
+                HOST_URL+'/api/user/login',
                 formData,
                 {
                   headers: {

@@ -16,9 +16,12 @@ const PieChartExample = ({ data,foodname }) => {
   const nutrientData = data?.data;
 
   return (
-    <View style={{ width:'90%'}}>
-      <View style={[t.m4]}> 
-      <Text style={[t.fontSemibold,t.textBase,t.mL8,t.textTeal800]}>Nutrients Per 100 Grams of {foodname}</Text>
+    <View style={{ width:'100%'}}>
+      <View style={[t.m0]}> 
+      <View style={[t.bgTeal800,t.p1,t.textCenter,t.mB6]}>
+      <Text style={[t.textCenter,t.fontSemibold,t.textBase,t.mB2,t.textWhite]}>📌 Selected Food: {foodname}</Text>
+      </View>
+      <Text style={[t.fontSemibold,t.textBase,t.mL8,t.textTeal800]}>📊 Nutrient Breakdown (per 100g)</Text>
       <PieChart 
   data={
     nutrientData

@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import HOST_URL from './config';
 
 export default function MyNotifications() {
 
@@ -42,7 +43,7 @@ export default function MyNotifications() {
   }
   useEffect(()=>{
     getstatus();
-  },[])
+  },[]);
   
   const toggleSwitch = (index) => {
     setstatuses(prevStatuses => {
@@ -58,7 +59,7 @@ export default function MyNotifications() {
       setLoading(true);
       const token = await AsyncStorage.getItem('token');
       const response = await axios.put(
-        'https://backend-updated-w7a2.onrender.com/api/user/update-status',
+        HOST_URL+'/api/user/update-status',
         {
           pstatus : statuses[0],
           astatus : statuses[1]
@@ -85,11 +86,11 @@ export default function MyNotifications() {
     <View> 
     <View style={[t.h18, t.shadowLg, t.bgWhite, t.borderB2, t.borderGray300,t.pB2]}>
       <View style={[t.flex, t.flexRow,t.m1, t.textCenter,t.justifyStart, t.wFull]}>
-        <View style={[t.mT4,t.mL4,t.flexRow]}>
+        <View style={[t.mT4,t.mL4,t.flexRow,t.itemsCenter]}>
           <TouchableOpacity onPress={handleBack}>
-            <Feather name="arrow-left" size={26} color="black" style={[t.bgBlue200, t.p1,t.roundedFull]} />
+            <Feather name="arrow-left" size={26} color="black" style={[t.bgBlue100, t.p1,t.roundedFull]} />
           </TouchableOpacity>
-          <Text style={[t.fontBold, t.text2xl, t.textBlack, t.mL3,t.mT2]}>Notifications</Text>
+          <Text style={[t.fontBold, t.text2xl, t.textBlack, t.mL3,]}>Notifications</Text>
         </View>
       </View>
     </View>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet,Button, ToastAndroid, ProgressBarAndroid } from 'react-native';
 import {t} from 'react-native-tailwindcss' ;
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import HOST_URL from "./config";
 
 const CounterApp = ({data,fooditem}) => {
   const [counter, setCounter] = useState(0);
@@ -23,7 +23,7 @@ const CounterApp = ({data,fooditem}) => {
     try { 
       
         await fetch( 
-            'https://backend-updated-w7a2.onrender.com/api/user/store-nutridata', requestOptions) 
+            HOST_URL+'/api/user/store-nutridata', requestOptions) 
             .then(response => { 
               // console.log(response)
                 response.json() 
