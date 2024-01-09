@@ -17,11 +17,13 @@ import BarComponent from './BarChart';
 import FillProfile from './FillProfile';
 import FoodHistory from './FoodHistory';
 import HOST_URL from './config';
+import NotificationModal from './Notifications';
+import CustomToast from './CustomToast';
 // import { AntDesign } from '@expo/vector-icons';
 // import { MaterialIcons } from '@expo/vector-icons';
 
 
-const MainHome = ({fetchNutri,formdata,calculateHydra, sploading}) => {
+const MainHome = ({fetchNutri,formdata,calculateHydra, sploading,toastVisible,closeToast,showToast}) => {
   // const screenWidth = Dimensions.get("window").width;
   // console.log(formdata);
   const navigation = useRouter();
@@ -212,46 +214,76 @@ const MainHome = ({fetchNutri,formdata,calculateHydra, sploading}) => {
     setpstatus(false);
   }
   const localImage = require('./assets/defaultuser.png');
+  const [nm,setnm] = useState(false);
+  const openNotification=()=>{
+    setnm(true);
+  }
+  const closeNotification=()=>{
+    setnm(false);
+  }
+
+  // console.log(formdata.allfoodlabels)
+  // const [text,setText]  = useState('');
+  // useEffect(() => {
+  //   const title =   `Hi, ${formdata.username} !` ;
+  //   let i = 0;
+  //   const type = () => {
+  //     if (i < title.length) {
+  //       setText((prevText) => prevText + title[i]);
+  //       i++;
+  //       setTimeout(type, 1);
+  //     }
+
+  //   };
+
+  //   type();
+  // }, []);
 
   return (
     <View>
-      <View style={[t.h17, t.shadowLg, t.bgWhite,t.borderB2, t.borderGray300]}>
-        <View style={[t.flex, t.flexRow,t.m1,t.justifyBetween]}>
+      <View style={[t.h17, t.shadowLg, t.bgWhite,t.borderB2,t.roundedTSm,t.borderT2, t.borderGray300]}>
+        <View style={[t.flex, t.flexRow,t.justifyBetween]}>
       
-          <View style={[t.flex, t.flexRow]}>
+          <View style={[t.flex, t.flexRow,t.mL2]}>
           <Image
               // source={require('./assets/defaultuser.png')}
               source = {dp ? {uri: dp} : require('./assets/defaultuser.png')}
-              style={{ width: 45, height: 45 ,margin:8, borderRadius:40, borderWidth:1, borderColor:'#294D61'}} // Adjust the width
+              style={{ width: 50, height: 50 ,margin:8, borderRadius:40, borderWidth:2, borderColor:'#294d61'}} // Adjust the width
               resizeMode="contain"
             />
             
-            <View style={[t.flex, t.flexCol, t.w40,t.h45,t.selfCenter,t.textGray200]}>
+            <View style={[t.flex, t.flexCol,t.h50,t.selfCenter,t.textGray200]}>
             <View style={[t.flex, t.flexRow]}>
             <Image
             
-              source={require('./assets/Levels/bronze.png')}
+              source={require('./assets/Levels/fs-coin.png')}
               style={{ width:15, height: 15,marginRight:4}} // Adjust the width
               resizeMode="contain"
             />
-            <Text style={[t.fontBold,t.textSm,t.textGray800]}>Bronze III</Text>
+            <Text style={[t.fontSemibold,t.h14,t.textGray800]}>{formdata.allfoodlabels.length*5} points</Text>
             </View>
             <View style={[t.h14,t.mT1,t.flex, t.flexRow]}>
-            <Text style={[t.fontBold,t.textSm,t.textGray800]}>👋 Welcome </Text>
-            <Text style={[t.fontBold,t.textSm,t.textGray600]}>{formdata.username} !</Text>
+            <Text style={[t.fontBold,t.textGray900]}>👋</Text>
+            <Text style={[t.fontBold,t.textGray900]}>{`Hi, ${formdata.username} !`}</Text>
             </View>
           </View>
           </View>
+          {
+            <NotificationModal modalVisible={nm} closeModal={closeNotification} />
+          }
+           {toastVisible ? (
+        <CustomToast message="success" duration={1500} onClose={closeToast} />
+      ):null}
       
-          <View style={[t.m4]}>
-            <TouchableOpacity onPress={()=>navigation.push('/Notifications')}>
-          <Ionicons name="md-notifications-outline" size={25} color="black" style={[t.roundedFull]} />
+          <View style={[t.m5]}>
+            <TouchableOpacity onPress={openNotification}>
+            <Ionicons name="settings-sharp" size={25} color="black" />
           </TouchableOpacity>
           </View>
           
-          <View style={[t.m4]}>
+          {/* <View style={[t.m4]}>
           <SimpleLineIcons name="options-vertical" size={24} color="black" />
-          </View>
+          </View> */}
           
         </View>
 
@@ -300,7 +332,7 @@ const MainHome = ({fetchNutri,formdata,calculateHydra, sploading}) => {
 
       <View style={[t.mB32]}>
         <DateNavigator />
-        <ProgressChartGrid mynutridata={formdata.mynutridata} hydrapercent={formdata.hydra} sploading={sploading} />
+        <ProgressChartGrid mynutridata={formdata.mynutridata} hydrapercent={formdata.hydra} sploading={sploading}/>
         <View style={{
           backgroundColor: 'white', marginLeft: 16, marginRight: 0, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'white', shadowOpacity: 0.4,
           shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
@@ -312,7 +344,9 @@ const MainHome = ({fetchNutri,formdata,calculateHydra, sploading}) => {
             elevation: 2,
             padding: 1, marginTop: 4, marginBottom: 4, borderRadius: 15
           }}>
-            <TouchableOpacity onPress={() => ToastAndroid.show("Challenge is not yet completed", ToastAndroid.SHORT)} style={[t.hFull, t.p2, t.bgRed200, t.roundedLg, t.wFull, t.flex, t.flexRow, t.justifyBetween]}>
+            <TouchableOpacity onPress={showToast
+              // () => ToastAndroid.show("Challenge is not yet completed", ToastAndroid.SHORT)
+              } style={[t.hFull, t.p2, t.bgRed200, t.roundedLg, t.wFull, t.flex, t.flexRow, t.justifyBetween]}>
               <View style={[t.flex, t.flexCol, t.justifyBetween]}>
                 <Text style={[t.fontSemibold, t.m2, t.textLg, t.textRed900]}>Challenges</Text>
                 <Text style={[t.fontSemibold, t.m2, t.textXl, t.textRed900]}>WinterHarvest Eats</Text>

@@ -3,10 +3,25 @@ import { View, Text, Modal, Button,ScrollView,TouchableOpacity } from 'react-nat
 import { t } from 'react-native-tailwindcss';
 import PieChartExample from './PieChart';
 import CounterApp from './Counter';
+import CustomToast from './CustomToast';
 
-const ModalComponent = ({ modalVisible, closeModal, modalData, foodname, reload }) => {
+
+
+
+const ModalComponent = ({ modalVisible, closeModal, modalData, foodname }) => {
   // console.log(modalData)
   // console.log(foodname)
+  const [toastVisible,setToastVisible] = useState(false);
+
+  const showToast = () => {
+    setToastVisible(true);
+  };
+
+  const closeToast = () => {
+    setToastVisible(false);
+  };
+
+
   function cleanArray(inputArray) {
     const arrayWithoutEmpty = inputArray.filter(item => item !== "" && item != "[]");
     const uniqueArray = Array.from(new Set(arrayWithoutEmpty));
@@ -20,26 +35,35 @@ const ModalComponent = ({ modalVisible, closeModal, modalData, foodname, reload 
   return (
     <Modal
       animationType="slide"
-      transparent={true}
+      transparent={false}
       visible={modalVisible}
       onRequestClose={closeModal}
     >
+      
+      
       <View style={{ alignItems: 'center', justifyContent: 'center', height:'100%' ,backgroundColor:'#F4F4F4'}}>
         <View style={{
            backgroundColor:'#F4F4F4', width: '94%', height: '100%', marginTop: '0%',borderRadius:10,borderColor:'white',
         }}>
           
  <ScrollView>
-  <View style={[t.flex, t.flexCol, t.selfCenter, t.mT10,t.m4,t.roundedLg]}>
-    
+
+  <View style={[t.flex,t.hFull, t.flexCol, t.selfCenter,t.roundedLg]}>
+ 
       <View style={[t.border4, t.borderWhite,{ borderRadius: 10 },t.shadowLg,t.borderTeal500]}>
-      <View style={[t.bgWhite, ]}>
+      <View style={[t.bgWhite ]}>
+      
         <PieChartExample data={modalData[index]} foodname ={foodname[index]} key={index} />
         </View>
-        <CounterApp data={modalData[index]} fooditem={foodname[index]}  />
-       
+        <View style={[t.h16]}>
+      {toastVisible ? (
+        <CustomToast message="success" duration={1500} onClose={closeToast} />
+      ):null}
+      </View>
+        <CounterApp data={modalData[index]} fooditem={foodname[index]} showToast={showToast} />
+       <View>
         {index === modalData.length - 1 ? (
-          <View style={{ width: 90, height:44,alignSelf:'center', marginBottom:20}}>
+          <View style={{ width: 90, height:44,alignSelf:'center',  marginBottom:20}}>
           <TouchableOpacity
             onPress={closeModal}
             style={{
@@ -89,13 +113,10 @@ const ModalComponent = ({ modalVisible, closeModal, modalData, foodname, reload 
           </TouchableOpacity>
           </View>
           }
+          </View>
       </View>
   </View>
 </ScrollView>
-
-
-
-
         </View>
       </View>
     </Modal>

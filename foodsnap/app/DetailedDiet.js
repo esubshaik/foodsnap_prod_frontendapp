@@ -183,10 +183,10 @@ const DetailedDiet = ({ modalVisible, closeModal, recommendInfo, findex }) => {
             </View>
             <Text style={[t.text2xl, t.mT6, t.fontSemibold,t.mB4]}>Wanna Search Food Online? </Text>
             <View style={[t.flex,t.flexRow,t.justifyBetween]}>
-            <TouchableOpacity onPress={() => openExternalUrl(`https://www.zomato.com/search?keywords=${encodeURIComponent(recommendInfo.foodNames[findex])}`)}>
+            <TouchableOpacity onPress={() => openExternalUrl(`https://www.zomato.com/search?${encodeURIComponent(recommendInfo.foodNames[findex])}`)}>
         <Text style={[t.textWhite,t.p2,t.bgRed600,t.roundedLg,t.fontSemibold,t.textCenter,t.w40]}>zomato</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => openExternalUrl(`https://www.swiggy.com/search?keywords=${encodeURIComponent(recommendInfo.foodNames[findex])}`)}>
+        <TouchableOpacity onPress={() => openExternalUrl(`zomato:///search?q=Roti`)}>
         <Text style={[t.textOrange600,t.border2,t.p2,t.borderOrange500,t.roundedLg,t.fontSemibold,t.textCenter,t.w40]}>swiggy</Text>
         </TouchableOpacity>
         </View>

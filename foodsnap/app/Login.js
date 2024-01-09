@@ -7,65 +7,66 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useRouter} from 'expo-router' ;
 import { Ionicons } from '@expo/vector-icons';
 import React, {useState,useEffect} from 'react';
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
 import HOST_URL from './config';
 
 // import { Input,Button,ButtonSpinner,ButtonText } from '@gluestack-ui/themed';
 
 const  Login=({ modalVisible, closeModal,data})=> {
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     pushtoken: '',
   });
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: true,
-      shouldSetBadge: true,
-    }),
-  });
+
+
+  // Notifications.setNotificationHandler({
+  //   handleNotification: async () => ({
+  //     shouldShowAlert: true,
+  //     shouldPlaySound: true,
+  //     shouldSetBadge: true,
+  //   }),
+  // });
   
   
-  async function registerForPushNotificationsAsync() {
-    let token;
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: 'teal',
-    });
-  
-    if (Device.isDevice) {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-      if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-      if (finalStatus !== 'granted') {
-        alert('Failed to get push token for push notification!');
-        return;
-      }
-      token = await Notifications.getExpoPushTokenAsync({
-        projectId: Constants.expoConfig.extra.eas.projectId,
-      });
-      // console.log(token.data);
-    } else {
-      alert('Must use physical device for Push Notifications');
-    }
-    // console.log(token.data);
-    return token.data;
-  }
+// async function registerForPushNotificationsAsync() {
+//   let token;
+//   Notifications.setNotificationChannelAsync('default', {
+//     name: 'default',
+//     importance: Notifications.AndroidImportance.MAX,
+//     vibrationPattern: [0, 250, 250, 250],
+//     lightColor: 'teal',
+//   });
+
+//   if (Device.isDevice) { // Corrected from Device.isDevice
+//     const { status: existingStatus } = await Notifications.getPermissionsAsync();
+//     let finalStatus = existingStatus;
+//     if (existingStatus !== 'granted') {
+//       const { status } = await Notifications.requestPermissionsAsync();
+//       finalStatus = status;
+//     }
+//     if (finalStatus !== 'granted') {
+//       alert('Failed to get push token for push notification!');
+//       return;
+//     }
+//     token = await Notifications.getExpoPushTokenAsync({
+//       projectId: Constants.expoConfig.extra.eas.projectId,
+//       // projectId: '9a74c053-51ce-4647-96c0-e3d8d923f47e'
+//     });
+//   } else {
+//     alert('Must use a physical device for Push Notifications'); // Updated the alert message
+//   }
+//   return token.data;
+// }
+
   
     const [expoPushToken, setExpoPushToken] = useState('');
   
-    useEffect(() => {
-      registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
-      registerForPushNotificationsAsync().then(token => setFormData({...formData, pushtoken: token}));
-    }, []);
+    // useEffect(() => {
+    //   // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+      
+      
+    // }, []);
 
   const [loading, setLoading] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
@@ -76,7 +77,7 @@ const  Login=({ modalVisible, closeModal,data})=> {
         const [rightIcon1, setRightIcon1] = useState('eye-off');
         const [rightIcon2, setRightIcon2] = useState('eye-off');
         const [cpassword,setcpassword] = useState("");
-      
+
         const handlePasswordVisibility1 = () => {
           if (rightIcon1 === 'eye') {
             setRightIcon1('eye-off');
@@ -92,22 +93,23 @@ const  Login=({ modalVisible, closeModal,data})=> {
             const str_age = await AsyncStorage.getItem('age');
             const age = parseInt(str_age);
             const gender = AsyncStorage.getItem('gender');
-            const user_cal = await axios.get(`https://backend-updated-w7a2.onrender.com/api/user/req-calories/${age}/${gender}`);
+            const user_cal = await axios.get(HOST_URL+`/api/user/req-calories/${age}/${gender}`);
             await AsyncStorage.setItem('min_cal',age? user_cal.data.data.min_calories.toString(): '0'); 
             await AsyncStorage.setItem('max_cal',age? user_cal.data.data.max_calories.toString():  '0'); 
             await AsyncStorage.setItem('avg_cal',age? (((parseInt(user_cal.data.data.max_calories)+parseInt(user_cal.data.data.min_calories))/2)).toString(): '0');
           }
 
           const handleSubmit = async () => {
-            try {
             setLoading(true);
-            if (!formData.email || !formData.password || !formData.pushtoken) {
-              ToastAndroid.show('Please enter your registered Email and Password', ToastAndroid.SHORT);
+            try {
+            if (!formData.email || !formData.password) {
+              ToastAndroid.show(`Please enter your registered Email and Password`, ToastAndroid.SHORT);
               return;
             }
               const response = await axios.post(
                 HOST_URL+'/api/user/login',
-                formData,
+               formData
+                ,
                 {
                   headers: {
                     'Content-type': 'application/json',
@@ -130,8 +132,8 @@ const  Login=({ modalVisible, closeModal,data})=> {
                 await AsyncStorage.setItem('email', formData.email);
                 await AsyncStorage.setItem('hydration','0');
                 await AsyncStorage.setItem('gender',gender);
-                await AsyncStorage.setItem('pstatus',pstatus.toString());
-                await AsyncStorage.setItem('astatus',astatus.toString());
+                await AsyncStorage.setItem('pstatus',pstatus? pstatus.toString():'0');
+                await AsyncStorage.setItem('astatus',astatus? astatus.toString():'0');
                 // await AsyncStorage.setItem('pushtoken',)
                 await getusercal();
                 const heightInMeters = parseFloat(height) * 0.3048; // 1 foot = 0.3048 meters
@@ -156,7 +158,8 @@ const  Login=({ modalVisible, closeModal,data})=> {
               }
             } catch (err) {
               // console.log(err);
-              ToastAndroid.show("Email Not Found, Please Register!", ToastAndroid.SHORT);
+              // ToastAndroid.show(er.message);
+              ToastAndroid.show("Please try again", ToastAndroid.SHORT);
             }
             finally{
               // <ActivityIndicator size="large" />

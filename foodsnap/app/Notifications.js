@@ -1,5 +1,5 @@
 import React, { useState, useEffect  } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Switch, ToastAndroid } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Switch, ToastAndroid, Modal } from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import { useRouter } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
@@ -7,18 +7,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import HOST_URL from './config';
 
-export default function MyNotifications() {
+export default function MyNotifications({modalVisible,closeModal}) {
 
-  const navigation = useRouter();
-  const handleBack=()=>{
-   navigation.push('/Home');
-  }
-
-  
-  const [isEnabled, setIsEnabled] = useState(false);
-
-
-
+  // const navigation = useRouter();
+  // const handleBack=()=>{
+  //  navigation.push('/Home');
+  // }
 
   // const notifyarr = [
   //   {
@@ -34,6 +28,7 @@ export default function MyNotifications() {
   //     body: "🥑 Your meal log awaits! Make every entry count on your path to a healthier and happier you. 🏋️‍♀️",
   //   },
   // ];
+
   const [statuses,setstatuses] = useState([0,0]);
   const getstatus=async()=>{
     const pstatus = await AsyncStorage.getItem('pstatus');
@@ -83,14 +78,19 @@ export default function MyNotifications() {
   }
 
   return (
-    <View> 
+     <Modal
+      animationType="fade"
+      transparent={false}
+      visible={modalVisible}
+      onRequestClose={closeModal}
+    >
     <View style={[t.h18, t.shadowLg, t.bgWhite, t.borderB2, t.borderGray300,t.pB2]}>
       <View style={[t.flex, t.flexRow,t.m1, t.textCenter,t.justifyStart, t.wFull]}>
         <View style={[t.mT4,t.mL4,t.flexRow,t.itemsCenter]}>
-          <TouchableOpacity onPress={handleBack}>
+          <TouchableOpacity onPress={closeModal}>
             <Feather name="arrow-left" size={26} color="black" style={[t.bgBlue100, t.p1,t.roundedFull]} />
           </TouchableOpacity>
-          <Text style={[t.fontBold, t.text2xl, t.textBlack, t.mL3,]}>Notifications</Text>
+          <Text style={[t.fontBold, t.text2xl, t.textBlack, t.mL3,]}>Settings</Text>
         </View>
       </View>
     </View>
@@ -98,7 +98,6 @@ export default function MyNotifications() {
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Text style={[t.textBase]}>Enable Push Notifications:</Text>
         <Switch
-
           trackColor={{ false: '#B4CCB9', true: 'skyblue' }}
           thumbColor={statuses[0] ? 'darkgreen' : '#f4f3f4'}
           ios_backgroundColor="#81b0ff"
@@ -115,15 +114,15 @@ export default function MyNotifications() {
           onValueChange={toggleSwitch}
           value={isEnabled}
         />
-      </View> */}
-      
-    </ScrollView>
-    <View style={[t.mT10,t.wFull]}>
+      </View> */} 
+      <View style={[t.mT10,t.wFull]}>
         <TouchableOpacity onPress={handleSave} style={[t.p3,t.bgGreen700,t.roundedLg,t.selfCenter]}>
           <Text style={[t.textWhite, t.textBase,t.fontSemibold,t.textCenter]}>Save Changes</Text>
         </TouchableOpacity>
       </View>
-  </View>
+    </ScrollView>
+    
+  </Modal>
   
   
   );

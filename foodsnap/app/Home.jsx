@@ -9,9 +9,62 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import DietRecommend from "./DietRecommend";
 import { Feather } from '@expo/vector-icons';
 import React, { useCallback } from 'react';
-
-
+import * as Notifications from 'expo-notifications';
 import HOST_URL from "./config";
+import {PermissionsAndroid} from 'react-native';
+
+
+async function registerForPushNotificationsAsync() {
+  try {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+
+    if (finalStatus !== 'granted') {
+      ToastAndroid.showToast('Permission to receive push notifications denied!',ToastAndroid.SHORT);
+      return;
+    }
+
+    const expoPushToken = (await Notifications.getExpoPushTokenAsync()).data;
+    // console.log('Expo Push Token:', expoPushToken);
+
+    sendPushTokenToBackend(expoPushToken);
+  } catch (error) {
+    console.error('Error getting push token:', error);
+  }
+}
+
+async function sendPushTokenToBackend(expoPushToken) {
+      const token = await AsyncStorage.getItem('token');
+      const requestOptions = {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pushtoken: expoPushToken })
+
+      };
+      try {
+        await fetch(
+          HOST_URL+'/api/user/register-push-notification', requestOptions)
+          .then(response => {
+            response.json()
+              .then(data => { 
+                console.log(data);
+              });
+          })
+      }
+      catch (error) {
+        console.error(error); 
+      }
+  };
+
+
 
 export default function TabsLayout() {
   const [mainTransporter, setMainTransporter] = useState({
@@ -55,6 +108,7 @@ export default function TabsLayout() {
         'Content-Type': 'application/json'
       },
     };
+    await randomizeArray(); 
     const user = await AsyncStorage.getItem('name');
     try {
       // await getusercal();
@@ -252,10 +306,11 @@ export default function TabsLayout() {
       }));
       alert('You have already reached 100% of your daily hydration goal! 🎉');
     }
+    showToast();
 
   };
 
-  const defaultFoodNames = [
+  const OriginalFoodNames = [
     'Chapati', 'Roti', 'Garlic Herb Chapati', 'Garlic Herb Roti', 'Rumali Roti', 'Masala Chapati',
     'Masala Roti', 'Missi Roti', 'Chicken Korma Naan', 'Garlic Coriander Naan', 'Kuloha Naan',
     'Masala Naan', 'Onion Naan', 'Peshwari Naan', 'Roghani Naan', 'Spicy Tomato Naan', 'Butter Naan',
@@ -290,6 +345,7 @@ export default function TabsLayout() {
   // const [currentImages, setCurrentImages] = useState([]);
   // const [descriptions,setdescriptions]= useState([]);
   // const [nutrition,setnutrition] = useState([]);
+  const [defaultFoodNames, setDefaultFoodnames] = useState(OriginalFoodNames.slice());
 
   const fetchImages = async () => {
     setLoading(true);
@@ -344,12 +400,26 @@ export default function TabsLayout() {
     setLoading(false);
   };
 
+  
+
+  const randomizeArray = () => {
+    // Function to generate a random number between -0.5 and 0.5
+    const randomize = () => Math.random() - 0.5;
+
+    // Use the sort method with the randomize function
+    const randomizedArray = defaultFoodNames.slice().sort(randomize);
+
+    setDefaultFoodnames(randomizedArray);
+  };
+
+
   useEffect(() => {
     const backAction = () => {
       BackHandler.exitApp();
       return true;
     };
-    
+    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+    registerForPushNotificationsAsync();
     fetchNutri();
     fetchImages();
     BackHandler.addEventListener('hardwareBackPress', backAction);
@@ -360,18 +430,28 @@ export default function TabsLayout() {
 
 
 
-  const renderComponent = (key) => {
-    switch (key) {
-      case 1:
-        return <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} />;
-      case 2:
-        return <DietRecommend fetchImages={fetchImages} currentImages={currentImages} foodNames={foodNames} loading={loading} />;
-      case 4:
-        return <UserMgmt />;
-      // Add more cases for other keys as needed
-      default:
-        return <Empty />; // Return a default component or null for unknown keys
-    }
+  // const renderComponent = (key) => {
+  //   switch (key) {
+  //     case 1:
+  //       return <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} />;
+  //     case 2:
+  //       return <DietRecommend fetchImages={fetchImages} currentImages={currentImages} foodNames={foodNames} loading={loading} />;
+  //     case 4:
+  //       return <UserMgmt />;
+  //     // Add more cases for other keys as needed
+  //     default:
+  //       return <Empty />; // Return a default component or null for unknown keys
+  //   }
+  // };
+
+  const [toastVisible,setToastVisible] = useState(false);
+
+  const showToast = () => {
+    setToastVisible(true);
+  };
+
+  const closeToast = () => {
+    setToastVisible(false);
   };
 
 
@@ -379,7 +459,7 @@ export default function TabsLayout() {
     <View style={[t.wFull, t.flex, t.flexCol, t.hFull, t.bg = ['#F5F5F4']]}>
       <View style={[t.flex1]}>
         {view == 1 ? (
-          <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} sploading={sploading} />
+          <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} sploading={sploading} toastVisible = {toastVisible} closeToast = {closeToast} showToast={showToast} />
         ) :
           view == 4 ?
             (

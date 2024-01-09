@@ -4,8 +4,11 @@ import {t} from 'react-native-tailwindcss' ;
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HOST_URL from "./config";
 
-const CounterApp = ({data,fooditem}) => {
+
+const CounterApp = ({data,fooditem,showToast}) => {
   const [counter, setCounter] = useState(0);
+
+
 
   const StoreinDB=async(record)=>{
   const nutri = record ;
@@ -31,8 +34,8 @@ const CounterApp = ({data,fooditem}) => {
                         console.log(data.message); 
                     }); 
             }) 
-            
-            ToastAndroid.show('Diet Recorded Successfully', ToastAndroid.SHORT);
+            showToast();
+            // ToastAndroid.show('Diet Recorded Successfully', ToastAndroid.SHORT);
             // openModal();
     } 
     catch (error) { 
