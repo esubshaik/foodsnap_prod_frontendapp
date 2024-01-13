@@ -241,7 +241,8 @@ const MainHome = ({fetchNutri,formdata,calculateHydra, sploading,toastVisible,cl
 
   return (
     <View>
-      <View style={[t.h17, t.shadowLg, t.bgWhite,t.borderB2,t.roundedTSm,t.borderT2, t.borderGray300]}>
+      <View style={{backgroundColor:'#F7FCFF'}}>
+      <View style={[t.h17, t.shadowLg,t.borderB2,t.roundedTSm, t.borderGray300,t.bgGray100]}>
         <View style={[t.flex, t.flexRow,t.justifyBetween]}>
       
           <View style={[t.flex, t.flexRow,t.mL2]}>
@@ -277,7 +278,8 @@ const MainHome = ({fetchNutri,formdata,calculateHydra, sploading,toastVisible,cl
       
           <View style={[t.m5]}>
             <TouchableOpacity onPress={openNotification}>
-            <Ionicons name="settings-sharp" size={25} color="black" />
+            {/* <Ionicons name="settings-sharp" size={25} color="black" /> */}
+            <SimpleLineIcons name="options-vertical" size={22} color="black" />
           </TouchableOpacity>
           </View>
           
@@ -288,9 +290,10 @@ const MainHome = ({fetchNutri,formdata,calculateHydra, sploading,toastVisible,cl
         </View>
 
       </View>
+      </View>
    
-    <ScrollView contentContainerStyle={{ backgroundColor: 'white' }}>
-      <View style={[t.p1, t.bgWhite, t.flex, t.textCenter, t.flexCol]}>
+    <ScrollView contentContainerStyle={{ backgroundColor: '#F7FCFF' }}>
+      <View style={[t.p1, t.flex, t.textCenter, t.flexCol]}>
         <View style={{ position: 'absolute', margin: '50%' }}>
           {loading ? ActivityIndicator : null}
         </View>

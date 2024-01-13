@@ -54,24 +54,25 @@ useEffect(() => {
 }, []);
 
   return (
-            <View style={imageUploaderStyles.container}>
+            <TouchableOpacity onPress={pickImage} style={imageUploaderStyles.container}>
                 {
-                    image  && <Image source={{ uri: image }} style={{ width: 120, height: 120 }} />
+                    image  && <Image source={{ uri: image }} style={{ width: 70, height: 70 }} />
                 }
-                    <View style={imageUploaderStyles.uploadBtnContainer}>
-                        <TouchableOpacity onPress={pickImage} style={imageUploaderStyles.uploadBtn} >
+                    {/* <View style={imageUploaderStyles.uploadBtnContainer}>
+                        <TouchableOpacity  style={imageUploaderStyles.uploadBtn} >
                             <AntDesign name="camera" size={20} color="black" />
                         </TouchableOpacity>
-                    </View>
-            </View>
+                    </View> */}
+
+            </TouchableOpacity>
   );
 }
 const imageUploaderStyles=StyleSheet.create({
     container:{
         elevation:2,
-        height:120,
-        width:120,
-        backgroundColor:'#efefef',
+        height:70,
+        width:70,
+        backgroundColor:"",
         position:'relative',
         borderRadius:999,
         overflow:'hidden',

@@ -36,7 +36,7 @@ const [findex,setfindex] = useState(null);
     <View style={[t.flex1]}>
       { breakLoop ?
       <View style={[t.flex1]}>
-      <View style={[t.h16, t.shadowLg, t.bgWhite, t.borderB2, t.borderGray300]}>
+      <View style={[t.h16, t.shadowLg, t.bgGray100, t.borderB2, t.borderGray300]}>
         <View style={[t.flex, t.flexRow,t.m1, t.textCenter,t.justifyStart, t.wFull]}>
       <Text style={[t.fontBold, t.text2xl, t.textBlack,t.mT4,t.mL4]}>Diet Recommendations</Text>
         </View>

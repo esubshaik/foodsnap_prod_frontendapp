@@ -93,15 +93,16 @@ const DetailedDiet = ({ modalVisible, closeModal, recommendInfo, findex }) => {
     >
       <View style={[t.flex1, t.borderB2, t.borderGray200]}>
         <View style={[t.h16, t.shadowLg, t.bgWhite, t.borderB2, t.borderGray300]}>
-          <View style={[t.flex, t.flexRow, t.m1, t.textCenter, t.justifyStart, t.wFull]}>
-            {/* <Text style={[t.fontBold, t.text2xl, t.textBlack,t.mT4,t.mL4]}></Text> */}
-            <View style={[t.mT4, t.mL2, t.flexRow, t.itemsCenter]}>
+        <View style={[t.flex, t.flexRow,t.justifyStart, t.wFull]}>
+      <View style={[t.textBlack,t.mT4,t.mL4]}>
+      <View style={[t.flexRow, t.itemsCenter]}>
               <TouchableOpacity onPress={closeModal}>
-                <Feather name="arrow-left" size={26} color="black" style={[t.bgBlue100, t.p1, t.roundedFull]} />
+                <Feather name="arrow-left" size={26} color="black" style={[t.bgBlue100, t.roundedFull]} />
               </TouchableOpacity>
-              <Text style={[t.fontBold, t.textXl, t.textBlack, t.mL2,]}>{text}</Text>
+              <Text style={[t.fontBold, t.text2xl, t.textBlack, t.mL2,]}>{text}</Text>
             </View>
-          </View>
+      </View>
+        </View>
         </View>
 
         <ScrollView contentContainerStyle={{ flexGrow: 1, minHeight: '100%', paddingBottom: 30 }}>

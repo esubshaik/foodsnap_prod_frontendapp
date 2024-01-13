@@ -122,7 +122,6 @@ const  Login=({ modalVisible, closeModal,data})=> {
               if (response.status === 400) {
                 ToastAndroid.show('Fill all details', ToastAndroid.SHORT);
               } else if (response.status === 200) {
-                // console.log('entered successfully');
                 const { message, name, accessToken,age,height,weight,gender,pstatus,astatus } = response.data;
                 await AsyncStorage.setItem('age',age);
                 await AsyncStorage.setItem('height',height);

@@ -8,8 +8,8 @@ const BarComponent = ({data,labels}) => {
     backgroundGradientFrom: '#FFFFF0',
     backgroundGradientTo: '#FFFFF0',
     color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    strokeWidth: 3, // optional, default 3
-    barPercentage: 1,
+    strokeWidth: 1, // optional, default 3
+    barPercentage: 0.4,
     decimalPlaces: 0,
     
   };
@@ -33,7 +33,7 @@ const BarComponent = ({data,labels}) => {
   yAxisLabel={''}
         fromZero
         chartConfig={chartConfig}
-        // withHorizontalLabels={false}
+        withHorizontalLabels={false}
         withInnerLines={false}
         showValuesOnTopOfBars
         // showBarTops

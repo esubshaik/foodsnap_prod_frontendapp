@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, BackHandler, ToastAndroid } from "react-native";
+import { View, Text, TouchableOpacity, Image, BackHandler, ToastAndroid,StatusBar } from "react-native";
 import { Octicons, Entypo, FontAwesome5 } from '@expo/vector-icons';
 import { t } from 'react-native-tailwindcss';
 import { useState, useEffect } from "react";
@@ -14,55 +14,55 @@ import HOST_URL from "./config";
 import {PermissionsAndroid} from 'react-native';
 
 
-async function registerForPushNotificationsAsync() {
-  try {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
+// async function registerForPushNotificationsAsync() {
+//   try {
+//     const { status: existingStatus } = await Notifications.getPermissionsAsync();
+//     let finalStatus = existingStatus;
 
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
+//     if (existingStatus !== 'granted') {
+//       const { status } = await Notifications.requestPermissionsAsync();
+//       finalStatus = status;
+//     }
 
-    if (finalStatus !== 'granted') {
-      ToastAndroid.showToast('Permission to receive push notifications denied!',ToastAndroid.SHORT);
-      return;
-    }
+//     if (finalStatus !== 'granted') {
+//       ToastAndroid.showToast('Permission to receive push notifications denied!',ToastAndroid.SHORT);
+//       return;
+//     }
 
-    const expoPushToken = (await Notifications.getExpoPushTokenAsync()).data;
-    // console.log('Expo Push Token:', expoPushToken);
+//     const expoPushToken = (await Notifications.getExpoPushTokenAsync()).data;
+//     // console.log('Expo Push Token:', expoPushToken);
 
-    sendPushTokenToBackend(expoPushToken);
-  } catch (error) {
-    console.error('Error getting push token:', error);
-  }
-}
+//     sendPushTokenToBackend(expoPushToken);
+//   } catch (error) {
+//     console.error('Error getting push token:', error);
+//   }
+// }
 
-async function sendPushTokenToBackend(expoPushToken) {
-      const token = await AsyncStorage.getItem('token');
-      const requestOptions = {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ pushtoken: expoPushToken })
+// async function sendPushTokenToBackend(expoPushToken) {
+//       const token = await AsyncStorage.getItem('token');
+//       const requestOptions = {
+//         method: 'PUT',
+//         headers: {
+//           'Authorization': `Bearer ${token}`,
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ pushtoken: expoPushToken })
 
-      };
-      try {
-        await fetch(
-          HOST_URL+'/api/user/register-push-notification', requestOptions)
-          .then(response => {
-            response.json()
-              .then(data => { 
-                console.log(data);
-              });
-          })
-      }
-      catch (error) {
-        console.error(error); 
-      }
-  };
+//       };
+//       try {
+//         await fetch(
+//           HOST_URL+'/api/user/register-push-notification', requestOptions)
+//           .then(response => {
+//             response.json()
+//               .then(data => { 
+//                 console.log(data);
+//               });
+//           })
+//       }
+//       catch (error) {
+//         console.error(error); 
+//       }
+//   };
 
 
 
@@ -418,8 +418,8 @@ export default function TabsLayout() {
       BackHandler.exitApp();
       return true;
     };
-    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-    registerForPushNotificationsAsync();
+    
+    // registerForPushNotificationsAsync();
     fetchNutri();
     fetchImages();
     BackHandler.addEventListener('hardwareBackPress', backAction);
@@ -454,9 +454,12 @@ export default function TabsLayout() {
     setToastVisible(false);
   };
 
-
   return (
-    <View style={[t.wFull, t.flex, t.flexCol, t.hFull, t.bg = ['#F5F5F4']]}>
+    <View style={[t.wFull, t.flex, t.flexCol, t.hFull, t.bg = ['#F7FCFF']]}>
+       <StatusBar
+        backgroundColor="#F7FCFF"
+        barStyle="dark-content"
+      />
       <View style={[t.flex1]}>
         {view == 1 ? (
           <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} sploading={sploading} toastVisible = {toastVisible} closeToast = {closeToast} showToast={showToast} />
