@@ -30,12 +30,9 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
 
   const fetchuserprofile = async () => {
     const token = await AsyncStorage.getItem('token');
-
     try {
       setLoadingClose(true);
-
       const response = await axios.get(
-
         HOST_URL+'/api/user/get-user-profile',
         {
           headers: {
@@ -47,6 +44,8 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
       const age = await response.data.age;
       const height = await response.data.height;
       const weight = await response.data.weight;
+      const calrange = await response.data.calrange ;
+      const location = await response.data.location;
 
       // Convert height from feet to meters
       const heightInMeters = parseFloat(height) * 0.3048;
@@ -61,9 +60,10 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
           await AsyncStorage.setItem('height', height);
           await AsyncStorage.setItem('weight', weight);
           await AsyncStorage.setItem('bmi', bmi.toString());
+          // console.log(calrange);
+          await AsyncStorage.setItem('calrange',calrange);
+          await AsyncStorage.setItem('location',location);
           await getusercal();
-          // Log BMI
-          // console.log("BMI:", bmi);
         } else {
           // console.error("Invalid BMI calculation");
         }
@@ -88,7 +88,8 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
     age: '',
     height: '',
     weight: '',
-    gender: 'male'
+    gender: 'male',
+    location:'India'
   });
   const [loading, setLoading] = useState(false);
 
@@ -184,7 +185,7 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
                     <Text style={[t.textBase, t.textWhite, t.fontBold, t.mB1]}>Age:</Text>
                     <TextInput
                       style={[t.border, t.borderWhite, t.rounded, t.pY2, t.pX4, t.textSm, t.flex, t.wFull, t.textWhite, t.fontSemibold]}
-                      placeholder="Enter your Age"
+                      placeholder="Years"
                       placeholderTextColor="white"
                       keyboardType="numeric"
                       autoCapitalize="none"
@@ -196,7 +197,7 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
                     <Text style={[t.textBase, t.textWhite, t.fontBold, t.mB1]}>Height:</Text>
                     <TextInput
                       style={[t.border, t.borderWhite, t.rounded, t.pY2, t.pX4, t.textSm, t.flex, t.wFull, t.textWhite, t.fontSemibold]}
-                      placeholder="Enter your Height in Feet"
+                      placeholder="feet"
                       placeholderTextColor="white"
                       keyboardType="numeric"
                       autoCapitalize="none"
@@ -210,11 +211,23 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
                     <View style={[t.relative, t.flex, t.wFull]}>
                       <TextInput
                         style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textSm, t.flex, t.wFull, t.pl10pr10, t.textWhite, t.fontSemibold]}
-                        placeholder="Enter your Weight in KG"
+                        placeholder="Kg"
                         keyboardType="numeric"
                         autoCapitalize="none"
                         placeholderTextColor="white"
                         onChangeText={(text) => setFormData({ ...formData, weight: text })}
+                      />
+                    </View>
+                  </View>
+                  <View style={t.mB4}>
+                    <Text style={[t.textBase, t.textWhite, t.fontBold, t.mB1]}>Location:</Text>
+                    <View style={[t.relative, t.flex, t.wFull]}>
+                      <TextInput
+                        style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textSm, t.flex, t.wFull, t.pl10pr10, t.textWhite, t.fontSemibold]}
+                        placeholder="Current location"
+                        autoCapitalize="none"
+                        placeholderTextColor="white"
+                        onChangeText={(text) => setFormData({ ...formData, location: text })}
                       />
                     </View>
                   </View>

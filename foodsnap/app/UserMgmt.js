@@ -21,24 +21,52 @@ function UserMgmt() {
   const [reqcals,setreqcals] = useState("");
   const [isFocused, setIsFocused] = useState(false);
   const [emailid,setemailid] = useState("");
-  
+  const [userdata,setuserdata] = useState(
+    {
+      name:'',
+      email:'',
+      phone:'',
+      location:'',
+      age:'',
+      height:'',
+      weight:'',
+      currpass:'',
+      newpass:'',
+      confirmpass:''
+
+    }
+  )
   const checkUserSession = async () => {
     const _age = await AsyncStorage.getItem('age');
     const _height = await AsyncStorage.getItem('height');
     const _weight = await AsyncStorage.getItem('weight');
     const _bmi = await AsyncStorage.getItem('bmi');
-    const _min = await AsyncStorage.getItem('min_cal');
-    const _max = await AsyncStorage.getItem('max_cal');
+    // const _min = await AsyncStorage.getItem('min_cal');
+    // const _max = await AsyncStorage.getItem('max_cal');
+    const calrange = await AsyncStorage.getItem('calrange');
     const mailid = await AsyncStorage.getItem('email');
+    const _location = await AsyncStorage.getItem('location');
+    const _phone = await AsyncStorage.getItem('phone');
+
+
     setage(_age);
     setheight(_height);
     setweight(_weight);
     setbmi(parseFloat(_bmi).toFixed(2));
     setemailid(mailid);
-    // console.log(_min)
-    setreqcals(_min+' - '+_max);
+    // console.log(calrange)
+    setreqcals(calrange);
     const user = await AsyncStorage.getItem('name');
     setUsername(user);
+    setuserdata({
+      name:user,
+      email:mailid,
+      phone:_phone,
+      location:_location,
+      age:_age,
+      height:_height,
+      weight:_weight
+    })
   };
 
   useEffect(() => {
@@ -69,10 +97,25 @@ function UserMgmt() {
 
     
   };
+  const [statuses,setstatuses] = useState([0,0,0,0,0]);
+
+  const getstatus=async()=>{
+    const pstatus = await AsyncStorage.getItem('pstatus');
+    const astatus = await AsyncStorage.getItem('astatus');
+    const nstatus = await AsyncStorage.getItem('nstatus');
+    const fstatus = await AsyncStorage.getItem('fstatus');
+    const ostatus = await AsyncStorage.getItem('ostatus');
+    // console.log(nstatus)
+    setstatuses([parseInt(pstatus),parseInt(astatus),parseInt(nstatus),parseInt(fstatus),parseInt(ostatus)]);
+  }
+
+  useEffect(()=>{
+    getstatus();
+  },[]);
 
   useEffect(() => {
     const backAction = () => {
-      BackHandler.exitApp(); // This will exit the app
+      BackHandler.exitApp();
       return true;
     };
 
@@ -127,7 +170,7 @@ function UserMgmt() {
       </View>
       <View style={[t.flexRow,t.itemsCenter,t.mY2]}>
       <Ionicons name="location-sharp" size={24} color="#4A4E4F" />
-      <Text style={[t.textBase,t.fontSemibold,t.textGray700,t.mL4]}>Guntur, Andhra Pradesh</Text>
+      <Text style={[t.textBase,t.fontSemibold,t.textGray700,t.mL4]}>{userdata.location}</Text>
       </View>
       <View style={[t.flexRow,t.itemsCenter,t.mY2]}>
       <MaterialCommunityIcons name="human-male-height" size={24} color="#4A4E4F" />
@@ -147,25 +190,25 @@ function UserMgmt() {
       <Text style={[t.textBase,t.fontSemibold,t.textGray700,t.mL4]}>{reqcals} Cal</Text>
       </View>
       </View>
-      <TouchableOpacity style={[t.absolute,t.justifyEnd,t.right0,t.bottom0]}><Feather name="edit" size={20} color="black" style={[t.pX4,t.pY4]}/></TouchableOpacity>
+      {/* <TouchableOpacity style={[t.absolute,t.justifyEnd,t.right0,t.bottom0]}><Feather name="edit" size={20} color="black" style={[t.pX4,t.pY4]}/></TouchableOpacity> */}
       </View>
       <View style={[t.flex, t.flexCol,t.itemsStart,t.bgWhite,t.mX2,t.mY2,t.border2,t.borderGray200,t.roundedLg    ]}>
 
-      <View style={[t.mX2,t.pX4,t.mY1,t.pY2, t.bgWhite, t.flex, t.flexRow,t.itemsCenter]}>
+      <TouchableOpacity style={[t.mX2,t.pX4,t.mY1,t.pY2, t.bgWhite, t.flex, t.flexRow,t.itemsCenter,t.wFull]} onPress={()=>openUModal(2,"Your Profile")}>
       <FontAwesome name="user" size={24} color="black" />
-      <Text style={[t.textBase,t.fontSemibold,t.textGray700,t.mL4,t.textCenter]}>Your Profile</Text>
-      </View>
-      <View style={[t.mX2,t.pX4,t.mY1,t.pY2, t.bgWhite, t.flex, t.flexRow,t.itemsCenter]}>
+      <Text style={[t.textBase,t.fontSemibold,t.textGray700,t.mL5,t.textCenter]}>Your Profile</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[t.mX2,t.pX4,t.mY1,t.pY2, t.bgWhite, t.flex, t.flexRow,t.itemsCenter,,t.wFull]} onPress={()=>openUModal(3,"Settings")}>
       <Ionicons name="settings-sharp" size={23} color="black" />
       <Text style={[t.textBase,t.fontSemibold,t.textGray700,t.mL4,t.textCenter]}>Settings</Text>
-      </View>
-      <TouchableOpacity style={[t.mX2,t.pX4,t.mY1,t.pY2, t.bgWhite, t.flex, t.flexRow,t.itemsCenter]} onPress={()=>openUModal(4,"Support")}>
+      </TouchableOpacity>
+      <TouchableOpacity style={[t.mX2,t.pX4,t.mY1,t.pY2, t.bgWhite, t.flex, t.flexRow,t.itemsCenter,t.wFull]} onPress={()=>openUModal(4,"Support")}>
       <Entypo name="help-with-circle" size={23} color="black" />
       <Text style={[t.textBase,t.fontSemibold,t.textGray700,t.mL4,t.textCenter]}>Support</Text>
       </TouchableOpacity>
       <TouchableOpacity
           onPress={handleLogout}>
-      <View style={[t.mX2,t.pX4,t.mY1,t.pY2, t.bgWhite, t.flex, t.flexRow,t.itemsCenter]}>
+      <View style={[t.mX2,t.pX4,t.mY1,t.pY2, t.bgWhite, t.flex, t.flexRow,t.itemsCenter,,t.wFull]}>
       <MaterialCommunityIcons name="logout" size={26} color="#B60004" />
       <Text style={[t.textBase,t.fontSemibold,t.textGray700,t.mL4,t.textCenter]}>Logout</Text>
       </View>
@@ -179,8 +222,12 @@ function UserMgmt() {
     <UserMgmtModal
       modalVisible={UModelVisible}
       closeModal={closeUModal}
-      Itemindex = {4}
+      Itemindex = {ItemIndex}
       ItemName = {ItemName}
+      userData = {userdata}
+      setuserdata = {setuserdata}
+      statuses = {statuses}
+      setstatuses = {setstatuses}
       />
     </View>
   );

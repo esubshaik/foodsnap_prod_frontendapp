@@ -33,9 +33,13 @@ const SignUp=({ modalVisible, closeModal,data,isCollapsed,setCollapsed})=> {
       height: '0',
       weight : '0',
       gender : '',
-      pushtoken: '',
+      location: '',
       pstatus : 1,
       astatus : 1,
+      nstatus:1,
+      fstatus:1,
+      ostatus: 1,
+      calrange:''
     });
     
     const requestOTP = async()=>{

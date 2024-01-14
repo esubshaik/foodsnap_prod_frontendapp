@@ -16,7 +16,6 @@ const  Login=({ modalVisible, closeModal,data})=> {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    pushtoken: '',
   });
 
 
@@ -60,7 +59,7 @@ const  Login=({ modalVisible, closeModal,data})=> {
 // }
 
   
-    const [expoPushToken, setExpoPushToken] = useState('');
+    // const [expoPushToken, setExpoPushToken] = useState('');
   
     // useEffect(() => {
     //   // registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
@@ -122,17 +121,23 @@ const  Login=({ modalVisible, closeModal,data})=> {
               if (response.status === 400) {
                 ToastAndroid.show('Fill all details', ToastAndroid.SHORT);
               } else if (response.status === 200) {
-                const { message, name, accessToken,age,height,weight,gender,pstatus,astatus } = response.data;
+                const { message, name, accessToken,age,height,weight,gender,location,pstatus,astatus,nstatus,fstatus,ostatus,calrange,phone } = response.data;
                 await AsyncStorage.setItem('age',age);
                 await AsyncStorage.setItem('height',height);
                 await AsyncStorage.setItem('weight',weight);
                 await AsyncStorage.setItem('token', accessToken);
                 await AsyncStorage.setItem('name', name);
+                await AsyncStorage.setItem('phone',phone.toString());
                 await AsyncStorage.setItem('email', formData.email);
                 await AsyncStorage.setItem('hydration','0');
                 await AsyncStorage.setItem('gender',gender);
+                await AsyncStorage.setItem('location',location)
                 await AsyncStorage.setItem('pstatus',pstatus? pstatus.toString():'0');
                 await AsyncStorage.setItem('astatus',astatus? astatus.toString():'0');
+                await AsyncStorage.setItem('nstatus',nstatus? nstatus.toString():'0');
+                await AsyncStorage.setItem('fstatus',nstatus? fstatus.toString():'0');
+                await AsyncStorage.setItem('ostatus',ostatus? ostatus.toString():'0');
+                await AsyncStorage.setItem('calrange',calrange);
                 // await AsyncStorage.setItem('pushtoken',)
                 await getusercal();
                 const heightInMeters = parseFloat(height) * 0.3048; // 1 foot = 0.3048 meters
@@ -156,7 +161,7 @@ const  Login=({ modalVisible, closeModal,data})=> {
                 ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
               }
             } catch (err) {
-              // console.log(err);
+              console.log(err);
               // ToastAndroid.show(er.message);
               ToastAndroid.show("Please try again", ToastAndroid.SHORT);
             }

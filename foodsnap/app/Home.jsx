@@ -360,7 +360,6 @@ export default function TabsLayout() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ foodname: currentFoodName })
-
       };
       try {
         await fetch(

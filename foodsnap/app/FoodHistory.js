@@ -10,6 +10,8 @@ const FoodHistory = ({foodlabels,dates,ids,reloadpage}) => {
   const foodnames = foodlabels.slice().reverse();
   const fooddate = dates.slice().reverse();
   const foodids = ids.slice().reverse();
+
+  
     const DeleteFood=async(itemid)=>{
         
         const requestOptions = {
@@ -23,7 +25,7 @@ const FoodHistory = ({foodlabels,dates,ids,reloadpage}) => {
               .then(response => {
                 response.json()
                   .then(data => {
-                    console.log(data.message);
+                    // console.log(data.message);
                     
                   });
               })
