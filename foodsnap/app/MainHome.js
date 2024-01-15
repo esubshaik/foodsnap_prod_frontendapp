@@ -4,7 +4,7 @@ import { t } from 'react-native-tailwindcss';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Input, InputField, InputSlot, InputIcon } from '@gluestack-ui/themed';
-import { AntDesign, Ionicons, Entypo, MaterialIcons,SimpleLineIcons } from '@expo/vector-icons';
+import { AntDesign, Ionicons, Entypo, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import ProgressChartGrid from './SpiralChart';
 import ModalComponent from './ModalClass';
 import UserProgress from './Progress';
@@ -18,19 +18,21 @@ import FillProfile from './FillProfile';
 import FoodHistory from './FoodHistory';
 import HOST_URL from './config';
 import NotificationModal from './Notifications';
-import CustomToast from './CustomToast';
+import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu';
+import { FontAwesome5 } from '@expo/vector-icons';
 // import { AntDesign } from '@expo/vector-icons';
 // import { MaterialIcons } from '@expo/vector-icons';
+import AboutUsModal from './AboutUs';
 
 
-const MainHome = ({fetchNutri,formdata,calculateHydra, sploading,toastVisible,closeToast,showToast}) => {
+const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, toastVisible, closeToast, showToast }) => {
   // const screenWidth = Dimensions.get("window").width;
   // console.log(formdata);
   const navigation = useRouter();
   const [myInput, setInput] = useState("");
   const [loading, setloading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
- 
+
   useEffect(() => {
     checkProfileStatus();
   }, []);
@@ -38,7 +40,7 @@ const MainHome = ({fetchNutri,formdata,calculateHydra, sploading,toastVisible,cl
   const handleFocus = () => {
     setIsFocused(true);
   };
-  
+
   const analyzeFood = async () => {
     const foodid = myInput;
     // if (foodid.length <= 1) {
@@ -66,7 +68,7 @@ const MainHome = ({fetchNutri,formdata,calculateHydra, sploading,toastVisible,cl
     };
     try {
       await fetch(
-        HOST_URL+'/api/user/analyze-food', requestOptions)
+        HOST_URL + '/api/user/analyze-food', requestOptions)
         .then(response => {
           response.json()
             .then(data => {
@@ -94,7 +96,7 @@ const MainHome = ({fetchNutri,formdata,calculateHydra, sploading,toastVisible,cl
     setModalVisible(true);
   };
 
-  const closeModal = async() => {
+  const closeModal = async () => {
     setModalVisible(false);
     await fetchNutri();
   };
@@ -183,11 +185,10 @@ const MainHome = ({fetchNutri,formdata,calculateHydra, sploading,toastVisible,cl
     }
   }
 
-  
   const [reqnutri, setreqnutri] = useState([0, 0, 0, 0]);
   const [alertstatus, setalertstatus] = useState(false);
   const [pstatus, setpstatus] = useState(false);
-  const [dp,setdp] = useState('');
+  const [dp, setdp] = useState('');
 
   async function checkProfileStatus() {
     try {
@@ -214,197 +215,208 @@ const MainHome = ({fetchNutri,formdata,calculateHydra, sploading,toastVisible,cl
     setpstatus(false);
   }
   const localImage = require('./assets/defaultuser.png');
-  const [nm,setnm] = useState(false);
-  const openNotification=()=>{
+  const [nm, setnm] = useState(false);
+  const openNotification = () => {
     setnm(true);
   }
-  const closeNotification=()=>{
+  const closeNotification = () => {
     setnm(false);
   }
 
-  // console.log(formdata.allfoodlabels)
-  // const [text,setText]  = useState('');
-  // useEffect(() => {
-  //   const title =   `Hi, ${formdata.username} !` ;
-  //   let i = 0;
-  //   const type = () => {
-  //     if (i < title.length) {
-  //       setText((prevText) => prevText + title[i]);
-  //       i++;
-  //       setTimeout(type, 1);
-  //     }
+  const [visible, setVisible] = useState(false);
+  const hideMenu = () => setVisible(false);
+  const showMenu = () => setVisible(true);
+  const parentFunction = (fn) => {
+    fetchNutri();
+    fn();
+  }
+  const [menuModal, setMenuModal] = useState([false, false, false]);
+  const [titles,settitles] = useState(["Diet Report","User Guide","About us"])
 
-  //   };
-
-  //   type();
-  // }, []);
+  const openMenuModal = (index) => {
+    const updatedMenuModal = [...menuModal];
+    updatedMenuModal[index] = true;
+    setMenuModal(updatedMenuModal);
+  };
+  const closeMenuModal = () => {
+    setMenuModal([false, false, false]);
+  };
 
   return (
     <View>
-      <View style={{backgroundColor:'#F7FCFF'}}>
-      <View style={[t.h17, t.shadowLg,t.borderB2,t.roundedTSm, t.borderGray300,t.bgGray100]}>
-        <View style={[t.flex, t.flexRow,t.justifyBetween]}>
-      
-          <View style={[t.flex, t.flexRow,t.mL2]}>
-          <Image
-              // source={require('./assets/defaultuser.png')}
-              source = {dp ? {uri: dp} : require('./assets/defaultuser.png')}
-              style={{ width: 50, height: 50 ,margin:8, borderRadius:40, borderWidth:2, borderColor:'#294d61'}} // Adjust the width
-              resizeMode="contain"
-            />
-            
-            <View style={[t.flex, t.flexCol,t.h50,t.selfCenter,t.textGray200]}>
-            <View style={[t.flex, t.flexRow]}>
-            <Image
-            
-              source={require('./assets/Levels/fs-coin.png')}
-              style={{ width:15, height: 15,marginRight:4}} // Adjust the width
-              resizeMode="contain"
-            />
-            <Text style={[t.fontSemibold,t.h14,t.textGray800]}>{formdata.allfoodlabels.length*5} points</Text>
+      <View style={{ backgroundColor: '#F7FCFF' }}>
+        <View style={[t.h17, t.shadowLg, t.borderB2, t.roundedTSm, t.borderGray300, t.bgGray100]}>
+          <View style={[t.flex, t.flexRow, t.justifyBetween]}>
+
+            <View style={[t.flex, t.flexRow, t.mL2]}>
+              <Image
+                // source={require('./assets/defaultuser.png')}
+                source={dp ? { uri: dp } : require('./assets/defaultuser.png')}
+                style={{ width: 50, height: 50, margin: 8, borderRadius: 40, borderWidth: 2, borderColor: '#294d61' }} // Adjust the width
+                resizeMode="contain"
+              />
+
+              <View style={[t.flex, t.flexCol, t.h50, t.selfCenter, t.textGray200]}>
+                <View style={[t.flex, t.flexRow]}>
+                  <Image
+
+                    source={require('./assets/Levels/fs-coin.png')}
+                    style={{ width: 15, height: 15, marginRight: 4 }} // Adjust the width
+                    resizeMode="contain"
+                  />
+                  <Text style={[t.fontSemibold, t.h14, t.textGray800]}>{formdata.allfoodlabels.length * 5} points</Text>
+                </View>
+                <View style={[t.h14, t.mT1, t.flex, t.flexRow]}>
+                  <Text style={[t.fontBold, t.textGray900]}>👋</Text>
+                  <Text style={[t.fontBold, t.textGray900]}>{`Hi, ${formdata.username} !`}</Text>
+                </View>
+              </View>
             </View>
-            <View style={[t.h14,t.mT1,t.flex, t.flexRow]}>
-            <Text style={[t.fontBold,t.textGray900]}>👋</Text>
-            <Text style={[t.fontBold,t.textGray900]}>{`Hi, ${formdata.username} !`}</Text>
+            {
+              <NotificationModal modalVisible={nm} closeModal={closeNotification} />
+            }
+            
+
+            <View style={[]}>
+              <Menu
+                visible={visible}
+                anchor={<TouchableOpacity onPress={showMenu}>
+                  <SimpleLineIcons name="options-vertical" size={22} color="black" style={[t.p5]} />
+                </TouchableOpacity>}
+                onRequestClose={hideMenu}
+                style={[t.bgWhite, t._mX2, t.mY2]}
+              >
+                <MenuItem onPress={() => parentFunction(hideMenu)}><Text style={[]}>Refresh</Text></MenuItem>
+                <MenuItem onPress={hideMenu}><Text style={[]}>Diet Report</Text></MenuItem>
+
+                <MenuItem onPress={hideMenu}><Text>User Guide</Text></MenuItem>
+                {/* <MenuItem disabled>Disabled item</MenuItem> */}
+                <MenuDivider color='gray' />
+                <MenuItem onPress={()=>openMenuModal(2)}><Text>About us</Text></MenuItem>
+              </Menu>
+              <AboutUsModal modalVisible={menuModal[2]} closeModal={closeMenuModal} ItemName={titles[2]}/>
             </View>
+
           </View>
-          </View>
-          {
-            <NotificationModal modalVisible={nm} closeModal={closeNotification} />
-          }
-           {toastVisible ? (
-        <CustomToast message="success" duration={1500} onClose={closeToast} />
-      ):null}
-      
-          <View style={[t.m5]}>
-            <TouchableOpacity onPress={openNotification}>
-            {/* <Ionicons name="settings-sharp" size={25} color="black" /> */}
-            <SimpleLineIcons name="options-vertical" size={22} color="black" />
-          </TouchableOpacity>
-          </View>
-          
-          {/* <View style={[t.m4]}>
-          <SimpleLineIcons name="options-vertical" size={24} color="black" />
-          </View> */}
-          
+
         </View>
-
       </View>
-      </View>
-   
-    <ScrollView contentContainerStyle={{ backgroundColor: '#F7FCFF' }}>
-      <View style={[t.p1, t.flex, t.textCenter, t.flexCol]}>
-        <View style={{ position: 'absolute', margin: '50%' }}>
-          {loading ? ActivityIndicator : null}
-        </View>
 
-        <Input style={[t.flex, t.flexRow, t.border2, t.m4, t.roundedLg, t.h12, isFocused ? t.borderBlue600 : t.borderBlack, t.flex, t.flexRow]}>
-          {
-            rec ? <Ionicons name="ios-stop-outline" onPress={stopRecording} size={24} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '2%' }} />
-              : <Ionicons name="ios-mic-outline" size={26} 
-              onPress={() =>startRecording} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '2%' }} disabled={rec} />
-          }
-          <Ionicons name="ios-camera-outline" onPress={() => { navigation.push("/Camera") }} size={24} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '0%' }} />
-
-          <Text style={[t.roundedRSm, t.bgTeal800, t.absolute, t.right0, t.w10, t.hFull, t.pT2, t.pL2]}>
-            <TouchableOpacity 
-            onPress={ analyzeFood}
-            >
-              <AntDesign name="search1" size={24} color='white' />
-            </TouchableOpacity>
-          </Text>
-          <View style={{ width: '60%', height: '100%' }}>
-            <InputField style={[ t.hFull, t.textGray600]} onFocus={handleFocus} onChange={(event) => setInput(event.nativeEvent.text)}
-              onSubmitEditing={analyzeFood}
-              placeholder='Start adding your food item'
-              returnKeyType="search"
-            />
+      <ScrollView contentContainerStyle={{ backgroundColor: '#F7FCFF' }}>
+        <View style={[t.p1, t.flex, t.textCenter, t.flexCol]}>
+          <View style={{ position: 'absolute', margin: '50%' }}>
+            {loading ? ActivityIndicator : null}
           </View>
-        </Input>
-      </View>
-      {
-        alertstatus ? <View style={[t.flex, t.flexRow, t.mY2, t.justifyCenter, t.alignCenter, t.itemsCenter]}>
-          <MaterialIcons name="label-important" size={20} style={[t.mX2]} color="red" />
-          <Text style={[t.textBase, t.fontSemibold]}>Please Fill Your Profile to Continue! </Text>
-          <TouchableOpacity onPress={openPS}>
-            <AntDesign name="form" size={18} color="#0096FF" style={[t.mX2, t.fontBold]} />
-          </TouchableOpacity>
-          <FillProfile modalVisible={pstatus} closeModal={closePS} reload={checkProfileStatus} />
-        </View> : null
-      }
+          <Input style={[t.flex, t.flexRow, t.border2, t.m4, t.roundedLg, t.h12, isFocused ? t.borderBlue600 : t.borderBlack, t.flex, t.flexRow]}>
+            {
+              rec ? <Ionicons name="ios-stop-outline" onPress={stopRecording} size={24} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '2%' }} />
+                : <Ionicons name="ios-mic-outline" size={26}
+                  onPress={() => startRecording} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '2%' }} disabled={rec} />
+            }
+            <Ionicons name="ios-camera-outline" onPress={() => { navigation.push("/Camera") }} size={24} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '0%' }} />
 
-      <View style={[t.mB32]}>
-        <DateNavigator />
-        <ProgressChartGrid mynutridata={formdata.mynutridata} hydrapercent={formdata.hydra} sploading={sploading}/>
-        <View style={{
-          backgroundColor: 'white', marginLeft: 16, marginRight: 0, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'white', shadowOpacity: 0.4,
-          shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
-        }}>
+            <Text style={[t.roundedRSm, t.bgTeal800, t.absolute, t.right0, t.w10, t.hFull, t.pT2, t.pL2]}>
+              <TouchableOpacity
+                onPress={analyzeFood}
+              >
+                <AntDesign name="search1" size={24} color='white' />
+              </TouchableOpacity>
+            </Text>
+            <View style={{ width: '60%', height: '100%' }}>
+              <InputField style={[t.hFull, t.textGray600]} onFocus={handleFocus} onChange={(event) => setInput(event.nativeEvent.text)}
+                onSubmitEditing={analyzeFood}
+                placeholder='Start adding your food item'
+                returnKeyType="search"
+              />
+            </View>
+          </Input>
+        </View>
+        {
+          alertstatus ?
+            <TouchableOpacity onPress={openPS}>
+              <View style={[t.flex, t.flexRow, t.mB4, t.pY2, t.justifyBetween, t.mX4, t.pX2, t.roundedLg, t.borderTeal800, t.border2, t.bgTeal800]}>
+                {/* <MaterialIcons name="label-important" size={20} style={[t.mX2]} color="red" /> */}
+                <Text style={[t.textWhite, t.fontSemibold]}>Update your Profile! </Text>
+
+                <FontAwesome5 name="greater-than" size={16} color="white" />
+
+                <FillProfile modalVisible={pstatus} closeModal={closePS} reload={checkProfileStatus} />
+              </View>
+            </TouchableOpacity> : null
+        }
+
+        <View style={[t.mB32]}>
+          <DateNavigator />
+          <ProgressChartGrid mynutridata={formdata.mynutridata} hydrapercent={formdata.hydra} sploading={sploading} />
           <View style={{
-            width: '68%',
-            // backgroundColor: 'skyblue',
-            shadowColor: '#575555',
-            elevation: 2,
-            padding: 1, marginTop: 4, marginBottom: 4, borderRadius: 15
+            backgroundColor: 'white', marginLeft: 16, marginRight: 0, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'white', shadowOpacity: 0.4,
+            shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
           }}>
-            <TouchableOpacity onPress={showToast
-              // () => ToastAndroid.show("Challenge is not yet completed", ToastAndroid.SHORT)
-              } style={[t.hFull, t.p2, t.bgRed200, t.roundedLg, t.wFull, t.flex, t.flexRow, t.justifyBetween]}>
-              <View style={[t.flex, t.flexCol, t.justifyBetween]}>
-                <Text style={[t.fontSemibold, t.m2, t.textLg, t.textRed900]}>Challenges</Text>
-                <Text style={[t.fontSemibold, t.m2, t.textXl, t.textRed900]}>WinterHarvest Eats</Text>
-              </View>
-              <View style={{}}>
-                <Image
-                  source={require('./assets/challengeFood/dates.png')}
-                  style={{ flex: 1, width: 50, height: 50, margin: '2%' }}
-                  resizeMode="contain"
-                />
-              </View>
-
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity style={{ width: '100%', height: '100%' }} onPress={calculateHydra}>
             <View style={{
-              width: '26%', height: '92%',
-              backgroundColor: '#0096FF',
+              width: '68%',
+              // backgroundColor: 'skyblue',
               shadowColor: '#575555',
               elevation: 2,
-              padding: 2, marginTop: 4, marginBottom: 4, borderRadius: 15, marginLeft: 8
+              padding: 1, marginTop: 4, marginBottom: 4, borderRadius: 15
             }}>
-              <View style={[t.wFull, t.flex, t.flexRow, t.hFull, t.itemsCenter, t.justifyCenter]}>
-                <Entypo name="cup" size={25} color="white" />
-                <MaterialIcons name="exposure-plus-1" size={26} color="white" />
-              </View>
+              <TouchableOpacity onPress={showToast
+                // () => ToastAndroid.show("Challenge is not yet completed", ToastAndroid.SHORT)
+              } style={[t.hFull, t.p2, t.bgRed200, t.roundedLg, t.wFull, t.flex, t.flexRow, t.justifyBetween]}>
+                <View style={[t.flex, t.flexCol, t.justifyBetween]}>
+                  <Text style={[t.fontSemibold, t.m2, t.textLg, t.textRed900]}>Challenges</Text>
+                  <Text style={[t.fontSemibold, t.m2, t.textXl, t.textRed900]}>WinterHarvest Eats</Text>
+                </View>
+                <View style={{}}>
+                  <Image
+                    source={require('./assets/challengeFood/dates.png')}
+                    style={{ flex: 1, width: 50, height: 50, margin: '2%' }}
+                    resizeMode="contain"
+                  />
+                </View>
+
+              </TouchableOpacity>
             </View>
-          </TouchableOpacity>
-          <View>
+
+            <TouchableOpacity style={{ width: '100%', height: '100%' }} onPress={calculateHydra}>
+              <View style={{
+                width: '26%', height: '92%',
+                backgroundColor: '#0096FF',
+                shadowColor: '#575555',
+                elevation: 2,
+                padding: 2, marginTop: 4, marginBottom: 4, borderRadius: 15, marginLeft: 8
+              }}>
+                <View style={[t.wFull, t.flex, t.flexRow, t.hFull, t.itemsCenter, t.justifyCenter]}>
+                  <Entypo name="cup" size={25} color="white" />
+                  <MaterialIcons name="exposure-plus-1" size={26} color="white" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <View>
+
+            </View>
+          </View>
+          <View style={{
+            backgroundColor: '#294D61', marginLeft: 16, marginRight: 16, marginBottom: 14, marginTop: 10, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'black', shadowOpacity: 0.9,
+            shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
+          }}>
+            {
+              sploading ? <Text style={[t.mY4, t.textCenter, t.wFull]}> <ActivityIndicator size="large" color='white' /> </Text> :
+                <UserProgress presentarr={formdata.daysarr} />
+            }
 
           </View>
+          <ModalComponent
+            modalVisible={modalVisible}
+            closeModal={closeModal}
+            modalData={modalData}
+            foodname={[myInput]}
+            reload={fetchNutri}
+          />
+
+          <BarComponent labels={formdata.labels} data={formdata.bardata} sploading={sploading} />
+          <FoodHistory foodlabels={formdata.allfoodlabels} dates={formdata.days} ids={formdata.ids} reloadpage={fetchNutri} sploading={sploading} />
         </View>
-        <View style={{
-          backgroundColor: '#294D61', marginLeft: 16,marginRight:16,marginBottom:14,marginTop:10, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'black', shadowOpacity: 0.9,
-          shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
-        }}>
-          {
-            sploading ? <Text style={[t.mY4,t.textCenter, t.wFull]}> <ActivityIndicator size="large" color='white'/> </Text> : 
-            <UserProgress presentarr={formdata.daysarr} />
-          }
-          
-        </View>
-        <ModalComponent
-          modalVisible={modalVisible}
-          closeModal={closeModal}
-          modalData={modalData}
-          foodname={[myInput]}
-          reload={fetchNutri}
-        />
-      
-<BarComponent labels={formdata.labels} data={formdata.bardata} /> 
-        <FoodHistory foodlabels = {formdata.allfoodlabels} dates={formdata.days} ids={formdata.ids} reloadpage={fetchNutri}/>
-      </View>
-    </ScrollView>
+      </ScrollView>
     </View>
   );
 }

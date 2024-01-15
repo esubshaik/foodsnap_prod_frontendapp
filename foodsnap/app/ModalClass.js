@@ -2,8 +2,8 @@ import React, { useState,useMemo } from 'react';
 import { View, Text, Modal, Button,ScrollView,TouchableOpacity } from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import PieChartExample from './PieChart';
+import { AntDesign, Feather,MaterialIcons,MaterialCommunityIcons,Ionicons} from '@expo/vector-icons';
 import CounterApp from './Counter';
-import CustomToast from './CustomToast';
 
 
 
@@ -40,30 +40,27 @@ const ModalComponent = ({ modalVisible, closeModal, modalData, foodname }) => {
       onRequestClose={closeModal}
     >
       
-      
-      <View style={{ alignItems: 'center', justifyContent: 'center', height:'100%' ,backgroundColor:'#F4F4F4'}}>
+      <View style={{ alignItems: 'center', justifyContent: 'center', height:'100%' ,backgroundColor:'#F7FCFF',borderTopLeftRadius:20,borderTopRightRadius:20}}>
+     
         <View style={{
-           backgroundColor:'#F4F4F4', width: '94%', height: '100%', marginTop: '0%',borderRadius:10,borderColor:'white',
+           backgroundColor:'#F7FCFF', width: '96%', height: '100%', marginTop: '0%',borderRadius:10,borderColor:'white',
         }}>
           
- <ScrollView>
+ <ScrollView contentContainerStyle={{ flexGrow: 1, minHeight: '100%', paddingBottom: 30 }}>
 
   <View style={[t.flex,t.hFull, t.flexCol, t.selfCenter,t.roundedLg]}>
- 
-      <View style={[t.border4, t.borderWhite,{ borderRadius: 10 },t.shadowLg,t.borderTeal500]}>
-      <View style={[t.bgWhite ]}>
-      
-        <PieChartExample data={modalData[index]} foodname ={foodname[index]} key={index} />
-        </View>
-        <View style={[t.h16]}>
-      {toastVisible ? (
-        <CustomToast message="success" duration={1500} onClose={closeToast} />
-      ):null}
-      </View>
+  <View style={[t.flexRow, t.itemsCenter,,t.pX4]}>
+                <TouchableOpacity onPress={closeModal}>
+                  <Feather name="arrow-left" size={26} color="black" style={[t.bgBlue100, t.roundedFull]} />
+                </TouchableOpacity>
+                <Text style={[t.fontBold, t.text2xl, t.textBlack, t.mL2,t.pY5]}>Nutrition Overview & Diet Log</Text>
+              </View>
+      <View style={[t.border4,t.bgWhite,{ borderRadius: 10 },t.shadowLg,t.borderTeal500,t.shadowLg,t.shadowXl]}>
+      <PieChartExample data={modalData[index]} foodname ={foodname[index]} key={index} />
         <CounterApp data={modalData[index]} fooditem={foodname[index]} showToast={showToast} />
        <View>
         {index === modalData.length - 1 ? (
-          <View style={{ width: 90, height:44,alignSelf:'center',  marginBottom:20}}>
+          <View style={{ width: '50%', height:44,alignSelf:'center',  marginBottom:20}}>
           <TouchableOpacity
             onPress={closeModal}
             style={{

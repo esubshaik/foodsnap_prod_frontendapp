@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, ToastAndroid } from 'react-native';
+import { View, Text, StyleSheet, Alert, ToastAndroid,ActivityIndicator } from 'react-native';
 import { format, endOfMonth } from 'date-fns';
 import {t} from 'react-native-tailwindcss' ;
 import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import HOST_URL from './config';
-const FoodHistory = ({foodlabels,dates,ids,reloadpage}) => {
+const FoodHistory = ({foodlabels,dates,ids,reloadpage,sploading}) => {
+  
   // const foodnames = Array.from(foodlabels).reverse() ;
+  const [loading, setloading] = useState(false);
   const foodnames = foodlabels.slice().reverse();
   const fooddate = dates.slice().reverse();
   const foodids = ids.slice().reverse();
 
   
     const DeleteFood=async(itemid)=>{
-        
+        setloading(true);
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -36,6 +38,7 @@ const FoodHistory = ({foodlabels,dates,ids,reloadpage}) => {
           }
           finally{
             await reloadpage();
+            setloading(false);
           }
     }
     const handleItemDelete = async(itemid)=>{
@@ -63,7 +66,9 @@ const FoodHistory = ({foodlabels,dates,ids,reloadpage}) => {
     <View style={[t.flex,t.flexRow,t.justifyCenter,t.mT4]}>
       <View style={[t.flex,t.flexCol,t.wFull,t.pX3]}>
         <Text style={[t.textBlack,t.textBase,t.fontSemibold,t.mB2,t.pT1]}>🕛 Intake History</Text>
-        <View style={[t.textBlack,t.flexCol, t.roundedSm,t.border]}>
+        {
+          loading || sploading ? <ActivityIndicator size="large" color='#294D61'/> :
+          <View style={[t.textBlack,t.flexCol, t.roundedSm,t.border]}>
             {
             foodnames.map((name,index)=>(
             index < histlimit ? (
@@ -79,7 +84,10 @@ const FoodHistory = ({foodlabels,dates,ids,reloadpage}) => {
             ) : null
                 )) 
             }
+            
         </View>
+        }
+        
       </View>
    
     </View>

@@ -29,6 +29,7 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
 
 
   const fetchuserprofile = async () => {
+    closeModal();
     const token = await AsyncStorage.getItem('token');
     try {
       setLoadingClose(true);
@@ -69,16 +70,13 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
         }
       }
 
-      //   if (height) {
-
-      // }
 
     }
     catch (error) {
       // console.log(error)
     }
     finally {
-      closeModal();
+      
       reload();
       setLoadingClose(false);
     }
@@ -132,14 +130,14 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
 
   return (
     <Modal
-      animationType="slide"
-      transparent={true}
+      animationType="fade"
+      transparent={false}
       //   key={data}
       visible={modalVisible}
       onRequestClose={closeModal}
     >
       <View style={[t.roundedLg, t.wFull, t.absolute, t.bottom0]}>
-        <ScrollView contentContainerStyle={{ height: '70%', flexGrow: 1, backgroundColor: '#072e33' }}>
+        <ScrollView contentContainerStyle={{ height: '70%', flexGrow: 1, backgroundColor: '#072e33',borderWidth:2,borderColor:'#072e33',borderTopLeftRadius:20,borderTopRightRadius:20 }}>
           <View style={[t.p1, t.flex, t.textCenter, t.flexCol, t.itemsCenter, t.pB100, t.roundedTLg]}>
 
             <View>

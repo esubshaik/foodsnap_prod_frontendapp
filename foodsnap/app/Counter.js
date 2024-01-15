@@ -35,7 +35,7 @@ const CounterApp = ({data,fooditem,showToast}) => {
                     }); 
             }) 
             showToast();
-            // ToastAndroid.show('Diet Recorded Successfully', ToastAndroid.SHORT);
+            ToastAndroid.show('Diet Recorded Successfully', ToastAndroid.SHORT);
             // openModal();
     } 
     catch (error) { 
@@ -95,13 +95,13 @@ const CounterApp = ({data,fooditem,showToast}) => {
       case 0 :
         return 'None'
       case 1:
-        return 'Low';
+        return 'Low (x1)';
       case 2:
-        return 'Medium';
+        return 'Medium (x2)';
       case 3:
-        return 'High';
+        return 'High (x3)';
       case 4:
-        return 'Very High';
+        return 'Very High (x4)';
       default:
         return '';
     }
@@ -122,7 +122,7 @@ const CounterApp = ({data,fooditem,showToast}) => {
   return (
     <View style={styles.container}>
       {/* <Text style={[t.absolute,t.mL10,t.selfStart,t.fontSemibold,t.textLg]}>Food Quantity</Text> */}
-      <Text style={styles.status}>{getStatus()}</Text>
+      <Text style={[t.mB10,t.text2xl,t.fontSemibold,t.textGray700]}>Quantity: {getStatus()}</Text>
       <ProgressBarAndroid
         styleAttr="Horizontal"
         indeterminate={false}
@@ -138,10 +138,10 @@ const CounterApp = ({data,fooditem,showToast}) => {
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
       </View>
-      <View style={[t.bottom0,t.selfCenter, t.mB4,t.textBase, t.flex,t.mT12, t.flexCol]}>
+      <View style={[,t.selfCenter, t.mB4,t.textBase, t.flex,t.mT12, t.flexCol]}>
             
-          <View >
-          <View style={{ width: 130, height: 44,alignSelf:'center'}}>
+          
+          <View style={{ width: '100%', height: 44,alignSelf:'center'}}>
   <TouchableOpacity
     onPress={(Event)=>multiplyValues(data,counter)}
     style={{
@@ -149,30 +149,27 @@ const CounterApp = ({data,fooditem,showToast}) => {
       borderRadius: 20,
       justifyContent: 'center',
       alignItems: 'center',
-      // direction:'ltr',
-      // padding:10,
+      width:'50%',
       flex: 1,
       flexDirection:'row',
     
     }}
   >
-    
     <Text
       style={{
         // #072e33
         color: 'white',
         fontWeight: '600',
-        // marginLeft:4,
-         // Semibold
-        fontSize: 16, // Adjust the font size as needed
+        fontSize: 16, 
+        width:'100%',
+        textAlign:'center'
       }}
     >
       Record My Diet
     </Text>
   </TouchableOpacity>
 </View>
-          {/* <Button title="Record My DIET"  /> */}
-          </View>
+          
           </View>
     </View>
   );
@@ -180,27 +177,20 @@ const CounterApp = ({data,fooditem,showToast}) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent:'flex-start',
+    // flex: 1,
+    // justifyContent:'flex-start',
     alignItems: 'center',
-    marginTop:40
-  },
-  status: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+    marginTop:20,
+    width:'100%',
+    
   },
   progressBar: {
     width: 250,
-    height: 40,
+    height: 10,
     marginBottom: 20,
   },
   buttonsContainer: {
     flexDirection: 'row',
-    
-    // margin:10,
-    // alignItems: 'center',
-    // justifyContent:'flex-end'
   },
   button: {
     backgroundColor: '#0C7078',
