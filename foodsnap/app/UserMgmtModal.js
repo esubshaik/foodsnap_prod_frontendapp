@@ -10,9 +10,7 @@ import axios from 'axios';
 import HOST_URL from './config';
 import { FontAwesome } from '@expo/vector-icons';
 
-function UserMgmtModal({ modalVisible, closeModal, Itemindex, ItemName,userData,setuserdata,statuses,setstatuses }) {
-  // console.log(statuses);
-  // console.log(Itemindex);
+function UserMgmtModal({ modalVisible, closeModal, Itemindex, ItemName,userData,setuserdata,statuses,setstatuses,ReloadProfile }) {
   const [loading, setLoading] = useState(false);
   const [Hloading, setHLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -51,6 +49,7 @@ function UserMgmtModal({ modalVisible, closeModal, Itemindex, ItemName,userData,
         await AsyncStorage.setItem('height',userData.height);
         await AsyncStorage.setItem('weight',userData.weight);
         await AsyncStorage.setItem('email',userData.email);
+        ReloadProfile();
       }
     }
     catch (error) {

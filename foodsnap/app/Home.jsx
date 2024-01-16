@@ -12,6 +12,7 @@ import React, { useCallback } from 'react';
 import * as Notifications from 'expo-notifications';
 import HOST_URL from "./config";
 import {PermissionsAndroid} from 'react-native';
+import * as MediaLibrary from 'expo-media-library';
 
 
 // async function registerForPushNotificationsAsync() {
@@ -411,16 +412,27 @@ export default function TabsLayout() {
     setDefaultFoodnames(randomizedArray);
   };
 
+  const getuserPermission=async()=>{
+    const { status } = await MediaLibrary.requestPermissionsAsync();
+    if (status !== 'granted') {
+      alert("Please grant camera roll permissions inside your system's settings");
+    }else{
+      console.log('Media Permissions are granted')
+    }
+}
 
   useEffect(() => {
     const backAction = () => {
       BackHandler.exitApp();
       return true;
     };
-    
+    getuserPermission();
     // registerForPushNotificationsAsync();
+    ReloadProfile();
     fetchNutri();
     fetchImages();
+    getstatus();
+    getStoredImage();
     BackHandler.addEventListener('hardwareBackPress', backAction);
     return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
 
@@ -442,7 +454,21 @@ export default function TabsLayout() {
   //       return <Empty />; // Return a default component or null for unknown keys
   //   }
   // };
-
+  const [image, setImage] = useState(null);
+  const getStoredImage=async()=>{
+    try {
+        const userdp = await AsyncStorage.getItem('userprofile') ;
+        if (userdp) {
+          setImage(userdp);
+        }
+        else{
+          const imageSource = Image.resolveAssetSource(require('./assets/defaultuser.png'));
+          setImage(imageSource.uri)
+        }
+      } catch (error) {
+      }
+    }
+    
   const [toastVisible,setToastVisible] = useState(false);
 
   const showToast = () => {
@@ -452,6 +478,89 @@ export default function TabsLayout() {
   const closeToast = () => {
     setToastVisible(false);
   };
+  const [Profile, setProfile] = useState({
+    username: "",
+    age: "",
+    height: "",
+    weight: "",
+    bmi: "",
+    reqcals: "",
+    emailid: "",
+  });
+
+  const [userdata,setuserdata] = useState(
+    {
+      name:'',
+      email:'',
+      phone:'',
+      location:'',
+      age:'',
+      height:'',
+      weight:'',
+      currpass:'',
+      newpass:'',
+      confirmpass:''
+    }
+  )
+
+
+  const ReloadProfile = async () => {
+    const _age = await AsyncStorage.getItem('age');
+    const _height = await AsyncStorage.getItem('height');
+    const _weight = await AsyncStorage.getItem('weight');
+    const _bmi = await AsyncStorage.getItem('bmi');
+    const calrange = await AsyncStorage.getItem('calrange');
+    const mailid = await AsyncStorage.getItem('email');
+    const _location = await AsyncStorage.getItem('location');
+    const _phone = await AsyncStorage.getItem('phone');
+    const user = await AsyncStorage.getItem('name');
+
+    setProfile({
+    username: user,
+    age: _age,
+    height: _height,
+    weight: _weight,
+    bmi: parseFloat(_bmi).toFixed(2),
+    reqcals: calrange,
+    emailid: mailid,
+    })
+    setuserdata({
+      name:user,
+      email:mailid,
+      phone:_phone,
+      location:_location,
+      age:_age,
+      height:_height,
+      weight:_weight
+    })
+  };
+  const [statuses,setstatuses] = useState([0,0,0,0,0]);
+
+  const getstatus=async()=>{
+    const pstatus = await AsyncStorage.getItem('pstatus');
+    const astatus = await AsyncStorage.getItem('astatus');
+    const nstatus = await AsyncStorage.getItem('nstatus');
+    const fstatus = await AsyncStorage.getItem('fstatus');
+    const ostatus = await AsyncStorage.getItem('ostatus');
+    // console.log(nstatus)
+    setstatuses([parseInt(pstatus),parseInt(astatus),parseInt(nstatus),parseInt(fstatus),parseInt(ostatus)]);
+  }
+  const [alertstatus, setalertstatus] = useState(false);
+  
+
+  async function checkProfileStatus() {
+    try {
+      const token = await AsyncStorage.getItem('bmi');
+      if (!parseInt(token)) {
+        setalertstatus(true);
+      }
+      else {
+        setalertstatus(false);
+      }
+    } catch (error) {
+      // console.log(error);
+    }
+  }
 
   return (
     <View style={[t.wFull, t.flex, t.flexCol, t.hFull, t.bg = ['#F7FCFF']]}>
@@ -461,11 +570,11 @@ export default function TabsLayout() {
       />
       <View style={[t.flex1]}>
         {view == 1 ? (
-          <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} sploading={sploading} toastVisible = {toastVisible} closeToast = {closeToast} showToast={showToast} />
+          <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} sploading={sploading} showToast={showToast} image={image} checkProfileStatus={checkProfileStatus} alertstatus={alertstatus} />
         ) :
           view == 4 ?
             (
-              <UserMgmt />
+              <UserMgmt Profile={Profile} userdata={userdata} ReloadProfile={ReloadProfile} getStoredImage={getStoredImage} setuserdata = {setuserdata} statuses = {statuses} setstatuses = {setstatuses}image={image} />
             ) :
             view == 2 ? (
               <DietRecommend fetchImages={fetchImages} recommendInfo= {recommendInfo} loading={loading} />

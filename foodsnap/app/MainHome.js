@@ -17,7 +17,6 @@ import BarComponent from './BarChart';
 import FillProfile from './FillProfile';
 import FoodHistory from './FoodHistory';
 import HOST_URL from './config';
-import NotificationModal from './Notifications';
 import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu';
 import { FontAwesome5 } from '@expo/vector-icons';
 // import { AntDesign } from '@expo/vector-icons';
@@ -25,17 +24,12 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import AboutUsModal from './AboutUs';
 
 
-const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, toastVisible, closeToast, showToast }) => {
-  // const screenWidth = Dimensions.get("window").width;
+const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, showToast,image,checkProfileStatus,alertstatus }) => {
   // console.log(formdata);
   const navigation = useRouter();
   const [myInput, setInput] = useState("");
-  const [loading, setloading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
-  useEffect(() => {
-    checkProfileStatus();
-  }, []);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -43,24 +37,6 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, toastVisibl
 
   const analyzeFood = async () => {
     const foodid = myInput;
-    // if (foodid.length <= 1) {
-    //   Alert.alert(
-    //     '',
-    //     'Please Enter the Food name',
-    //     [
-    //       {
-    //         text: 'Cancel',
-    //         style: 'cancel',
-    //       },
-    //       {
-    //         text: 'OK',
-    //         // onPress: () => ToastAndroid.show('Thank you ☺️', ToastAndroid.SHORT),
-    //       },
-    //     ],
-    //     { cancelable: false }
-    //   );
-    // }
-    // console.log(foodid);
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -96,9 +72,9 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, toastVisibl
     setModalVisible(true);
   };
 
-  const closeModal = async () => {
+  const closeModal = () => {
     setModalVisible(false);
-    await fetchNutri();
+    fetchNutri();
   };
 
   const [rec, setrec] = useState(false);
@@ -185,28 +161,8 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, toastVisibl
     }
   }
 
-  const [reqnutri, setreqnutri] = useState([0, 0, 0, 0]);
-  const [alertstatus, setalertstatus] = useState(false);
+  
   const [pstatus, setpstatus] = useState(false);
-  const [dp, setdp] = useState('');
-
-  async function checkProfileStatus() {
-    try {
-      const userdp = await AsyncStorage.getItem("userprofile");
-      setdp(userdp);
-      const token = await AsyncStorage.getItem('bmi');
-      // console.log(parseInt(token))
-      if (!parseInt(token)) {
-        setalertstatus(true);
-      }
-      else {
-        setalertstatus(false);
-      }
-    } catch (error) {
-      // console.log(error);
-    }
-  }
-
 
   const openPS = () => {
     setpstatus(true);
@@ -214,14 +170,7 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, toastVisibl
   const closePS = () => {
     setpstatus(false);
   }
-  const localImage = require('./assets/defaultuser.png');
-  const [nm, setnm] = useState(false);
-  const openNotification = () => {
-    setnm(true);
-  }
-  const closeNotification = () => {
-    setnm(false);
-  }
+
 
   const [visible, setVisible] = useState(false);
   const hideMenu = () => setVisible(false);
@@ -230,8 +179,9 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, toastVisibl
     fetchNutri();
     fn();
   }
+
   const [menuModal, setMenuModal] = useState([false, false, false]);
-  const [titles,settitles] = useState(["Diet Report","User Guide","About us"])
+  const titles = ["Diet Report","User Guide","About us"] ;
 
   const openMenuModal = (index) => {
     const updatedMenuModal = [...menuModal];
@@ -241,6 +191,7 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, toastVisibl
   const closeMenuModal = () => {
     setMenuModal([false, false, false]);
   };
+  // const imageSource = Image.resolveAssetSource(require('./assets/defaultuser.png'));
 
   return (
     <View>
@@ -251,7 +202,8 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, toastVisibl
             <View style={[t.flex, t.flexRow, t.mL2]}>
               <Image
                 // source={require('./assets/defaultuser.png')}
-                source={dp ? { uri: dp } : require('./assets/defaultuser.png')}
+                // source={dp ? { uri: dp } : require('./assets/defaultuser.png')}
+                source={{ uri: image }}
                 style={{ width: 50, height: 50, margin: 8, borderRadius: 40, borderWidth: 2, borderColor: '#294d61' }} // Adjust the width
                 resizeMode="contain"
               />
@@ -272,11 +224,7 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, toastVisibl
                 </View>
               </View>
             </View>
-            {
-              <NotificationModal modalVisible={nm} closeModal={closeNotification} />
-            }
-            
-
+           
             <View style={[]}>
               <Menu
                 visible={visible}
@@ -305,7 +253,6 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, toastVisibl
       <ScrollView contentContainerStyle={{ backgroundColor: '#F7FCFF' }}>
         <View style={[t.p1, t.flex, t.textCenter, t.flexCol]}>
           <View style={{ position: 'absolute', margin: '50%' }}>
-            {loading ? ActivityIndicator : null}
           </View>
           <Input style={[t.flex, t.flexRow, t.border2, t.m4, t.roundedLg, t.h12, isFocused ? t.borderBlue600 : t.borderBlack, t.flex, t.flexRow]}>
             {

@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect, StatusBar } from "react";
+import React, { useState, useRef, useEffect, StatusBar} from "react";
 import {
   StyleSheet,
   Dimensions,
   View,
   Text,
   TouchableOpacity,
-  SafeAreaView, Image
+  SafeAreaView, Image,Alert
 } from "react-native";
 import { Camera } from "expo-camera";
 import { Video } from "expo-av";
@@ -149,17 +149,20 @@ export default function ScanFood() {
         },
       });
       const responseData = await response.json();
-      // console.log(responseData.data.results);
-      if (responseData){
+      console.log(responseData.data.results);
+      if (responseData.data.results){
         const nextdata = await responseData.data.results ;
         setresults(responseData);
         nextOption(nextdata);////
         setboolbound(true);
       }
+      else {
+        showAlert();
+      }
 
 
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       setboolbound(false);
     
     }
@@ -167,6 +170,18 @@ export default function ScanFood() {
       setanim(false);
     }
   };
+  const showAlert=()=>{
+    Alert.alert(
+      '',
+      'No foods are detected in the Image',
+      [
+        {
+          text: 'OK',
+        },
+      ],
+      { cancelable: false }
+    );
+  }
 
   const drawBoundingBoxes=()=>(
     <View style={bstyles.container}>
