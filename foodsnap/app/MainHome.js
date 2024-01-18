@@ -350,9 +350,9 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading,image,checkP
             </TouchableOpacity>
            
           </View>
-          <View style={[t.p2,t.flex,t.flexRow,t.textCenter,t.itemsCenter, t.border2,t.borderGray200,t.mX4,t.mY2,t.roundedLg,t.bgWhite]}>
+          <View style={[t.p2,t.flex,t.flexRow,t.textCenter,t.itemsCenter, t.border2,t.borderGray200,t.mX4,t.mY2,t.roundedLg,t.bgOrange200]}>
             {
-              sploading ? <Text style={[t.mY4, t.textCenter, t.wFull]}> <ActivityIndicator size="large" color='#294D61' /> </Text> :
+              sploading ? <Text style={[t.mY4, t.textCenter, t.wFull]}> <ActivityIndicator size="large" color='#115e59' /> </Text> :
                 <UserProgress presentarr={formdata.daysarr} />
             }
           </View>

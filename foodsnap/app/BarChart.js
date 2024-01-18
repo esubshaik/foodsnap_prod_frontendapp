@@ -16,7 +16,7 @@ const BarComponent = ({data,labels,sploading}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={[t.fontSemibold,t.textYellow800, t.textLg, t.mT2,t.mB2,t.mL4,t.pT1,t.overflowVisible]}>🍔 Today's Food Journey</Text>
+      <Text style={[t.p2,t.mX4,t.flex,t.flexRow,t.itemsCenter,t.roundedLg,t.textYellow800,t.textLg,t.fontBold]}>Today's Food Journey</Text>
       {
         sploading ? <ActivityIndicator size="large" color='#294D61'/> :
         labels[0] ?

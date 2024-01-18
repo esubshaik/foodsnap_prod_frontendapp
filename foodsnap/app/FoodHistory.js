@@ -72,7 +72,7 @@ const FoodHistory = ({foodlabels,dates,ids,reloadpage,sploading}) => {
             {
             foodnames.map((name,index)=>(
             index < histlimit ? (
-<View style={[t.flexRow, t.justifyBetween,  t.itemsCenter, [index%2 == 0 ? t.bgBlue100 : t.bgWhite], t.p1, t.h16,t.borderB]} key={index}>
+<View style={[t.flexRow, t.justifyBetween,  t.itemsCenter, [index%2 == 0 ? t.bgWhite: t.bgTransparent ], t.p1, t.h16,t.borderB]} key={index}>
             <View style={[t.flexCol]}>
             <Text style={[t.fontSemibold, t.textGray900]}>✅ {name}</Text>
             <Text style={[t.mL4,t.mT1]}>{new Date(fooddate[index]).toString()}</Text>
@@ -108,7 +108,7 @@ const FoodHistory = ({foodlabels,dates,ids,reloadpage,sploading}) => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor:'white',shadowColor: '#05161A',shadowOpacity: 0.9,borderTopEndRadius : 10,borderTopStartRadius: 10,borderBottomEndRadius: 40,borderBottomStartRadius: 40,
+      backgroundColor:'#eff6ff',shadowColor: '#05161A',shadowOpacity: 0.9,borderTopEndRadius : 10,borderTopStartRadius: 10,borderBottomEndRadius: 40,borderBottomStartRadius: 40,
       shadowRadius: 4,elevation: 5, marginLeft:18, marginRight:18, paddingTop:12, marginTop:14,marginBottom: 30
     },
   });
