@@ -87,7 +87,8 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
     height: '',
     weight: '',
     gender: 'male',
-    location:'India'
+    location:'India',
+    activityfactor: 1,
   });
   const [loading, setLoading] = useState(false);
 
@@ -119,7 +120,7 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
       ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
     }
     catch (error) {
-      // console.error(error);
+      console.error(error);
     }
     finally {
       setLoading(false);

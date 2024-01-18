@@ -9,18 +9,6 @@ import CounterApp from './Counter';
 
 
 const ModalComponent = ({ modalVisible, closeModal, modalData, foodname }) => {
-  // console.log(modalData)
-  // console.log(foodname)
-  const [toastVisible,setToastVisible] = useState(false);
-
-  const showToast = () => {
-    setToastVisible(true);
-  };
-
-  const closeToast = () => {
-    setToastVisible(false);
-  };
-
 
   function cleanArray(inputArray) {
     const arrayWithoutEmpty = inputArray.filter(item => item !== "" && item != "[]");
@@ -57,7 +45,7 @@ const ModalComponent = ({ modalVisible, closeModal, modalData, foodname }) => {
               </View>
       <View style={[t.border4,t.bgWhite,{ borderRadius: 10 },t.shadowLg,t.borderTeal500,t.shadowLg,t.shadowXl]}>
       <PieChartExample data={modalData[index]} foodname ={foodname[index]} key={index} />
-        <CounterApp data={modalData[index]} fooditem={foodname[index]} showToast={showToast} />
+        <CounterApp data={modalData[index]} fooditem={foodname[index]}  />
        <View>
         {index === modalData.length - 1 ? (
           <View style={{ width: '50%', height:44,alignSelf:'center',  marginBottom:20}}>

@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import HOST_URL from "./config";
 
 
-const CounterApp = ({data,fooditem,showToast}) => {
+const CounterApp = ({data,fooditem}) => {
   const [counter, setCounter] = useState(0);
 
 
@@ -34,7 +34,6 @@ const CounterApp = ({data,fooditem,showToast}) => {
                         console.log(data.message); 
                     }); 
             }) 
-            showToast();
             ToastAndroid.show('Diet Recorded Successfully', ToastAndroid.SHORT);
             // openModal();
     } 
@@ -44,7 +43,6 @@ const CounterApp = ({data,fooditem,showToast}) => {
   }
   console.error = (error) => {
     if (!error.toString().includes('ProgressBarAndroid')) {
-      // Suppress the specific warning about ProgressBarAndroid
       console.warn('Suppressed Warning:', error);
     }
   };

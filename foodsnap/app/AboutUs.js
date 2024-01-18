@@ -30,28 +30,37 @@ function AboutUs({ modalVisible, closeModal,ItemName }) {
               </View>
             </View>
           </View>
-        </View>
-        <ScrollView contentContainerStyle={{ flexGrow: 1, minHeight: '100%', }}>
-        <View style={styles.container}>
-        <Text style={styles.subHeading}>Who we are</Text>
-        <Text style={[t.pB4]}>
-      We are a team of Btech final year students from VVIT College, specializing in AI & ML, passionately developing the innovative mobile application "FoodSnap."
+        </View>{
+          ItemName == "About us" &&  <ScrollView contentContainerStyle={{ flexGrow: 1, minHeight: '100%', }}>
+          <View style={styles.container}>
+          <Text style={styles.subHeading}>Who we are</Text>
+          <Text style={[t.pB4]}>
+        We are a team of Btech final year students from VVIT College, specializing in AI & ML, passionately developing the innovative mobile application "FoodSnap."
+          </Text>
+        <Text style={styles.subHeading}>Conclusion</Text>
+        
+  
+        <Text>
+          Thank you for choosing FoodSnap. Together, let's foster healthier eating habits and improved well-being for all. {'\n\n'}Appreciate your time with us! Thank you for choosing our service. For any queries like that, feel free to reach out
         </Text>
-      <Text style={styles.subHeading}>Conclusion</Text>
-      
-
-      <Text>
-        Thank you for choosing FoodSnap. Together, let's foster healthier eating habits and improved well-being for all. {'\n\n'}Appreciate your time with us! Thank you for choosing our service. For any queries like that, feel free to reach out
-      </Text>
-
-      <Text style={styles.signature}>
-        Sincerely,
-        {'\n'}FoodSnap Team
-        {'\n'}foodsnapl1456@gmail.com
-      </Text>
-    </View>
-    <Text style={[t.textGray700,t.textCenter,t.mT10]}>Thats all folks!</Text>
-    </ScrollView>
+  
+        <Text style={styles.signature}>
+          Sincerely,
+          {'\n'}FoodSnap Team
+          {'\n'}foodsnapl1456@gmail.com
+        </Text>
+      </View>
+      <Text style={[t.textGray700,t.textCenter,t.mT10]}>Thats all folks!</Text>
+      </ScrollView>
+        }
+        {
+          ItemName === "Diet Report" && <ScrollView contentContainerStyle={{ flexGrow: 1, minHeight: '100%',backgroundColor: '#F7FCFF' }}>
+              <View style={[t.bgWhite,t.hFull,t.wFull]}>
+                <Text>Hello</Text>
+              </View>
+            </ScrollView>
+        }
+       
       </View>
       
     </Modal>

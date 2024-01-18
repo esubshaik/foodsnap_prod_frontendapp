@@ -25,12 +25,12 @@ const percent = parseInt(percentageOfOnes);
   return (
     <View style={[t.flex,t.flexRow,t.justifyBetween,t.m4]}>
       <View style={[t.flex,t.flexCol]}>
-        <Text style={[t.textWhite,t.textLg,t.fontSemibold,t.pB2,t.pT1]}>🟢 Your Progress</Text>
+        <Text style={[t.textGray800,t.textLg,t.fontSemibold,t.pB2,t.pT1]}>🟢 Your Progress</Text>
       <View style={styles.container}>
         {numberOfOnes ? firstRow.map((day, index) => (
           <View key={index} style={[styles.circle, day === 1 ? styles.circleFilled : null]} />
         )): <View>
-          <Text style={[t.textWhite,t.textBase,t.pT2]}>LOG YOUR MEAL TO START YOUR STREAK 🔥</Text>
+          <Text style={[t.textGray800,t.textBase,t.pT2,t.fontSemibold]}>Log ur' meal to continue your Streak 🔥</Text>
           </View>
           }
       </View>
@@ -41,7 +41,7 @@ const percent = parseInt(percentageOfOnes);
       </View>
       </View>
       <View style={[t.flex1,t.mT6,t.mL4]}>
-        <Text style={[t.textWhite,t.text3xl,t.fontSemibold]}>{percent ?percent+'%' : null}</Text>
+        <Text style={[t.textGray800,t.text3xl,t.fontSemibold]}>{percent ?percent+'%' : null}</Text>
       </View>
     </View>
   );
@@ -59,12 +59,12 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'white',
+    borderColor: '#294D61',
     backgroundColor: 'transparent',
     margin: 2,
   },
   circleFilled: {
-    backgroundColor: 'white', // or any color you prefer
+    backgroundColor: '#294D61', // or any color you prefer
   },
 });
 

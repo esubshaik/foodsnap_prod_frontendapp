@@ -18,13 +18,13 @@ import FillProfile from './FillProfile';
 import FoodHistory from './FoodHistory';
 import HOST_URL from './config';
 import { Menu, MenuItem, MenuDivider } from 'react-native-material-menu';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome5,Feather,Foundation,Octicons,MaterialCommunityIcons } from '@expo/vector-icons';
 // import { AntDesign } from '@expo/vector-icons';
 // import { MaterialIcons } from '@expo/vector-icons';
 import AboutUsModal from './AboutUs';
 
 
-const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, showToast,image,checkProfileStatus,alertstatus }) => {
+const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading,image,checkProfileStatus,alertstatus }) => {
   // console.log(formdata);
   const navigation = useRouter();
   const [myInput, setInput] = useState("");
@@ -191,6 +191,17 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, showToast,i
   const closeMenuModal = () => {
     setMenuModal([false, false, false]);
   };
+  const [three,setthree] = useState([false,false,false]);
+  const trice = ["Diet Report","User Guide","About us"] ;
+
+  const openTriceModal = (index) => {
+    const updatedMenuModal = [...three];
+    updatedMenuModal[index] = true;
+    setthree(updatedMenuModal);
+  };
+  const closeTriceModal = () => {
+    setthree([false, false, false]);
+  };
   // const imageSource = Image.resolveAssetSource(require('./assets/defaultuser.png'));
 
   return (
@@ -235,7 +246,7 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, showToast,i
                 style={[t.bgWhite, t._mX2, t.mY2]}
               >
                 <MenuItem onPress={() => parentFunction(hideMenu)}><Text style={[]}>Refresh</Text></MenuItem>
-                <MenuItem onPress={hideMenu}><Text style={[]}>Diet Report</Text></MenuItem>
+                <MenuItem onPress={()=>openMenuModal(0)}><Text>Diet Report</Text></MenuItem>
 
                 <MenuItem onPress={hideMenu}><Text>User Guide</Text></MenuItem>
                 {/* <MenuItem disabled>Disabled item</MenuItem> */}
@@ -301,13 +312,12 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, showToast,i
           }}>
             <View style={{
               width: '68%',
-              // backgroundColor: 'skyblue',
               shadowColor: '#575555',
               elevation: 2,
               padding: 1, marginTop: 4, marginBottom: 4, borderRadius: 15
             }}>
-              <TouchableOpacity onPress={showToast
-                // () => ToastAndroid.show("Challenge is not yet completed", ToastAndroid.SHORT)
+              <TouchableOpacity onPress={
+                () => ToastAndroid.show("Challenge is not yet completed", ToastAndroid.SHORT)
               } style={[t.hFull, t.p2, t.bgRed200, t.roundedLg, t.wFull, t.flex, t.flexRow, t.justifyBetween]}>
                 <View style={[t.flex, t.flexCol, t.justifyBetween]}>
                   <Text style={[t.fontSemibold, t.m2, t.textLg, t.textRed900]}>Challenges</Text>
@@ -338,20 +348,15 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, showToast,i
                 </View>
               </View>
             </TouchableOpacity>
-            <View>
-
-            </View>
+           
           </View>
-          <View style={{
-            backgroundColor: '#294D61', marginLeft: 16, marginRight: 16, marginBottom: 14, marginTop: 10, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'black', shadowOpacity: 0.9,
-            shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
-          }}>
+          <View style={[t.p2,t.flex,t.flexRow,t.textCenter,t.itemsCenter, t.border2,t.borderGray200,t.mX4,t.mY2,t.roundedLg,t.bgWhite]}>
             {
-              sploading ? <Text style={[t.mY4, t.textCenter, t.wFull]}> <ActivityIndicator size="large" color='white' /> </Text> :
+              sploading ? <Text style={[t.mY4, t.textCenter, t.wFull]}> <ActivityIndicator size="large" color='#294D61' /> </Text> :
                 <UserProgress presentarr={formdata.daysarr} />
             }
-
           </View>
+
           <ModalComponent
             modalVisible={modalVisible}
             closeModal={closeModal}
@@ -361,6 +366,29 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, showToast,i
           />
 
           <BarComponent labels={formdata.labels} data={formdata.bardata} sploading={sploading} />
+          <View style={{
+            // ccfbf1
+            backgroundColor: '#FFBE94', marginLeft: 16, marginRight: 16, marginBottom: 4, marginTop: 16, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'black', shadowOpacity: 0.9,
+            shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
+          }}>
+
+          <View style={[t.mX4,t.h30]}>
+          <View style={[t.flex, t.flexRow, t.justifyAround,t.roundedLg]}>
+            <TouchableOpacity onPress={()=>openTriceModal(0)} style={[t.w20,t.h16,t.m4,t.roundedFull,t.bgOrange100,t.itemsCenter,t.justifyCenter,t.flexCol]}>
+            <MaterialCommunityIcons name="clock-edit-outline"  size={30} style={[t.textGray700,t.textCenter]} />
+            <Text style={[t.fontSemibold,t.textCenter]}>Goals</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={()=>openTriceModal(1)} style={[t.w20,t.h16,t.m4,t.roundedFull,t.bgOrange100,t.itemsCenter,t.justifyCenter,t.flexCol]}>
+          <Octicons name="alert" size={30}  style={[t.textGray700,t.textCenter]} />
+            <Text style={[t.fontSemibold,t.textCenter]}>Alerts</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={()=>openTriceModal(2)} style={[t.w20,t.h16,t.m4,t.roundedFull,t.bgOrange100,t.itemsCenter,t.justifyCenter,t.flexCol]}>
+          <Ionicons name="document-attach-outline" size={30} style={[t.textGray700,t.textCenter]} />
+            <Text style={[t.fontSemibold,t.textCenter]}>Reports</Text>
+          </TouchableOpacity>
+            </View>
+          </View>
+          </View>
           <FoodHistory foodlabels={formdata.allfoodlabels} dates={formdata.days} ids={formdata.ids} reloadpage={fetchNutri} sploading={sploading} />
         </View>
       </ScrollView>

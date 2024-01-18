@@ -116,7 +116,7 @@ const  Login=({ modalVisible, closeModal,data})=> {
                 }
               );
               setLoading(true);
-              // console.log(response.data);
+              console.log(response.data);
                 
               if (response.status === 400) {
                 ToastAndroid.show('Fill all details', ToastAndroid.SHORT);

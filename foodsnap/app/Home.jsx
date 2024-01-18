@@ -307,7 +307,6 @@ export default function TabsLayout() {
       }));
       alert('You have already reached 100% of your daily hydration goal! 🎉');
     }
-    showToast();
 
   };
 
@@ -426,13 +425,14 @@ export default function TabsLayout() {
       BackHandler.exitApp();
       return true;
     };
+    checkProfileStatus();
+    getStoredImage();
     getuserPermission();
-    // registerForPushNotificationsAsync();
     ReloadProfile();
     fetchNutri();
     fetchImages();
     getstatus();
-    getStoredImage();
+    
     BackHandler.addEventListener('hardwareBackPress', backAction);
     return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
 
@@ -454,8 +454,11 @@ export default function TabsLayout() {
   //       return <Empty />; // Return a default component or null for unknown keys
   //   }
   // };
+  
   const [image, setImage] = useState(null);
+
   const getStoredImage=async()=>{
+
     try {
         const userdp = await AsyncStorage.getItem('userprofile') ;
         if (userdp) {
@@ -466,18 +469,10 @@ export default function TabsLayout() {
           setImage(imageSource.uri)
         }
       } catch (error) {
+        console.log(error);
       }
     }
-    
-  const [toastVisible,setToastVisible] = useState(false);
 
-  const showToast = () => {
-    setToastVisible(true);
-  };
-
-  const closeToast = () => {
-    setToastVisible(false);
-  };
   const [Profile, setProfile] = useState({
     username: "",
     age: "",
@@ -547,9 +542,9 @@ export default function TabsLayout() {
   }
   const [alertstatus, setalertstatus] = useState(false);
   
-
   async function checkProfileStatus() {
     try {
+      // await AsyncStorage.removeItem('bmi');
       const token = await AsyncStorage.getItem('bmi');
       if (!parseInt(token)) {
         setalertstatus(true);
@@ -570,7 +565,7 @@ export default function TabsLayout() {
       />
       <View style={[t.flex1]}>
         {view == 1 ? (
-          <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} sploading={sploading} showToast={showToast} image={image} checkProfileStatus={checkProfileStatus} alertstatus={alertstatus} />
+          <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} sploading={sploading} image={image} checkProfileStatus={checkProfileStatus} alertstatus={alertstatus} />
         ) :
           view == 4 ?
             (

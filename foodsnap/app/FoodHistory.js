@@ -108,7 +108,7 @@ const FoodHistory = ({foodlabels,dates,ids,reloadpage,sploading}) => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor:'#FAFAFA',shadowColor: '#05161A',shadowOpacity: 0.4,borderTopEndRadius : 10,borderTopStartRadius: 10,borderBottomEndRadius: 40,borderBottomStartRadius: 40,
+      backgroundColor:'white',shadowColor: '#05161A',shadowOpacity: 0.9,borderTopEndRadius : 10,borderTopStartRadius: 10,borderBottomEndRadius: 40,borderBottomStartRadius: 40,
       shadowRadius: 4,elevation: 5, marginLeft:18, marginRight:18, paddingTop:12, marginTop:14,marginBottom: 30
     },
   });
