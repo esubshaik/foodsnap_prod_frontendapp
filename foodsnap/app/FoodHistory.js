@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert, ToastAndroid,ActivityIndicator } from 'react-native';
 import { format, endOfMonth } from 'date-fns';
 import {t} from 'react-native-tailwindcss' ;
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign,Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import HOST_URL from './config';
 const FoodHistory = ({foodlabels,dates,ids,reloadpage,sploading}) => {
@@ -77,9 +77,8 @@ const FoodHistory = ({foodlabels,dates,ids,reloadpage,sploading}) => {
             <Text style={[t.fontSemibold, t.textGray900]}>✅ {name}</Text>
             <Text style={[t.mL4,t.mT1]}>{new Date(fooddate[index]).toString()}</Text>
             </View>
-            <TouchableOpacity onPress={()=>handleItemDelete(foodids[index])}>
-            <AntDesign name="delete" size={25} color="red" style={[t.mL4,t.fontBold,t.mR1]}/>
-            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>handleItemDelete(foodids[index])}><Ionicons name="trash-outline" size={25} color="#e11d48" style={[t.mL4,t.fontBold,t.mR1]}/></TouchableOpacity>
+         
             </View>
             ) : null
                 )) 

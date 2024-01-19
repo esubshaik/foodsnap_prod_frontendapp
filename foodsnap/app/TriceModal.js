@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ToastAndroid, BackHandler, ActivityIndicator, Modal, Switch, TextInput, Alert, StyleSheet, Button, Image } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ToastAndroid, BackHandler, ActivityIndicator, Modal, Switch, TextInput, Alert, StyleSheet, Button, Image, Linking, FlatList } from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,7 +14,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as IntentLauncher from 'expo-intent-launcher';
 import { encode } from 'base-64';
-import {Buffer} from "buffer";
+import { Buffer } from "buffer";
 
 function TriceModal({ modalVisible, closeModal, ItemName }) {
   const [startDate, setStartDate] = useState(new Date(1598051730000));
@@ -38,7 +38,7 @@ function TriceModal({ modalVisible, closeModal, ItemName }) {
   };
 
   const endOnChange = (event, selectedDate) => {
-    const currentDate = selectedDate || endDate;
+    const currentDate = selectedDate < endDate ? selectedDate : new Date();
     setShowEnd(Platform.OS === 'Android');
     setEndDate(currentDate);
     setEndDateSelected(true);
@@ -70,9 +70,7 @@ function TriceModal({ modalVisible, closeModal, ItemName }) {
     if (startDateSelected) {
       showStartMode('time');
     } else {
-      // Handle the case where the user tries to select start time without selecting start date
-      // You can inform the user to select a start date first or set the start date to the current date
-      // For example, you can call showStartMode('time') here with the current start date.
+
     }
   };
 
@@ -80,9 +78,7 @@ function TriceModal({ modalVisible, closeModal, ItemName }) {
     if (endDateSelected) {
       showEndMode('time');
     } else {
-      // Handle the case where the user tries to select end time without selecting end date
-      // You can inform the user to select an end date first or set the end date to the current date
-      // For example, you can call showEndMode('time') here with the current end date.
+
     }
   };
 
@@ -94,36 +90,35 @@ function TriceModal({ modalVisible, closeModal, ItemName }) {
     showEndDatepicker();
   };
 
-  async function saveFile(uri, filename, mimetype) {
-    if (Platform.OS === "android") {
-      const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+  const convertToMongoDBDate = async (reactNativeDate) => {
+    const year = reactNativeDate.getUTCFullYear();
+    const month = String(reactNativeDate.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(reactNativeDate.getUTCDate()).padStart(2, '0');
+    const hours = String(reactNativeDate.getUTCHours()).padStart(2, '0');
+    const minutes = String(reactNativeDate.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(reactNativeDate.getUTCSeconds()).padStart(2, '0');
+    const milliseconds = String(reactNativeDate.getUTCMilliseconds()).padStart(3, '0');
 
-      if (permissions.granted) {
-        // const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+    const timeZoneOffset = '+00:00';
+    const mongoDBDateString = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}${timeZoneOffset}`;
 
-        await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri, filename, mimetype)
-          .then(async (uri) => {
-            await FileSystem.writeAsStringAsync(uri, base64, { encoding: FileSystem.EncodingType.Base64 });
-          })
-          .catch(e => console.log(e));
-      } else {
-        shareAsync(uri);
-      }
-    } else {
-      shareAsync(uri);
-    }
-  }
-
+    return mongoDBDateString;
+  };
 
   const [pdfUri, setPdfUri] = useState(null);
   const downloadAndOpenPdf = async () => {
+    // console.log(startDate)
     const token = await AsyncStorage.getItem('token');
+    const act_start = await convertToMongoDBDate(startDate);
+    const act_end = await convertToMongoDBDate(endDate);
+    // console.log(act_start)
+    // console.log(act_end)
     try {
       const response = await axios.post(
         HOST_URL + '/api/user/diet-report',
         {
-          start: "2024-01-18T12:27:43.961+00:00",
-          end: "2024-01-19T07:28:53.443+00:00"
+          start: act_start,
+          end: act_end
         },
         {
           headers: {
@@ -132,39 +127,122 @@ function TriceModal({ modalVisible, closeModal, ItemName }) {
           responseType: 'arraybuffer',
         }
       );
+      const filename = 'foodsnap_' + Date.now() + '.pdf';
+      const directoryName = 'foodsnap';
+      const directoryUri = FileSystem.cacheDirectory + directoryName + '/';
+      const uri = directoryUri + filename;
+      const buff = Buffer.from(response.data, 'base64');
+      const base64Data = buff.toString('base64');
+      const mimetype = 'application/pdf';
+      await FileSystem.makeDirectoryAsync(directoryUri, { intermediates: true });
 
-      const filename = 'cachefile_' + Date.now() + '.pdf';
-      const uri = FileSystem.cacheDirectory + filename;
-      buff = Buffer.from(response.data, 'base64')
+      // Write the PDF file to the directory
+      await FileSystem.writeAsStringAsync(uri, base64Data, { encoding: FileSystem.EncodingType.Base64 });
 
-      const base64Data = buff.toString("base64");
-      // console.log(base64Data)
-      const mimetype = "application/pdf"
-      if (Platform.OS === "android") {
-        const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
-        if (permissions.granted) {
-          // const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
-  
-          await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri, filename,mimetype)
-            .then(async (uri) => {
-              console.log(uri);
-              await FileSystem.writeAsStringAsync(uri, base64Data, { encoding: FileSystem.EncodingType.Base64 });
-            })
-            .catch(e => console.log(e));
-        } else {
-          shareAsync(uri);
-        }
-      } else {
-        shareAsync(uri);
-      }
+      const destinationUri = FileSystem.documentDirectory + filename;
+      await FileSystem.copyAsync({ from: uri, to: destinationUri });
+      setPdfUri(uri)
+      console.log('File copied to:', destinationUri);
+      let content = await FileSystem.getContentUriAsync(uri)
+      // await Linking.openURL(uri);
+      IntentLauncher.startActivityAsync(activityAction = "android.intent.action.VIEW", {
+        data: content,
+        flags: 1,
+        type: mimetype,
 
+      });
 
-      // await FileSystem.writeAsStringAsync(uri, base64Data, { encoding: FileSystem.EncodingType.Base64 });
-      console.log("saved pdf")
     } catch (error) {
       console.error(error);
     }
   };
+  const [fileList, setFileList] = useState([]);
+
+  useEffect(() => {
+    const loadFiles = async () => {
+      try {
+        const directoryName = 'foodsnap';
+        const directoryUri = FileSystem.cacheDirectory + directoryName + '/';
+        const files = await FileSystem.readDirectoryAsync(directoryUri);
+
+        // Create an array of objects with URI and name for each file
+        const fileDetails = files.map((fileName) => ({
+          uri: directoryUri + fileName,
+          name: fileName,
+        }));
+
+        // Update the state with the file details
+        setFileList(fileDetails);
+      } catch (error) {
+        console.error('Error reading directory:', error);
+      }
+    };
+    loadFiles();
+  }, [pdfUri]);
+
+
+  const deleteFile = async (fileName) => {
+    try {
+      const directoryName = 'foodsnap';
+      const directoryUri = FileSystem.cacheDirectory + directoryName + '/';
+      const filePath = directoryUri + fileName;
+
+      // Delete the file
+      await FileSystem.deleteAsync(filePath);
+
+      // Update the file list after deletion
+      setFileList((prevList) => prevList.filter((file) => file.name !== fileName));
+    } catch (error) {
+      console.error('Error deleting file:', error);
+    }
+  };
+
+  const handlePDFOpen=async(uri)=>{
+    let content = await FileSystem.getContentUriAsync(uri)
+      IntentLauncher.startActivityAsync(activityAction = "android.intent.action.VIEW", {
+        data: content,
+        flags: 1,
+        type: 'application/pdf',
+
+      });
+  }
+
+  const showOpenAlert = (uri) => {
+    Alert.alert(
+      'Open PDF File',
+      'Do you want to open this PDF file?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => handlePDFOpen(uri),
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+  const showDeleteAlert = (name) => {
+    Alert.alert(
+      'Permanently Delete File',
+      `Are you sure you want to permanently delete the file "${name}"? This action cannot be undone.`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: () => deleteFile(name),
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+  
+
 
   return (
     <Modal
@@ -208,6 +286,7 @@ function TriceModal({ modalVisible, closeModal, ItemName }) {
                       value={startDate}
                       mode={startMode}
                       onChange={startOnChange}
+                      maximumDate={new Date()}
                     />
                   )}
                   {showEnd && (
@@ -215,6 +294,9 @@ function TriceModal({ modalVisible, closeModal, ItemName }) {
                       value={endDate}
                       mode={endMode}
                       onChange={endOnChange}
+                      maximumDate={new Date()}
+
+
                     />
                   )}
                 </View>
@@ -247,7 +329,23 @@ function TriceModal({ modalVisible, closeModal, ItemName }) {
               <TouchableOpacity style={[t.bgTeal900, t.roundedLg, t.p2, t.mY4, t.borderTeal800, t.border2]} onPress={downloadAndOpenPdf}>
                 <Text style={[t.textWhite, t.textXl, t.textCenter]}>Generate and Download Report</Text>
               </TouchableOpacity>
+              <View>
+                <Text style={[t.textBase, t.fontSemibold, t.textGray700, t.mT1, t.mX1]}>Download History</Text>
+                <View style={[t.flexCol,t.p2, t.border2, t.borderGray200, t.mY1, t.roundedLg, t.bgWhite]}>
+                  {
+                    fileList?.map((file, index) => (
+                      <View key={index} style={[t.flexRow,t.m2,t.justifyBetween,t.itemsCenter]}>
+                        <Text style={[t.fontSemibold,t.textBase,t.textGray700]}>{index+1 + ".  "+file.name}</Text>
+                        <TouchableOpacity onPress={()=>showDeleteAlert(file.name)}><Ionicons name="trash-outline" size={25} color="#e11d48" /></TouchableOpacity>
+                        <TouchableOpacity onPress={()=>showOpenAlert(file.uri)}><AntDesign name="pdffile1" size={25} color="#e11d48" /></TouchableOpacity>
+                        
+                      </View>
+                    ))
+                  }
 
+
+                </View>
+              </View>
 
             </View>
           </ScrollView>

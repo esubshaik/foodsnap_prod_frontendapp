@@ -10,7 +10,7 @@ const ProgressChartGrid = ({mynutridata,hydrapercent,sploading}) => {
 const reqhydra = 100-hydrapercent ;
 
   return (
-    <View style={{backgroundColor:'#dcfce7',marginLeft: 16,marginRight:16,marginBottom:10,marginTop:14,borderRadius:15,flexDirection:'row',height:'fit',shadowColor: '#05161A',shadowOpacity: 0.4,
+    <View style={{backgroundColor:'#eff6ff',marginLeft: 16,marginRight:16,marginBottom:10,marginTop:14,borderRadius:15,flexDirection:'row',height:'fit',shadowColor: '#05161A',shadowOpacity: 0.4,
     shadowRadius: 4,elevation: 5}}>
       {
         sploading? <Text style={[t.mY4,t.textCenter, t.wFull]}> <ActivityIndicator size="large" color='#294D61'/> </Text> :
@@ -29,9 +29,9 @@ const reqhydra = 100-hydrapercent ;
             strokeWidth={8}
             radius={20}
             chartConfig={{
-              backgroundColor: '#dcfce7',
-              backgroundGradientFrom: '#dcfce7',
-              backgroundGradientTo: '#dcfce7',
+              backgroundColor: '#eff6ff',
+              backgroundGradientFrom: '#eff6ff',
+              backgroundGradientTo: '#eff6ff',
               color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             }}
           />
@@ -51,9 +51,9 @@ const reqhydra = 100-hydrapercent ;
             radius={20}
             
             chartConfig={{
-              backgroundColor: '#dcfce7',
-              backgroundGradientFrom: '#dcfce7',
-              backgroundGradientTo: '#dcfce7',
+              backgroundColor: '#eff6ff',
+              backgroundGradientFrom: '#eff6ff',
+              backgroundGradientTo: '#eff6ff',
               color: (opacity = 8) => `rgba(0, 0, 0, ${opacity})`,
             }}
           />
@@ -74,9 +74,9 @@ const reqhydra = 100-hydrapercent ;
             strokeWidth={8}
             radius={20}
             chartConfig={{
-              backgroundColor: '#dcfce7',
-              backgroundGradientFrom: '#dcfce7',
-              backgroundGradientTo: '#dcfce7',
+              backgroundColor: '#eff6ff',
+              backgroundGradientFrom: '#eff6ff',
+              backgroundGradientTo: '#eff6ff',
               color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             }}
           />
@@ -94,9 +94,9 @@ const reqhydra = 100-hydrapercent ;
             strokeWidth={8}
             radius={20}
             chartConfig={{
-              backgroundColor: '#dcfce7',
-              backgroundGradientFrom: '#dcfce7',
-              backgroundGradientTo: '#dcfce7',
+              backgroundColor: '#eff6ff',
+              backgroundGradientFrom: '#eff6ff',
+              backgroundGradientTo: '#eff6ff',
               color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             }}
           />

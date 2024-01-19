@@ -61,9 +61,9 @@ const styles = StyleSheet.create({
     paddingLeft:20,
     // padding: 10,
     alignItems:'center',
-    color:'white',
+    color:'#294D61',
     // backgroundColor:''
-    backgroundColor:'#294D61',borderRadius:15,flexDirection:'row',height:'fit',shadowColor: '#05161A',shadowOpacity: 0.4,
+    backgroundColor:'white',borderRadius:15,flexDirection:'row',height:'fit',shadowColor: '#05161A',shadowOpacity: 0.4,
     shadowRadius: 4,elevation: 5
   },
 });

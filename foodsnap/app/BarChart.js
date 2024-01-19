@@ -5,8 +5,8 @@ import {t} from 'react-native-tailwindcss' ;
 
 const BarComponent = ({data,labels,sploading}) => {
   const chartConfig = {
-    backgroundGradientFrom: '#FFF0B2',
-    backgroundGradientTo: '#FFF0B2',
+    backgroundGradientFrom: '#eff6ff',
+    backgroundGradientTo: '#eff6ff',
     color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     strokeWidth: 1,
     barPercentage: 1,
@@ -16,7 +16,7 @@ const BarComponent = ({data,labels,sploading}) => {
 
   return (
     <View style={styles.container}>
-      <Text style={[t.p2,t.mX4,t.flex,t.flexRow,t.itemsCenter,t.roundedLg,t.textYellow800,t.textLg,t.fontBold]}>Today's Food Journey</Text>
+      <Text style={[t.p2,t.mX4,t.flex,t.flexRow,t.itemsCenter,t.roundedLg,t.textGray800,t.textLg,t.fontBold]}>Today's Food Journey</Text>
       {
         sploading ? <ActivityIndicator size="large" color='#294D61'/> :
         labels[0] ?
@@ -64,8 +64,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingBottom:20,
-    backgroundColor:'#FFF0B2',borderRadius:10,shadowColor: '#05161A',shadowOpacity: 0.4,
-    shadowRadius: 4,elevation: 5, marginLeft:18, marginRight:18, paddingTop:12, marginTop:0
+    backgroundColor:'#eff6ff',borderRadius:10,shadowColor: '#05161A',shadowOpacity: 0.4,
+    shadowRadius: 4,elevation: 5, marginLeft:18, marginRight:18, paddingTop:12, marginTop:6
   },
 });
 

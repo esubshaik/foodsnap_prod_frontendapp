@@ -320,7 +320,7 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading,image,checkP
             }}>
               <TouchableOpacity onPress={
                 () => ToastAndroid.show("Challenge is not yet completed", ToastAndroid.SHORT)
-              } style={[t.hFull, t.p2, t.bgRed200, t.roundedLg, t.wFull, t.flex, t.flexRow, t.justifyBetween]}>
+              } style={[t.hFull, t.p2, t.bgRed100, t.roundedLg, t.wFull, t.flex, t.flexRow, t.justifyBetween]}>
                 <View style={[t.flex, t.flexCol, t.justifyBetween]}>
                   <Text style={[t.fontSemibold, t.m2, t.textLg, t.textRed900]}>Challenges</Text>
                   <Text style={[t.fontSemibold, t.m2, t.textXl, t.textRed900]}>WinterHarvest Eats</Text>
@@ -352,11 +352,13 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading,image,checkP
             </TouchableOpacity>
            
           </View>
-          <View style={[t.p2,t.flex,t.flexRow,t.textCenter,t.itemsCenter, t.border2,t.borderGray200,t.mX4,t.mY2,t.roundedLg,t.bgOrange200]}>
+          <View style={{backgroundColor:'#eff6ff', marginHorizontal:16,marginVertical:10,borderRadius: 15}}>
+          <View style={[t.p2,t.flex,t.flexRow,t.textCenter,t.itemsCenter, t.border2,t.borderGray200,t.roundedLg]}>
             {
               sploading ? <Text style={[t.mY4, t.textCenter, t.wFull]}> <ActivityIndicator size="large" color='#115e59' /> </Text> :
                 <UserProgress presentarr={formdata.daysarr} />
             }
+          </View>
           </View>
 
           <ModalComponent
@@ -370,21 +372,21 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading,image,checkP
           <BarComponent labels={formdata.labels} data={formdata.bardata} sploading={sploading} />
           <View style={{
             // ccfbf1
-            backgroundColor: '#FFBE94', marginLeft: 16, marginRight: 16, marginBottom: 4, marginTop: 16, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'black', shadowOpacity: 0.9,
+            backgroundColor: '#eff6ff', marginLeft: 16, marginRight: 16, marginBottom: 4, marginTop: 16, borderRadius: 15, flexDirection: 'row', height: 100, shadowColor: 'black', shadowOpacity: 0.9,
             shadowRadius: 4, elevation: 5, justifyContent: 'space-between', alignItems: 'center'
           }}>
 
           <View style={[t.mX4,t.h30]}>
           <View style={[t.flex, t.flexRow, t.justifyAround,t.roundedLg]}>
-            <TouchableOpacity onPress={()=>openTriceModal(0)} style={[t.w20,t.h16,t.m4,t.roundedFull,t.bgOrange100,t.itemsCenter,t.justifyCenter,t.flexCol]}>
+            <TouchableOpacity onPress={()=>openTriceModal(0)} style={[t.w20,t.h16,t.m4,t.roundedFull,t.bgYellow100,t.itemsCenter,t.justifyCenter,t.flexCol]}>
             <MaterialCommunityIcons name="clock-edit-outline"  size={30} style={[t.textGray700,t.textCenter]} />
             <Text style={[t.fontSemibold,t.textCenter]}>Goals</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=>openTriceModal(1)} style={[t.w20,t.h16,t.m4,t.roundedFull,t.bgOrange100,t.itemsCenter,t.justifyCenter,t.flexCol]}>
+          <TouchableOpacity onPress={()=>openTriceModal(1)} style={[t.w20,t.h16,t.m4,t.roundedFull,t.bgYellow100,t.itemsCenter,t.justifyCenter,t.flexCol]}>
           <Octicons name="alert" size={30}  style={[t.textGray700,t.textCenter]} />
             <Text style={[t.fontSemibold,t.textCenter]}>Alerts</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=>openTriceModal(2)} style={[t.w20,t.h16,t.m4,t.roundedFull,t.bgOrange100,t.itemsCenter,t.justifyCenter,t.flexCol]}>
+          <TouchableOpacity onPress={()=>openTriceModal(2)} style={[t.w20,t.h16,t.m4,t.roundedFull,t.bgYellow100,t.itemsCenter,t.justifyCenter,t.flexCol]}>
           <Ionicons name="document-attach-outline" size={30} style={[t.textGray700,t.textCenter]} />
             <Text style={[t.fontSemibold,t.textCenter]}>Reports</Text>
           </TouchableOpacity>
