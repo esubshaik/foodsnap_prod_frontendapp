@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     
   },
   currentDate: {
-    fontSize: 20,
+    fontSize: 14,
     fontWeight: 'bold',
     borderRadius: 20,
     borderWidth: 1,

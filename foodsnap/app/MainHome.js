@@ -22,6 +22,7 @@ import { FontAwesome5,Feather,Foundation,Octicons,MaterialCommunityIcons } from 
 // import { AntDesign } from '@expo/vector-icons';
 // import { MaterialIcons } from '@expo/vector-icons';
 import AboutUsModal from './AboutUs';
+import TriceModal from './TriceModal';
 
 
 const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading,image,checkProfileStatus,alertstatus }) => {
@@ -191,13 +192,14 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading,image,checkP
   const closeMenuModal = () => {
     setMenuModal([false, false, false]);
   };
+
   const [three,setthree] = useState([false,false,false]);
-  const trice = ["Diet Report","User Guide","About us"] ;
+  const trice = ["Goals","Alerts","Reports"] ;
 
   const openTriceModal = (index) => {
-    const updatedMenuModal = [...three];
-    updatedMenuModal[index] = true;
-    setthree(updatedMenuModal);
+    const updatedTriceModal = [...three];
+    updatedTriceModal[index] = true;
+    setthree(updatedTriceModal);
   };
   const closeTriceModal = () => {
     setthree([false, false, false]);
@@ -265,7 +267,7 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading,image,checkP
         <View style={[t.p1, t.flex, t.textCenter, t.flexCol]}>
           <View style={{ position: 'absolute', margin: '50%' }}>
           </View>
-          <Input style={[t.flex, t.flexRow, t.border2, t.m4, t.roundedLg, t.h12, isFocused ? t.borderBlue600 : t.borderBlack, t.flex, t.flexRow]}>
+          <Input style={[t.flex, t.flexRow, t.border2, t.m4, t.roundedLg, t.h12, isFocused ? t.borderTeal700 : t.borderTeal800, t.flex, t.flexRow]}>
             {
               rec ? <Ionicons name="ios-stop-outline" onPress={stopRecording} size={24} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '2%' }} />
                 : <Ionicons name="ios-mic-outline" size={26}
@@ -273,7 +275,7 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading,image,checkP
             }
             <Ionicons name="ios-camera-outline" onPress={() => { navigation.push("/Camera") }} size={24} color={isFocused ? '#1e88e5' : 'black'} style={{ width: '12%', marginTop: '3%', marginLeft: '0%' }} />
 
-            <Text style={[t.roundedRSm, t.bgTeal800, t.absolute, t.right0, t.w10, t.hFull, t.pT2, t.pL2]}>
+            <Text style={[t.roundedRSm, t.bgTeal800, t.absolute, t.right0, t.w10, t.hFull, t.pT2, t.pL2,t.borderT2,t.borderTeal800,t.itemsEnd]}>
               <TouchableOpacity
                 onPress={analyzeFood}
               >
@@ -387,6 +389,7 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading,image,checkP
             <Text style={[t.fontSemibold,t.textCenter]}>Reports</Text>
           </TouchableOpacity>
             </View>
+            <TriceModal modalVisible={three[2]} closeModal={closeTriceModal} ItemName={trice[2]}/>
           </View>
           </View>
           <FoodHistory foodlabels={formdata.allfoodlabels} dates={formdata.days} ids={formdata.ids} reloadpage={fetchNutri} sploading={sploading} />
