@@ -31,7 +31,7 @@ const BarComponent = ({data,labels,sploading}) => {
           ],
         }}
         // width={Dimensions.get('window').width-40} 
-        width={barwidth*75}
+        width={barwidth*150}
   height={180} 
   yAxisLabel={''}
         fromZero

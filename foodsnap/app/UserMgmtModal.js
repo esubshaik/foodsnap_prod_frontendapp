@@ -27,7 +27,7 @@ function UserMgmtModal({ modalVisible, closeModal, Itemindex, ItemName,userData,
         ToastAndroid.show(`One or more required fields are missing`, ToastAndroid.SHORT);
         return;
       }
-      console.log(userData);
+      // console.log(userData);
       const token = await AsyncStorage.getItem('token');
       const response = await axios.put(
         HOST_URL + '/api/user/update-fullprofile',
@@ -53,7 +53,7 @@ function UserMgmtModal({ modalVisible, closeModal, Itemindex, ItemName,userData,
       }
     }
     catch (error) {
-      console.log(error)
+      // console.log(error)
       // 
     }
     finally {

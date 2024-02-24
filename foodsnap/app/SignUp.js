@@ -39,7 +39,8 @@ const SignUp=({ modalVisible, closeModal,data,isCollapsed,setCollapsed})=> {
       nstatus:1,
       fstatus:1,
       ostatus: 1,
-      calrange:''
+      calrange:'',
+      issues: 'None'
     });
     
     const requestOTP = async()=>{
@@ -200,7 +201,7 @@ const SignUp=({ modalVisible, closeModal,data,isCollapsed,setCollapsed})=> {
           style={[t.border, t.borderGray400, t.rounded, t.pY2, t.pX4, t.textSm, t.flex, t.wFull, t.pl10pr10,t.textWhite,t.fontSemibold]}
           placeholder="Enter your email"
           placeholderTextColor="white" 
-          onChangeText={(text) => setFormData({ ...formData, email: text })  }
+          onChangeText={(text) => setFormData({ ...formData, email: text.toLowerCase() })}
           keyboardType="email-address"
           editable={ismatched}
         />

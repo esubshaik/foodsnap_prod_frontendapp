@@ -87,7 +87,7 @@ export default function ScanFood() {
           const source = data.uri;
           if (source) {
             setIsPreview(true);
-            console.log("video source", source);
+            // console.log("video source", source);
             setVideoSource(source);
           }
         }
@@ -149,7 +149,7 @@ export default function ScanFood() {
         },
       });
       const responseData = await response.json();
-      console.log(responseData.data.results);
+      // console.log(responseData.data.results);
       if (responseData.data.results){
         const nextdata = await responseData.data.results ;
         setresults(responseData);
@@ -358,7 +358,7 @@ const animationLoader =()=>(
         flashMode={Camera.Constants.FlashMode.auto}
         onCameraReady={onCameraReady}
         onMountError={(error) => {
-          console.log("cammera error", error);
+          // console.log("cammera error", error);
         }}
       />
       <View style={styles.container}>

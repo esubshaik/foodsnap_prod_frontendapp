@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, Image, StyleSheet, Dimensions, ActivityIndicator, Modal, Linking ,TouchableOpacity,ScrollView,BackHandler} from 'react-native';
+import { View, Text, Button, Image, StyleSheet, Dimensions, ActivityIndicator, Modal, Linking ,TouchableOpacity,ScrollView,BackHandler, ToastAndroid} from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import { Feather } from '@expo/vector-icons';
 import { LineChart } from 'react-native-chart-kit';
@@ -12,7 +12,8 @@ const openExternalUrl = async (url) => {
   if (supported) {
     await Linking.openURL(url);
   } else {
-    console.error(`Don't know how to open URL: ${url}`);
+    ToastAndroid.show("It seems there is no such application",ToastAndroid.SHORT)
+    // console.error(`Don't know how to open URL: ${url}`);
   }
 };
 
@@ -184,10 +185,10 @@ const DetailedDiet = ({ modalVisible, closeModal, recommendInfo, findex }) => {
             </View>
             <Text style={[t.text2xl, t.mT6, t.fontSemibold,t.mB4]}>Wanna Search Food Online? </Text>
             <View style={[t.flex,t.flexRow,t.justifyBetween]}>
-            <TouchableOpacity onPress={() => openExternalUrl(`https://www.zomato.com/search?${encodeURIComponent(recommendInfo.foodNames[findex])}`)}>
+            <TouchableOpacity onPress={() => openExternalUrl(`zomato:///search?q=Roti`)}>
         <Text style={[t.textWhite,t.p2,t.bgRed600,t.roundedLg,t.fontSemibold,t.textCenter,t.w40]}>zomato</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => openExternalUrl(`zomato:///search?q=Roti`)}>
+        <TouchableOpacity onPress={() => openExternalUrl(`swiggy:///search?q=Roti`)}>
         <Text style={[t.textOrange600,t.border2,t.p2,t.borderOrange500,t.roundedLg,t.fontSemibold,t.textCenter,t.w40]}>swiggy</Text>
         </TouchableOpacity>
         </View>

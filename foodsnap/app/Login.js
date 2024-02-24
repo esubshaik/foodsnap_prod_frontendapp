@@ -116,7 +116,7 @@ const  Login=({ modalVisible, closeModal,data})=> {
                 }
               );
               setLoading(true);
-              console.log(response.data);
+              // console.log(response.data);
                 
               if (response.status === 400) {
                 ToastAndroid.show('Fill all details', ToastAndroid.SHORT);
@@ -131,7 +131,7 @@ const  Login=({ modalVisible, closeModal,data})=> {
                 await AsyncStorage.setItem('email', formData.email);
                 await AsyncStorage.setItem('hydration','0');
                 await AsyncStorage.setItem('gender',gender);
-                await AsyncStorage.setItem('location',location)
+                await AsyncStorage.setItem('location',location);
                 await AsyncStorage.setItem('pstatus',pstatus? pstatus.toString():'0');
                 await AsyncStorage.setItem('astatus',astatus? astatus.toString():'0');
                 await AsyncStorage.setItem('nstatus',nstatus? nstatus.toString():'0');
@@ -161,7 +161,7 @@ const  Login=({ modalVisible, closeModal,data})=> {
                 ToastAndroid.show('Internal Server Error', ToastAndroid.SHORT);
               }
             } catch (err) {
-              console.log(err);
+              // console.log(err);
               // ToastAndroid.show(er.message);
               ToastAndroid.show("Please try again", ToastAndroid.SHORT);
             }
@@ -201,7 +201,8 @@ const  Login=({ modalVisible, closeModal,data})=> {
           placeholderTextColor="white" 
           keyboardType="email-address"
           autoCapitalize="none" 
-          onChangeText={(text) => setFormData({ ...formData, email: text })}
+          // onChangeText={(text) => setFormData({ ...formData, email: text })}
+          onChangeText={(text) => setFormData({ ...formData, email: text.toLowerCase() })}
         />
       </View>
      

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Button, Image, StyleSheet, Text } from 'react-native';
+import {t} from 'react-native-tailwindcss';
 // const RenderBoundingBoxes = ({results}) => {
 //     if (!results || results.length == 0) {
 //       return null;
@@ -79,7 +80,7 @@ import { View, Button, Image, StyleSheet, Text } from 'react-native';
             backgroundColor: 'transparent',
           }}
         >
-          <Text style={{ color: 'white', fontWeight: 'bold' }}>{className}</Text>
+          <Text style={[t.textWhite,t.fontSemibold,t.textLg]}>{className}</Text>
         </View>
       );
     });

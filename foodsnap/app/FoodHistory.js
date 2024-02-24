@@ -5,6 +5,7 @@ import {t} from 'react-native-tailwindcss' ;
 import { AntDesign,Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import HOST_URL from './config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const FoodHistory = ({foodlabels,dates,ids,reloadpage,sploading}) => {
   
   // const foodnames = Array.from(foodlabels).reverse() ;
@@ -16,9 +17,12 @@ const FoodHistory = ({foodlabels,dates,ids,reloadpage,sploading}) => {
   
     const DeleteFood=async(itemid)=>{
         setloading(true);
+        const token = await AsyncStorage.getItem('token');
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json' },
             body: JSON.stringify({ itemid: itemid })
           };
           try {

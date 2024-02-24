@@ -11,7 +11,7 @@ import { Foundation } from '@expo/vector-icons';
 import HOST_URL from './config';
 
 const FillProfile = ({ closeModal, modalVisible, reload }) => {
-
+  const navigation = useRouter();
   //   const [index,setindex]=useState(0) ;
 
   const [LoadingClose, setLoadingClose] = useState(false);
@@ -116,7 +116,7 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
         }
       );
 
-      //console.error(response.data);
+      // console.error(response.data);
       ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
     }
     catch (error) {
@@ -124,6 +124,10 @@ const FillProfile = ({ closeModal, modalVisible, reload }) => {
     }
     finally {
       setLoading(false);
+      setTimeout(() => {
+        // Navigate to the home screen after 4 seconds
+        navigation.push('/Home'); // Replace 'Home' with your actual route name
+      }, 1000);
     }
 
   }

@@ -1,19 +1,20 @@
-import { View, Text, TouchableOpacity, Image, BackHandler, ToastAndroid,StatusBar } from "react-native";
+import { View, Text, TouchableOpacity, Image, BackHandler, ToastAndroid, StatusBar } from "react-native";
 import { Octicons, Entypo, FontAwesome5 } from '@expo/vector-icons';
 import { t } from 'react-native-tailwindcss';
 import { useState, useEffect } from "react";
 import MainHome from './MainHome';
 import UserMgmt from './UserMgmt';
 import Empty from "./EmptyPage";
+import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DietRecommend from "./DietRecommend";
 import { Feather } from '@expo/vector-icons';
 import React, { useCallback } from 'react';
 import * as Notifications from 'expo-notifications';
 import HOST_URL from "./config";
-import {PermissionsAndroid} from 'react-native';
+import { PermissionsAndroid } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
-
+import Community from "./Network";
 
 // async function registerForPushNotificationsAsync() {
 //   try {
@@ -79,7 +80,7 @@ export default function TabsLayout() {
     days: [],
     ids: [],
   });
-  const [sploading,setsploading] = useState(false);
+  const [sploading, setsploading] = useState(false);
 
   const [view, setview] = useState(1);
   const getPresenceArray = (timestamps) => {
@@ -109,19 +110,30 @@ export default function TabsLayout() {
         'Content-Type': 'application/json'
       },
     };
-    await randomizeArray(); 
+    await randomizeArray();
     const user = await AsyncStorage.getItem('name');
     try {
       // await getusercal();
 
       await hydraFetch();
+      const today = await AsyncStorage.getItem('curr_date');
+      // const selected_date = new Date(today);
       await fetch(
-        HOST_URL+'/api/user/get-nutridata', requestOptions)
+        HOST_URL + '/api/user/get-nutridata', requestOptions)
         .then(response => {
           response.json()
             .then(data => {
+              // console.log(data)
               if (data && data.allentries) {
-                const nutridataArray = data.entries.map(entry => entry.nutridata) || [];
+                // console.log(new Date(today));
+                // const today = new Date();
+                // const formattedToday = selected_date.toISOString().split('T')[0]; 
+                // console.log(new Date(data.allentries[0].createdAt).toDateString())
+                // console.log(new Date(today).toDateString());
+                const nutridataArray = data.allentries
+                  .filter(entry => entry.createdAt && new Date(entry.createdAt).toDateString() === new Date(today).toDateString())
+                  .map(entry => entry.nutridata) || [];
+                // console.log(nutridataArray)
                 const foodnamesArray = data.entries.map(entry => entry.foodname) || [];
                 const allfoodlabels = data.allentries.map(entry => entry.foodname) || [];
                 const alldataArray = data.allentries.map(entry => entry.updatedAt) || [];
@@ -130,14 +142,18 @@ export default function TabsLayout() {
                 const sumArray = nutridataArray[0] && nutridataArray[0].map((_, index) =>
                   nutridataArray.reduce((sum, array) => sum + parseFloat(array[index]), 0)
                 ) || [];
-
+                let resultArray = [0,0,0,0]
                 if (sumArray.length > 0) {
                   const avgreqnutri = [2500, 300, 70, 56];
-                  const resultArray = avgreqnutri.map((reqValue, index) => {
+                  resultArray = avgreqnutri.map((reqValue, index) => {
                     const totValue = sumArray[index];
                     const prog = Number((totValue / reqValue).toFixed(2));
                     return prog >= 1 ? 1 : prog;
                   });
+                }
+                else{
+                  resultArray = [0,0,0,0] ;
+                }
 
                   setMainTransporter((prevState) => ({
                     ...prevState,
@@ -150,10 +166,7 @@ export default function TabsLayout() {
                     days: alldataArray,
                     ids: data.allentries.map(entry => entry._id) || [],
                   }));
-                } else {
-                  // Handle the case where sumArray is not defined
-                  // You may want to provide default values or handle it differently
-                }
+                
               } else {
                 // Handle the case where data, data.allentries, or data.entries is not defined
                 // You may want to provide default values or handle it differently
@@ -171,6 +184,7 @@ export default function TabsLayout() {
         username: user,
       }));
       setsploading(false);
+      getUsers();
     }
   }
   const mhydra = 3700;
@@ -195,16 +209,22 @@ export default function TabsLayout() {
       },
     };
     try {
+      const today = await AsyncStorage.getItem('curr_date');
       await fetch(
-        HOST_URL+'/api/user/get-hydrate', requestOptions)
+        HOST_URL + '/api/user/get-hydrate', requestOptions)
         .then(response => {
           response.json()
             .then(data => {
               if (data) {
-                // console.log(data);
-                const hydraArray = data.entries.map(entry => entry.hydrate);
+                // console.log(data.entries);
+                
+                const hydratedata = data.entries
+                  .filter(entry => entry.createdAt && new Date(entry.createdAt).toDateString() === new Date(today).toDateString())
+                  .map(entry => entry.hydrate) || [];
 
-                const numericArr = hydraArray.map(value => parseInt(value, 10));
+                // const hydraArray = data.entries.map(entry => entry.hydrate && new Date(entry.createdAt).toDateString() === new Date(today).toDateString());
+
+                const numericArr = hydratedata.map(value => parseInt(value, 10));
                 const validNumbers = numericArr.filter(value => !isNaN(value));
                 const sum = validNumbers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
@@ -218,6 +238,7 @@ export default function TabsLayout() {
                     hydra: parseInt(mypercent),
                   }));
                 }
+
                 else {
                   AsyncStorage.setItem('hydration', dailyHydrationGoal.toString());
                   setMainTransporter((prevState) => ({
@@ -232,7 +253,7 @@ export default function TabsLayout() {
 
     }
     catch (error) {
-      console.log(error);
+      // console.log(error);
     }
     finally {
       await AsyncStorage.setItem('hydration', currenthydra.toString());
@@ -240,6 +261,9 @@ export default function TabsLayout() {
     }
   }
   const StoreinDB = async (record) => {
+    const today = new Date();
+    await AsyncStorage.setItem('curr_date',today.toDateString());
+    await hydraFetch();
     const hydra = record;
     // console.log(nutri);
     const token = await AsyncStorage.getItem('token');
@@ -254,7 +278,7 @@ export default function TabsLayout() {
     };
     try {
       await fetch(
-        HOST_URL+'/api/user/store-hydrate', requestOptions)
+        HOST_URL + '/api/user/store-hydrate', requestOptions)
         .then(response => {
           // console.log(response)
           response.json()
@@ -262,6 +286,7 @@ export default function TabsLayout() {
               // console.log(data.message);
             });
         })
+
       ToastAndroid.show('Hydration Status Updated Successfully', ToastAndroid.SHORT);
       // openModal();
     }
@@ -335,7 +360,7 @@ export default function TabsLayout() {
   ];
   const [loading, setLoading] = useState(false);
   const [currentFoodIndex, setCurrentFoodIndex] = useState(0);
-  const [recommendInfo,setRecommendInfo] = useState({
+  const [recommendInfo, setRecommendInfo] = useState({
     foodNames: [],
     currentImages: [],
     descriptions: [],
@@ -363,11 +388,11 @@ export default function TabsLayout() {
       };
       try {
         await fetch(
-          HOST_URL+'/api/user/get_recommendations', requestOptions)
+          HOST_URL + '/api/user/get_recommendations', requestOptions)
           .then(response => {
             response.json()
               .then(data => {
-                if(data.data[0]){
+                if (data.data[0]) {
                   setRecommendInfo((prevState) => ({
                     ...prevState,
                     foodNames: [...prevState.foodNames, data.data[0][0]],
@@ -383,7 +408,7 @@ export default function TabsLayout() {
                   // setdescriptions((old)=>[...old,])
                   // // console.log(data.data[0][3].Description);
                 }
-                
+
                 // findex += 1;
                 // console.log(data.data[0][2][1]);
               });
@@ -393,13 +418,13 @@ export default function TabsLayout() {
       catch (error) {
         // console.error(error); 
       }
-      setCurrentFoodIndex(currentFoodIndex+10);
+      setCurrentFoodIndex(currentFoodIndex + 10);
     }
-    setCurrentFoodIndex(currentFoodIndex+10);
+    setCurrentFoodIndex(currentFoodIndex + 10);
     setLoading(false);
   };
 
-  
+
 
   const randomizeArray = () => {
     // Function to generate a random number between -0.5 and 0.5
@@ -411,14 +436,14 @@ export default function TabsLayout() {
     setDefaultFoodnames(randomizedArray);
   };
 
-  const getuserPermission=async()=>{
+  const getuserPermission = async () => {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     if (status !== 'granted') {
       alert("Please grant camera roll permissions inside your system's settings");
-    }else{
-      console.log('Media Permissions are granted')
+    } else {
+      // console.log('Media Permissions are granted')
     }
-}
+  }
 
   useEffect(() => {
     const backAction = () => {
@@ -431,12 +456,11 @@ export default function TabsLayout() {
     ReloadProfile();
     fetchNutri();
     fetchImages();
+    getUsers();
     getstatus();
-    
+
     BackHandler.addEventListener('hardwareBackPress', backAction);
     return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
-
-    // 
   }, []);
 
 
@@ -454,24 +478,24 @@ export default function TabsLayout() {
   //       return <Empty />; // Return a default component or null for unknown keys
   //   }
   // };
-  
+
   const [image, setImage] = useState(null);
 
-  const getStoredImage=async()=>{
+  const getStoredImage = async () => {
 
     try {
-        const userdp = await AsyncStorage.getItem('userprofile') ;
-        if (userdp) {
-          setImage(userdp);
-        }
-        else{
-          const imageSource = Image.resolveAssetSource(require('./assets/defaultuser.png'));
-          setImage(imageSource.uri)
-        }
-      } catch (error) {
-        console.log(error);
+      const userdp = await AsyncStorage.getItem('userprofile');
+      if (userdp) {
+        setImage(userdp);
+      } 
+      else {
+        const imageSource = Image.resolveAssetSource(require('./assets/defaultuser.png'));
+        setImage(imageSource.uri)
       }
+    } catch (error) {
+      // console.log(error);
     }
+  }
 
   const [Profile, setProfile] = useState({
     username: "",
@@ -483,18 +507,18 @@ export default function TabsLayout() {
     emailid: "",
   });
 
-  const [userdata,setuserdata] = useState(
+  const [userdata, setuserdata] = useState(
     {
-      name:'',
-      email:'',
-      phone:'',
-      location:'',
-      age:'',
-      height:'',
-      weight:'',
-      currpass:'',
-      newpass:'',
-      confirmpass:''
+      name: '',
+      email: '',
+      phone: '',
+      location: '',
+      age: '',
+      height: '',
+      weight: '',
+      currpass: '',
+      newpass: '',
+      confirmpass: ''
     }
   )
 
@@ -511,37 +535,37 @@ export default function TabsLayout() {
     const user = await AsyncStorage.getItem('name');
 
     setProfile({
-    username: user,
-    age: _age,
-    height: _height,
-    weight: _weight,
-    bmi: parseFloat(_bmi).toFixed(2),
-    reqcals: calrange,
-    emailid: mailid,
+      username: user,
+      age: _age,
+      height: _height,
+      weight: _weight,
+      bmi: parseFloat(_bmi).toFixed(2),
+      reqcals: calrange,
+      emailid: mailid,
     })
     setuserdata({
-      name:user,
-      email:mailid,
-      phone:_phone,
-      location:_location,
-      age:_age,
-      height:_height,
-      weight:_weight
+      name: user,
+      email: mailid,
+      phone: _phone,
+      location: _location,
+      age: _age,
+      height: _height,
+      weight: _weight
     })
   };
-  const [statuses,setstatuses] = useState([0,0,0,0,0]);
+  const [statuses, setstatuses] = useState([0, 0, 0, 0, 0]);
 
-  const getstatus=async()=>{
+  const getstatus = async () => {
     const pstatus = await AsyncStorage.getItem('pstatus');
     const astatus = await AsyncStorage.getItem('astatus');
     const nstatus = await AsyncStorage.getItem('nstatus');
     const fstatus = await AsyncStorage.getItem('fstatus');
     const ostatus = await AsyncStorage.getItem('ostatus');
     // console.log(nstatus)
-    setstatuses([parseInt(pstatus),parseInt(astatus),parseInt(nstatus),parseInt(fstatus),parseInt(ostatus)]);
+    setstatuses([parseInt(pstatus), parseInt(astatus), parseInt(nstatus), parseInt(fstatus), parseInt(ostatus)]);
   }
   const [alertstatus, setalertstatus] = useState(false);
-  
+
   async function checkProfileStatus() {
     try {
       // await AsyncStorage.removeItem('bmi');
@@ -556,33 +580,51 @@ export default function TabsLayout() {
       // console.log(error);
     }
   }
+const [users,setusers] = useState([]);
+  const getUsers=async()=>{
+    const token = await AsyncStorage.getItem('token');
+    try {
+      const response = await axios.get(
+        HOST_URL + '/api/user/allusers',
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+      // console.log(response.data);
+      setusers(response.data.users);
+    } catch (error) { 
+      console.error(error); 
+    }
+  }
 
   return (
     <View style={[t.wFull, t.flex, t.flexCol, t.hFull, t.bg = ['#F7FCFF']]}>
-       <StatusBar
+      <StatusBar
         backgroundColor="#F7FCFF"
         barStyle="dark-content"
       />
       <View style={[t.flex1]}>
         {view == 1 ? (
-          <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} sploading={sploading} image={image} checkProfileStatus={checkProfileStatus} alertstatus={alertstatus} />
+          <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} sploading={sploading} image={image} checkProfileStatus={checkProfileStatus} alertstatus={alertstatus} getStoredImage={getStoredImage} />
         ) :
           view == 4 ?
             (
-              <UserMgmt Profile={Profile} userdata={userdata} ReloadProfile={ReloadProfile} getStoredImage={getStoredImage} setuserdata = {setuserdata} statuses = {statuses} setstatuses = {setstatuses}image={image} />
+              <UserMgmt Profile={Profile} userdata={userdata} ReloadProfile={ReloadProfile} getStoredImage={getStoredImage} setuserdata={setuserdata} statuses={statuses} setstatuses={setstatuses} image={image}  />
             ) :
             view == 2 ? (
-              <DietRecommend fetchImages={fetchImages} recommendInfo= {recommendInfo} loading={loading} />
+              <DietRecommend fetchImages={fetchImages} recommendInfo={recommendInfo} loading={loading} />
               // <Empty/>
             )
               :
               view == 3 ? (
 
-                <Empty />
+                <Community users={users}  />
 
               ) : null
         }
-        
+
         {/* <View>
       {renderComponent(view)}
       </View>

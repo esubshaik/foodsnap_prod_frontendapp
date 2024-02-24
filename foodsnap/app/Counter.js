@@ -1,44 +1,46 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet,Button, ToastAndroid, ProgressBarAndroid } from 'react-native';
-import {t} from 'react-native-tailwindcss' ;
+import { View, Text, TouchableOpacity, StyleSheet, Button, ToastAndroid, ProgressBarAndroid } from 'react-native';
+import { t } from 'react-native-tailwindcss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HOST_URL from "./config";
 
 
-const CounterApp = ({data,fooditem}) => {
+const CounterApp = ({ data, fooditem }) => {
   const [counter, setCounter] = useState(0);
 
 
 
-  const StoreinDB=async(record)=>{
-  const nutri = record ;
-  // console.log(nutri);
-  const token = await AsyncStorage.getItem('token');
-  const requestOptions = { 
-    method: 'POST', 
-    headers: { 
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-  }, 
-    body: JSON.stringify({ nutridata: nutri,food_name : fooditem}) 
+  const StoreinDB = async (record) => {
+    const nutri = record;
+    // console.log(nutri);
+    const token = await AsyncStorage.getItem('token');
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ nutridata: nutri, food_name: fooditem })
 
-}; 
-    try { 
-      
-        await fetch( 
-            HOST_URL+'/api/user/store-nutridata', requestOptions) 
-            .then(response => { 
-              // console.log(response)
-                response.json() 
-                    .then(data=> { 
-                        console.log(data.message); 
-                    }); 
-            }) 
-            ToastAndroid.show('Diet Recorded Successfully', ToastAndroid.SHORT);
-            // openModal();
-    } 
-    catch (error) { 
-        // console.error(error); 
+    };
+    try {
+
+      await fetch(
+        HOST_URL + '/api/user/store-nutridata', requestOptions)
+        .then(response => {
+          // console.log(response)
+          response.json()
+            .then(data => {
+              // console.log(data.message);
+            });
+        })
+      const today = new Date();
+      await AsyncStorage.setItem('curr_date', today.toDateString());
+      ToastAndroid.show('Diet Recorded Successfully', ToastAndroid.SHORT);
+      // openModal();
+    }
+    catch (error) {
+      // console.error(error); 
     }
   }
   console.error = (error) => {
@@ -50,33 +52,33 @@ const CounterApp = ({data,fooditem}) => {
   const multiplyValues = async (dataString, multiplier) => {
     try {
       // Parse the data string into a JavaScript object
-      const {data} = dataString;
-    // console.log(dataString);
+      const { data } = dataString;
+      // console.log(dataString);
       // Ensure data and multiplier are provided
       if (!data || typeof data !== 'object' || typeof multiplier !== 'number') {
         return [];
       }
-  
+
       // Multiply each valid numeric value by the multiplier
       const multipliedData = {};
       for (const key in data) {
         // if (Object.hasOwnProperty.call(data, key)) {
-          const originalValue = data[key];
-          // Check if the original value is a valid number
-          if (typeof originalValue === 'number' && !isNaN(originalValue)) {
-            multipliedData[key] = (originalValue * multiplier).toFixed(2);
-          } else {
-            // Handle non-numeric values (e.g., strings, objects, etc.)
-            multipliedData[key] = originalValue;
-          }
+        const originalValue = data[key];
+        // Check if the original value is a valid number
+        if (typeof originalValue === 'number' && !isNaN(originalValue)) {
+          multipliedData[key] = (originalValue * multiplier).toFixed(2);
+        } else {
+          // Handle non-numeric values (e.g., strings, objects, etc.)
+          multipliedData[key] = originalValue;
+        }
         // }
       }
-  
+
       // Convert the result to an array
       const resultArray = Object.values(multipliedData);
       // console.log(resultArray);
       await StoreinDB(resultArray);
-      
+
       // reloadnutri();
 
       await AsyncStorage.setItem('nutridata', JSON.stringify(resultArray));
@@ -90,7 +92,7 @@ const CounterApp = ({data,fooditem}) => {
 
   const getStatus = () => {
     switch (counter) {
-      case 0 :
+      case 0:
         return 'None'
       case 1:
         return 'Low (x1)';
@@ -120,7 +122,7 @@ const CounterApp = ({data,fooditem}) => {
   return (
     <View style={styles.container}>
       {/* <Text style={[t.absolute,t.mL10,t.selfStart,t.fontSemibold,t.textLg]}>Food Quantity</Text> */}
-      <Text style={[t.mB10,t.text2xl,t.fontSemibold,t.textGray700]}>Quantity: {getStatus()}</Text>
+      <Text style={[t.mB10, t.text2xl, t.fontSemibold, t.textGray700]}>Quantity: {getStatus()}</Text>
       <ProgressBarAndroid
         styleAttr="Horizontal"
         indeterminate={false}
@@ -136,39 +138,39 @@ const CounterApp = ({data,fooditem}) => {
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
       </View>
-      <View style={[,t.selfCenter, t.mB4,t.textBase, t.flex,t.mT12, t.flexCol]}>
-            
-          
-          <View style={{ width: '100%', height: 44,alignSelf:'center'}}>
-  <TouchableOpacity
-    onPress={(Event)=>multiplyValues(data,counter)}
-    style={{
-      backgroundColor: '#09BF13',
-      borderRadius: 20,
-      justifyContent: 'center',
-      alignItems: 'center',
-      width:'50%',
-      flex: 1,
-      flexDirection:'row',
-    
-    }}
-  >
-    <Text
-      style={{
-        // #072e33
-        color: 'white',
-        fontWeight: '600',
-        fontSize: 16, 
-        width:'100%',
-        textAlign:'center'
-      }}
-    >
-      Record My Diet
-    </Text>
-  </TouchableOpacity>
-</View>
-          
-          </View>
+      <View style={[, t.selfCenter, t.mB4, t.textBase, t.flex, t.mT12, t.flexCol]}>
+
+
+        <View style={{ width: '100%', height: 44, alignSelf: 'center' }}>
+          <TouchableOpacity
+            onPress={(Event) => multiplyValues(data, counter)}
+            style={{
+              backgroundColor: '#09BF13',
+              borderRadius: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '50%',
+              flex: 1,
+              flexDirection: 'row',
+
+            }}
+          >
+            <Text
+              style={{
+                // #072e33
+                color: 'white',
+                fontWeight: '600',
+                fontSize: 16,
+                width: '100%',
+                textAlign: 'center'
+              }}
+            >
+              Record My Diet
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+      </View>
     </View>
   );
 };
@@ -178,9 +180,9 @@ const styles = StyleSheet.create({
     // flex: 1,
     // justifyContent:'flex-start',
     alignItems: 'center',
-    marginTop:20,
-    width:'100%',
-    
+    marginTop: 20,
+    width: '100%',
+
   },
   progressBar: {
     width: 250,
@@ -195,12 +197,12 @@ const styles = StyleSheet.create({
     padding: 20,
     marginHorizontal: 10,
     borderRadius: 10,
-    justifyContent:'space-evenly'
+    justifyContent: 'space-evenly'
   },
   buttonText: {
     fontSize: 30,
     fontWeight: 'bold',
-    color:'white'
+    color: 'white'
   },
   counter: {
     fontSize: 10,

@@ -1,7 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const DateNavigator = () => {
+const DateNavigator = ({reload}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const formatCurrentDate = () => {
@@ -9,10 +10,12 @@ const DateNavigator = () => {
     return currentDate.toLocaleDateString(undefined, options).replace(/\//g, '-');;
   };
 
-  const navigateDate = (direction) => {
+  const navigateDate = async(direction) => {
     const newDate = new Date(currentDate);
     direction === 'next' ? newDate.setDate(currentDate.getDate() + 1) : newDate.setDate(currentDate.getDate() - 1);
     setCurrentDate(newDate);
+    await AsyncStorage.setItem('curr_date', newDate.toDateString());
+    await reload()
   };
 
   return (
