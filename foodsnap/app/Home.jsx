@@ -15,6 +15,7 @@ import HOST_URL from "./config";
 import { PermissionsAndroid } from 'react-native';
 import * as MediaLibrary from 'expo-media-library';
 import Community from "./Network";
+import NetInfo from '@react-native-community/netinfo';
 
 // async function registerForPushNotificationsAsync() {
 //   try {
@@ -69,6 +70,9 @@ import Community from "./Network";
 
 
 export default function TabsLayout() {
+  const [isConnected, setIsConnected] = useState(false);
+  const [user,setuser] = useState("") ;
+  const [peek,setpeek] = useState(false);
   const [mainTransporter, setMainTransporter] = useState({
     labels: [],
     allfoodlabels: [],
@@ -80,6 +84,14 @@ export default function TabsLayout() {
     days: [],
     ids: [],
   });
+  const setsUser=async()=>{
+    const username = await AsyncStorage.getItem('name');
+    setMainTransporter((prevState) => ({
+      ...prevState,
+      username: username,
+    }));
+    setuser(user);
+  }
   const [sploading, setsploading] = useState(false);
 
   const [view, setview] = useState(1);
@@ -105,13 +117,13 @@ export default function TabsLayout() {
     const token = await AsyncStorage.getItem('token');
     const requestOptions = {
       method: 'GET',
-      headers: {
+      headers: { 
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
     };
     await randomizeArray();
-    const user = await AsyncStorage.getItem('name');
+    
     try {
       // await getusercal();
 
@@ -142,7 +154,7 @@ export default function TabsLayout() {
                 const sumArray = nutridataArray[0] && nutridataArray[0].map((_, index) =>
                   nutridataArray.reduce((sum, array) => sum + parseFloat(array[index]), 0)
                 ) || [];
-                let resultArray = [0,0,0,0]
+                let resultArray = [0, 0, 0, 0]
                 if (sumArray.length > 0) {
                   const avgreqnutri = [2500, 300, 70, 56];
                   resultArray = avgreqnutri.map((reqValue, index) => {
@@ -151,22 +163,22 @@ export default function TabsLayout() {
                     return prog >= 1 ? 1 : prog;
                   });
                 }
-                else{
-                  resultArray = [0,0,0,0] ;
+                else {
+                  resultArray = [0, 0, 0, 0];
                 }
 
-                  setMainTransporter((prevState) => ({
-                    ...prevState,
-                    labels: foodnamesArray,
-                    allfoodlabels: allfoodlabels,
-                    daysarr: getPresenceArray(alldataArray),
-                    mynutridata: resultArray,
-                    bardata: data.entries.map(entry => entry.nutridata[0]) || [],
-                    username: user,
-                    days: alldataArray,
-                    ids: data.allentries.map(entry => entry._id) || [],
-                  }));
-                
+                setMainTransporter((prevState) => ({
+                  ...prevState,
+                  labels: foodnamesArray,
+                  allfoodlabels: allfoodlabels,
+                  daysarr: getPresenceArray(alldataArray),
+                  mynutridata: resultArray,
+                  bardata: data.entries.map(entry => entry.nutridata[0]) || [],
+                  // username: user,
+                  days: alldataArray,
+                  ids: data.allentries.map(entry => entry._id) || [],
+                }));
+
               } else {
                 // Handle the case where data, data.allentries, or data.entries is not defined
                 // You may want to provide default values or handle it differently
@@ -179,14 +191,14 @@ export default function TabsLayout() {
       // console.log(error);
     }
     finally {
-      setMainTransporter((prevState) => ({
-        ...prevState,
-        username: user,
-      }));
+      
       setsploading(false);
-      getUsers();
+
     }
   }
+  // if offline 
+
+
   const mhydra = 3700;
   const fhydra = 2700;
 
@@ -217,7 +229,7 @@ export default function TabsLayout() {
             .then(data => {
               if (data) {
                 // console.log(data.entries);
-                
+
                 const hydratedata = data.entries
                   .filter(entry => entry.createdAt && new Date(entry.createdAt).toDateString() === new Date(today).toDateString())
                   .map(entry => entry.hydrate) || [];
@@ -262,7 +274,7 @@ export default function TabsLayout() {
   }
   const StoreinDB = async (record) => {
     const today = new Date();
-    await AsyncStorage.setItem('curr_date',today.toDateString());
+    await AsyncStorage.setItem('curr_date', today.toDateString());
     await hydraFetch();
     const hydra = record;
     // console.log(nutri);
@@ -444,24 +456,49 @@ export default function TabsLayout() {
       // console.log('Media Permissions are granted')
     }
   }
-
+ 
   useEffect(() => {
-    const backAction = () => {
-      BackHandler.exitApp();
-      return true;
-    };
+    // getUsers();
+    const unsubscribe = NetInfo.addEventListener(state => {
+      if (state.isConnected) {
+        fetchNutri();
+        fetchImages();
+      }
+     setTimeout(() => {
+      NetInfo.addEventListener(state => {
+        setIsConnected(state.isConnected);
+      })
+
+     }, 1000);
+    },[]);
+    
+    setsUser();
+    unsubscribe();
     checkProfileStatus();
     getStoredImage();
     getuserPermission();
     ReloadProfile();
-    fetchNutri();
-    fetchImages();
     getUsers();
     getstatus();
+    const backAction = () => {
+      BackHandler.exitApp();
+      return true;
+    };
 
     BackHandler.addEventListener('hardwareBackPress', backAction);
     return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
-  }, []);
+  },[]);
+  
+
+  // useEffect(() => {
+  //   const unsubscribe = NetInfo.addEventListener(state => {
+  //     setIsConnected(state.isConnected);
+  //   });
+
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, []);
 
 
 
@@ -487,7 +524,7 @@ export default function TabsLayout() {
       const userdp = await AsyncStorage.getItem('userprofile');
       if (userdp) {
         setImage(userdp);
-      } 
+      }
       else {
         const imageSource = Image.resolveAssetSource(require('./assets/defaultuser.png'));
         setImage(imageSource.uri)
@@ -570,6 +607,7 @@ export default function TabsLayout() {
     try {
       // await AsyncStorage.removeItem('bmi');
       const token = await AsyncStorage.getItem('bmi');
+      
       if (!parseInt(token)) {
         setalertstatus(true);
       }
@@ -580,8 +618,8 @@ export default function TabsLayout() {
       // console.log(error);
     }
   }
-const [users,setusers] = useState([]);
-  const getUsers=async()=>{
+  const [users, setusers] = useState([]);
+  const getUsers = async () => {
     const token = await AsyncStorage.getItem('token');
     try {
       const response = await axios.get(
@@ -594,10 +632,147 @@ const [users,setusers] = useState([]);
       );
       // console.log(response.data);
       setusers(response.data.users);
-    } catch (error) { 
-      console.error(error); 
+    } catch (error) {
+      console.error(error);
     }
   }
+  const getArray = async (key) => {
+    try {
+      const jsonValue = await AsyncStorage.getItem(key); // Retrieve the stored JSON string
+      return jsonValue != null ? JSON.parse(jsonValue) : []; // Parse the JSON string back to an array, or return an empty array if it's null
+    } catch (e) {
+      console.error(`Error retrieving array with key ${key}:`, e);
+      return [];
+    }
+  };
+  
+  
+  const historyRepeat = async() => {
+    // Your code here
+    // console.log("This function runs every 1 minute");
+    const oldcount = await getArray('oldcount');
+      const oldnames = await getArray('oldnames');
+      for(var i = 0 ; i  < oldnames.length ; i++){
+        await analyzeFood(oldnames[i], oldcount[i]);
+      }
+      await AsyncStorage.removeItem('oldcount');
+      await AsyncStorage.removeItem('oldnames');
+      await fetchNutri() ;
+
+  };
+  
+
+  
+  const analyzeFood = async (myInput,count) => {
+    const foodid = myInput;
+    const token = await AsyncStorage.getItem('token');
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+  
+      },
+      body: JSON.stringify({ foodname: foodid })
+    };
+    try {
+      await fetch(
+        HOST_URL + '/api/user/analyze-food', requestOptions)
+        .then(response => {
+          response.json()
+            .then(data => {
+              multiplyValues(data, count,foodid);
+            });
+        })
+  
+    }
+    catch (error) {
+      // console.log(error);
+    }
+  }
+  const StoreFoodInDB = async (record,foodid) => {
+    const nutri = record;
+    // console.log(nutri);
+    const token = await AsyncStorage.getItem('token');
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ nutridata: nutri, food_name: foodid })
+  
+    };
+    try {
+      await fetch(
+        HOST_URL + '/api/user/store-nutridata', requestOptions)
+        .then(response => {
+          // console.log(response)
+          response.json()
+            .then(data => {
+              // console.log(data.message);
+            });
+        })
+      const today = new Date();
+      await AsyncStorage.setItem('curr_date', today.toDateString());
+      ToastAndroid.show('Diet Recorded Successfully', ToastAndroid.SHORT);
+      // openModal();
+    }
+    catch (error) {
+      // console.error(error); 
+    }
+  }
+
+  const multiplyValues = async (dataString, multiplier,foodid) => {
+    try {
+      // Parse the data string into a JavaScript object
+      const { data } = dataString;
+      // console.log(dataString);
+      // Ensure data and multiplier are provided
+      if (!data || typeof data !== 'object' || typeof multiplier !== 'number') {
+        return [];
+      }
+  
+      // Multiply each valid numeric value by the multiplier
+      const multipliedData = {};
+      for (const key in data) {
+        // if (Object.hasOwnProperty.call(data, key)) {
+        const originalValue = data[key];
+        // Check if the original value is a valid number
+        if (typeof originalValue === 'number' && !isNaN(originalValue)) {
+          multipliedData[key] = (originalValue * multiplier).toFixed(2);
+        } else {
+          // Handle non-numeric values (e.g., strings, objects, etc.)
+          multipliedData[key] = originalValue;
+        }
+        // }
+      }
+  
+      // Convert the result to an array
+      const resultArray = Object.values(multipliedData);
+      // console.log(resultArray);
+      // console.log(resultArray);
+      await StoreFoodInDB(resultArray,foodid);
+  
+      // reloadnutri();
+  
+      await AsyncStorage.setItem('nutridata', JSON.stringify(resultArray));
+  
+      // return resultArray;
+    } catch (error) {
+      console.error('Error parsing data string:', error);
+    }
+  };
+
+  const cloudCheck=async()=>{
+    const oldcount = await getArray('oldcount');
+      if(oldcount.length > 0){
+        setpeek(true);
+      }
+  }
+  useEffect(()=>{
+    cloudCheck();
+  },[isConnected])
 
   return (
     <View style={[t.wFull, t.flex, t.flexCol, t.hFull, t.bg = ['#F7FCFF']]}>
@@ -607,11 +782,11 @@ const [users,setusers] = useState([]);
       />
       <View style={[t.flex1]}>
         {view == 1 ? (
-          <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} sploading={sploading} image={image} checkProfileStatus={checkProfileStatus} alertstatus={alertstatus} getStoredImage={getStoredImage} />
+          <MainHome fetchNutri={fetchNutri} formdata={mainTransporter} calculateHydra={calculateHydra} sploading={sploading} image={image} checkProfileStatus={checkProfileStatus} alertstatus={alertstatus} getStoredImage={getStoredImage} isConnected={isConnected}  foodnames = {OriginalFoodNames} uploadHistory={historyRepeat} peek={peek}/>
         ) :
           view == 4 ?
             (
-              <UserMgmt Profile={Profile} userdata={userdata} ReloadProfile={ReloadProfile} getStoredImage={getStoredImage} setuserdata={setuserdata} statuses={statuses} setstatuses={setstatuses} image={image}  />
+              <UserMgmt Profile={Profile} userdata={userdata} ReloadProfile={ReloadProfile} getStoredImage={getStoredImage} setuserdata={setuserdata} statuses={statuses} setstatuses={setstatuses} image={image} />
             ) :
             view == 2 ? (
               <DietRecommend fetchImages={fetchImages} recommendInfo={recommendInfo} loading={loading} />
@@ -620,7 +795,7 @@ const [users,setusers] = useState([]);
               :
               view == 3 ? (
 
-                <Community users={users}  />
+                <Community users={users} />
 
               ) : null
         }

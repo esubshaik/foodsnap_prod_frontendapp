@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Button, ToastAndroid, ProgressBarAndroid } from 'react-native';
-import { t } from 'react-native-tailwindcss';
+import { color, t } from 'react-native-tailwindcss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HOST_URL from "./config";
 
 
-const CounterApp = ({ data, fooditem }) => {
-  const [counter, setCounter] = useState(0);
-
-
-
+const CounterApp = ({ data, fooditem, status }) => {
+  const getArray = async (key) => {
+    try {
+      const jsonValue = await AsyncStorage.getItem(key); // Retrieve the stored JSON string
+      return jsonValue != null ? JSON.parse(jsonValue) : []; // Parse the JSON string back to an array, or return an empty array if it's null
+    } catch (e) {
+      console.error(`Error retrieving array with key ${key}:`, e);
+      return [];
+    }
+  };
+  
+  
   const StoreinDB = async (record) => {
     const nutri = record;
     // console.log(nutri);
@@ -21,10 +28,9 @@ const CounterApp = ({ data, fooditem }) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ nutridata: nutri, food_name: fooditem })
-
+  
     };
     try {
-
       await fetch(
         HOST_URL + '/api/user/store-nutridata', requestOptions)
         .then(response => {
@@ -43,11 +49,6 @@ const CounterApp = ({ data, fooditem }) => {
       // console.error(error); 
     }
   }
-  console.error = (error) => {
-    if (!error.toString().includes('ProgressBarAndroid')) {
-      console.warn('Suppressed Warning:', error);
-    }
-  };
 
   const multiplyValues = async (dataString, multiplier) => {
     try {
@@ -58,7 +59,7 @@ const CounterApp = ({ data, fooditem }) => {
       if (!data || typeof data !== 'object' || typeof multiplier !== 'number') {
         return [];
       }
-
+  
       // Multiply each valid numeric value by the multiplier
       const multipliedData = {};
       for (const key in data) {
@@ -73,20 +74,28 @@ const CounterApp = ({ data, fooditem }) => {
         }
         // }
       }
-
+  
       // Convert the result to an array
       const resultArray = Object.values(multipliedData);
       // console.log(resultArray);
       await StoreinDB(resultArray);
-
+  
       // reloadnutri();
-
+  
       await AsyncStorage.setItem('nutridata', JSON.stringify(resultArray));
-
+  
       // return resultArray;
     } catch (error) {
       // console.error('Error parsing data string:', error);
       return [];
+    }
+  };
+
+
+  const [counter, setCounter] = useState(0);
+  console.error = (error) => {
+    if (!error.toString().includes('ProgressBarAndroid')) {
+      console.warn('Suppressed Warning:', error);
     }
   };
 
@@ -119,6 +128,18 @@ const CounterApp = ({ data, fooditem }) => {
     }
   };
 
+  
+
+  const storeForLater=async(fooditem,counter)=>{
+    const oldcount = await getArray('oldcount');
+    const oldnames = await getArray('oldnames');
+    oldcount.push(counter);
+    oldnames.push(fooditem);
+    await AsyncStorage.setItem('oldcount', JSON.stringify(oldcount));
+    await AsyncStorage.setItem('oldnames', JSON.stringify(oldnames));
+    // console.log(oldnames);
+    ToastAndroid.show('Diet Recorded Offline Successfully', ToastAndroid.SHORT);
+  }
   return (
     <View style={styles.container}>
       {/* <Text style={[t.absolute,t.mL10,t.selfStart,t.fontSemibold,t.textLg]}>Food Quantity</Text> */}
@@ -143,7 +164,7 @@ const CounterApp = ({ data, fooditem }) => {
 
         <View style={{ width: '100%', height: 44, alignSelf: 'center' }}>
           <TouchableOpacity
-            onPress={(Event) => multiplyValues(data, counter)}
+            onPress={(Event) => status? multiplyValues(data, counter) : storeForLater(fooditem,counter)}
             style={{
               backgroundColor: '#09BF13',
               borderRadius: 20,

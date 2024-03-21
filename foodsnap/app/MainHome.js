@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ToastAndroid, BackHandler, StyleSheet, Dimensions, Alert, Image, ActivityIndicator, Modal, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ToastAndroid, BackHandler, StyleSheet, Dimensions, Alert, Image, ActivityIndicator, Modal, TextInput, FlatList, TouchableNativeFeedback } from 'react-native';
 import { t } from 'react-native-tailwindcss';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,6 +12,7 @@ import DateNavigator from './DateNavigator';
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
+
 // import BarComponent from '/BarChart';
 import BarComponent from './BarChart';
 import FillProfile from './FillProfile';
@@ -25,7 +26,8 @@ import AboutUsModal from './AboutUs';
 import TriceModal from './TriceModal';
 import ImageOpener from './ImageOpener';
 
-const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, image, checkProfileStatus, alertstatus, getStoredImage }) => {
+const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, image, checkProfileStatus, alertstatus, getStoredImage, isConnected, foodnames, uploadHistory, peek }) => {
+
   // console.log(formdata);
   const navigation = useRouter();
   const [myInput, setInput] = useState("");
@@ -36,48 +38,64 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, image, chec
     setIsFocused(true);
   };
 
+
+
   const analyzeFood = async () => {
-    setLoading(true);
+
     const foodid = myInput;
+    // console.log(foodid);
     const token = await AsyncStorage.getItem('token');
     const requestOptions = {
       method: 'POST',
-      headers: { 
+      headers: {
         'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json' 
-      
-    },
+        'Content-Type': 'application/json'
+
+      },
       body: JSON.stringify({ foodname: foodid })
     };
-    try {
-      await fetch(
-        HOST_URL + '/api/user/analyze-food', requestOptions)
-        .then(response => {
-          response.json()
-            .then(data => {
-              // console.log(data.alert);
-              if (data['data']['CALORIES(G)']) {
-                if (data.alert === "no"){
-                  showAlert(data);
-                }
-                else{
-                setModalData([data]);
-                openModal();
-                setnames(data.name);
-                }
-                // console.log(data);
-              }
-
-            });
-        })
+    if (!isConnected) {
+      const fname = searchText;
+      setModalData([{ "alert": "yes", "data": { "CALORIES(G)": 0, "CARBOHYDRATES(G)": 0, "FAT(G)": 0, "PROTEIN(G)": 0 }, "name": fname }]);
+      setnames(fname);
+      openModal();
+      // setLoading(false);
 
     }
-    catch (error) {
-      // console.log(error);
+    else {
+      try {
+        setLoading(true);
+        await fetch(
+          HOST_URL + '/api/user/analyze-food', requestOptions)
+          .then(response => {
+            response.json()
+              .then(data => {
+                // console.log(data.alert);
+                if (data['data']['CALORIES(G)']) {
+                  if (data.alert === "no") {
+                    showAlert(data);
+                  }
+                  else {
+                    // console.log([data]);
+                    setModalData([data]);
+                    openModal();
+                    setnames(data.name);
+                  }
+                  // console.log(data.name);
+                }
+
+              });
+          })
+
+      }
+      catch (error) {
+        // console.log(error);
+      }
+      finally {
+        setLoading(false);
+      }
     }
-    finally{
-      setLoading(false);
-    }
+
   }
   const showAlert = (data) => {
     Alert.alert(
@@ -88,22 +106,45 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, image, chec
           text: 'Continue at Risk',
           onPress: () => {
             setModalData([data]);
-                openModal();
-                setnames(data.name);
+            openModal();
+            setnames(data.name);
           },
         },
         {
           text: 'Avoid Food',
           style: 'cancel', // This will make the button appear in a different style (e.g., on the left)
           // onPress: () => {
-            
+
           // },
         },
       ],
       { cancelable: true }
     );
   };
-  
+
+  const cloudAlert = () => {
+    Alert.alert(
+      'Upload to Cloud',
+      'Do you want to retry uploading offline data to cloud ?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+
+          text: 'Yes',
+          onPress: () => {
+            uploadHistory();
+          },
+          // This will make the button appear in a different style (e.g., on the left)
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalData, setModalData] = useState([{ "data": { "CALORIES(G)": 0, "CARBOHYDRATES(G)": 0, "FAT(G)": 0, "PROTEIN(G)": 0 } }]);
@@ -313,15 +354,30 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, image, chec
     setSMod(false);
   }
 
+  const [searchText, setSearchText] = useState('');
+  const [suggestedFoods, setSuggestedFoods] = useState([]);
+
+  const handleTextChange = text => {
+    setSearchText(text);
+    // Filter food names based on entered text
+    const filteredFoods = foodnames.filter(food =>
+      food.toLowerCase().includes(text.toLowerCase())
+    );
+    // console.log(filteredFoods);
+    setSuggestedFoods(filteredFoods);
+  };
+
+
   return (
     <View>
       <ImageOpener modalVisible={imgstatus} closeModal={closeImg} imgURL={image} handleReload={getStoredImage} />
       <View style={{ backgroundColor: '#F7FCFF' }}>
         <View style={[t.h17, t.shadowLg, t.borderB2, t.roundedTSm, t.borderGray300, t.bgGray100]}>
+
           <View style={[t.flex, t.flexRow, t.justifyBetween]}>
-          <TouchableOpacity onPress={openImg}>
-            <View style={[t.flex, t.flexRow, t.mL2]}>
-              
+            <TouchableOpacity onPress={openImg}>
+              <View style={[t.flex, t.flexRow, t.mL2]}>
+
                 <Image
                   // source={require('./assets/defaultuser.png')}
                   // source={dp ? { uri: dp } : require('./assets/defaultuser.png')}
@@ -329,26 +385,40 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, image, chec
                   style={{ width: 50, height: 50, margin: 8, borderRadius: 40, borderWidth: 2, borderColor: '#294d61' }} // Adjust the width
                   resizeMode="contain"
                 />
-              
-              <View style={[t.flex, t.flexCol, t.h50, t.selfCenter, t.textGray200]}>
-                <View style={[t.flex, t.flexRow]}>
-                  <Image
 
-                    source={require('./assets/Levels/fs-coin.png')}
-                    style={{ width: 15, height: 15, marginRight: 4 }} // Adjust the width
-                    resizeMode="contain"
-                  />
-                  <Text style={[t.fontSemibold, t.h14, t.textGray800]}>{formdata.allfoodlabels.length * 5} points</Text>
-                </View>
-                <View style={[t.h14, t.mT1, t.flex, t.flexRow]}>
-                  <Text style={[t.fontBold, t.textGray900]}>👋</Text>
-                  <Text style={[t.fontBold, t.textGray900]}>{`Hi, ${formdata.username} !`}</Text>
+
+                <View style={[t.flex, t.flexCol, t.h50, t.selfCenter, t.textGray200]}>
+                  <View style={[t.flex, t.flexRow]}>
+                    <Image
+
+                      source={require('./assets/Levels/fs-coin.png')}
+                      style={{ width: 15, height: 15, marginRight: 4 }} // Adjust the width
+                      resizeMode="contain"
+                    />
+                    <Text style={[t.fontSemibold, t.h14, t.textGray800]}>{formdata.allfoodlabels.length * 5} points</Text>
+                  </View>
+                  <View style={[t.h14, t.mT1, t.flex, t.flexRow]}>
+                    <Text style={[t.fontBold, t.textGray900]}>👋</Text>
+                    <Text style={[t.fontBold, t.textGray900]}>{`Hi, ${formdata.username} !`}</Text>
+                  </View>
                 </View>
               </View>
-            </View>
             </TouchableOpacity>
+            <View style={[t.flexRow, t.selfCenter, t.itemsCenter]}>
+              <Entypo name="dot-single" size={40} color={isConnected ? "green" : "red"} />
+              <Text style={[t.fontSemibold, t.mR2]}>{isConnected ? 'Online' : 'Offline'}</Text>
+              {/* offline icon */}
+              {
+                peek && <TouchableOpacity onPress={cloudAlert}>
+                  <Ionicons name="cloud-offline" size={24} color="darkgreen" />
+                </TouchableOpacity>
+              }
+
+
+            </View>
 
             <View style={[]}>
+
               <Menu
                 visible={visible}
                 anchor={<TouchableOpacity onPress={showMenu}>
@@ -374,16 +444,17 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, image, chec
       </View>
 
       <ScrollView contentContainerStyle={{ backgroundColor: '#F7FCFF' }}>
-        <View style={[t.pY4, t.pX4, t.flexRow,t.wFull, t.justifyBetween]}>
-          <TouchableOpacity style={[t.bgWhite,t.w40, t.border2, t.borderRed700, t.h24, t.roundedLg, t.itemsCenter, t.justifyCenter]} onPress={() => { navigation.push("/Camera") }}>
+        <View style={[t.pY4, t.pX4, t.flexRow, t.wFull, t.justifyBetween]}>
+          <TouchableOpacity style={[t.bgWhite, t.w40, t.border2, t.borderRed700, t.h24, t.roundedLg, t.itemsCenter, t.justifyCenter]} onPress={() => { navigation.push("/Camera") }}>
             <Ionicons name="ios-camera-outline" size={50} style={[t.textRed700, t.selfCenter]} />
             <Text style={[t.textRed700, t.fontSemibold]}>Snap your food</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[t.bgRed600,t.w40, t.h24, t.roundedLg, t.itemsCenter, t.justifyCenter]} onPress={() => setSMod(true)}>
+          <TouchableOpacity style={[t.bgRed600, t.w40, t.h24, t.roundedLg, t.itemsCenter, t.justifyCenter]} onPress={() => setSMod(true)}>
             <MaterialCommunityIcons name="text-long" size={50} color="white" />
             <Text style={[t.textWhite, t.fontSemibold]}>Log your food</Text>
           </TouchableOpacity>
         </View>
+
         <Modal
           animationType="fade"
           transparent={true}
@@ -425,17 +496,51 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, image, chec
                 }
 
               </View>
-              <Text style={[t.textBase, t.fontBold, t.mL4, t.mT4, t.mB2, t.textGray700]}>Food Entry:</Text>
-              <View style={[t.mX4, t.border2, t.borderGray600, t.bgWhite, t.roundedLg]}>
-                <TextInput
-                  multiline={true}
-                  numberOfLines={5}
-                  style={{ textAlignVertical: 'top', padding: 6, fontSize: 16 }}
-                  // onChangeText={(text) => setFormData({ ...formData, content: text })}
-                  placeholder='Input your food name/ Describe your food item'
-                  onChange={(event) => setInput(event.nativeEvent.text)}
-                />
-              </View>
+              {
+                isConnected ?
+                  <View>
+                    <Text style={[t.textBase, t.fontBold, t.mL4, t.mT4, t.mB2, t.textGray700]}>Food Entry:</Text>
+                    <View style={[t.mX4, t.border2, t.borderGray600, t.bgWhite, t.roundedLg]}>
+
+                      <TextInput
+                        multiline={true}
+                        numberOfLines={5}
+                        style={{ textAlignVertical: 'top', padding: 6, fontSize: 16 }}
+                        // onChangeText={(text) => setFormData({ ...formData, content: text })}
+                        placeholder='Input your food name/ Describe your food item'
+                        onChange={(event) => setInput(event.nativeEvent.text)}
+                      />
+                    </View>
+                  </View> :
+                  <View>
+                    <Text style={[t.textSm, t.fontBold, t.mL4, t.mT4, t.mB2, t.textGray700]}>It Seems you're not connected to internet. To log your meal, select food item from list and click Submit. </Text>
+                    <View style={{ padding: 20 }}>
+                      <TextInput
+                        style={{ height: 40, borderColor: 'gray', borderWidth: 1, marginBottom: 10, paddingHorizontal: 10 }}
+                        placeholder="Enter food name"
+                        value={searchText}
+                        onChangeText={handleTextChange}
+                      />
+
+                      {suggestedFoods.length > -1 ? (
+                        <FlatList
+                          data={suggestedFoods}
+                          renderItem={({ item }) => <Text style={[t.p2, t.borderGreen400, t.border, t.roundedLg, t.mY1, item === searchText ? t.bgGreen300 : t.bgWhite]} onPress={() => setSearchText(item)}>{item}</Text>}
+                          keyExtractor={(item, index) => index.toString()}
+                        />
+
+                      ) : (
+                        <Text>No items found</Text>
+                      )}
+                    </View>
+                  </View>
+              }
+
+
+
+
+
+
               <TouchableOpacity
                 onPress={analyzeFood}
                 style={{
@@ -576,6 +681,7 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, image, chec
             modalData={modalData}
             foodname={[names]}
             reload={fetchNutri}
+            status={isConnected}
           />
 
           <BarComponent labels={formdata.labels} data={formdata.bardata} sploading={sploading} />

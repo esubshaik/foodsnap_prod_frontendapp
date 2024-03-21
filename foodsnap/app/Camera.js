@@ -14,6 +14,7 @@ import RenderBoundingBoxes from "./DrawBoundings";
 import { useRouter } from "expo-router";
 import ModalComponent from './ModalClass';
 import HOST_URL from "./config";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const WINDOW_HEIGHT = Dimensions.get("window").height;
 const closeButtonSize = Math.floor(WINDOW_HEIGHT * 0.032);
@@ -124,7 +125,7 @@ export default function ScanFood() {
     setfitems([]);
     setanim(false);
   };
-
+  const [classresult,setclassresult] = useState([]);
 
   const GetDetectionResults = async () => {
     try {
@@ -149,7 +150,7 @@ export default function ScanFood() {
         },
       });
       const responseData = await response.json();
-      // console.log(responseData.data.results);
+      console.log(responseData.data.results);
       if (responseData.data.results){
         const nextdata = await responseData.data.results ;
         setresults(responseData);
@@ -198,28 +199,62 @@ export default function ScanFood() {
   setfitems(prevItems => [...prevItems, ...classNames]);
 };
 
+const showfAlert = (data) => {
+  Alert.alert(
+    '',
+    'The Food Item is not Recommended to eat based on your health Condition',
+    [
+      {
+        text: 'Continue at Risk',
+        onPress: () => {
+          setModalData([data]);
+          openModal();
+          setnames(data.name);
+        },
+      },
+      {
+        text: 'Avoid Food',
+        style: 'cancel', // This will make the button appear in a different style (e.g., on the left)
+        // onPress: () => {
 
-  const [classresult,setclassresult] = useState([]);
+        // },
+      },
+    ],
+    { cancelable: true }
+  );
+};
+  
+
   const getnutriinfo=async(foodn)=>{
     // console.log(foodid);
     // const foodid = foodn ;
-    // console.log(foodn);
+    const token = await AsyncStorage.getItem('token');
+    console.log(foodn);
+
+    
     const requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({ foodname: foodn })
     };
+
     try {
       await fetch(
         HOST_URL+'/api/user/analyze-food', requestOptions)
         .then(response => {
           response.json()
             .then(data => {
-              // console.log(data);
+              console.log(data);
               if (data['data']['CALORIES(G)']) {
+                if (data.alert === "no") {
+                  showfAlert(data);
+                }
                 setclassresult(prevItems => [...prevItems,data])
                 // setclassresult([...classresult,data])
-                // console.log(data);
+                console.log(data);
                 
               }
 
@@ -228,23 +263,27 @@ export default function ScanFood() {
 
     }
     catch (error) {
-      // console.log(error);
+      console.log(error);
     }
   }
   const sendAllDataToBackend = async (items) => {
     try {
+      // console.log(items);
+      
       const promises = await items.map(getnutriinfo);
       await Promise.all(promises);
-      // console.log('All requests completed successfully.');
+      console.log('All requests completed successfully.');
+
     } catch (error) {
-      // console.error('Error sending data:', error);
+      console.error('Error sending data:', error);
     }
   };
 
   const [finresult,setfinresult] = useState([]);
+
   useEffect(()=>{
     setfinresult(classresult);
-  },[classresult])
+  },[classresult]);
 
   const displayCalorie=async()=>{
     // const foodid = myInput;
@@ -254,7 +293,7 @@ export default function ScanFood() {
     setclassresult(prevItems => [...prevItems,""])
     // console.log(classresult);
 
-    openModal();
+    openModal();      
     
     // fitems.forEach((item) => {
     //   // await getnutriinfo(item);
@@ -349,7 +388,8 @@ const animationLoader =()=>(
           closeModal={closeModal}
           modalData={finresult}
           foodname={fitems}
-          reload={reloadnutri}
+          // reload={reloadnutri}
+          status={true}
         /> 
       <Camera
         ref={cameraRef}

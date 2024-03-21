@@ -164,7 +164,6 @@ const DietRecommend = ({ fetchImages, recommendInfo, loading }) => {
                           <Text style={[t.textGray600, t.textWhite]}>Download</Text>
                         </TouchableOpacity>
                       </View>
-
                     </View>
                   </View>
 
