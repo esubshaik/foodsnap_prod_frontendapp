@@ -97,6 +97,7 @@ function App() {
         navigation.push('/Start');
       }
     } catch (error) {
+      // console.log(error);
     }
   }
   useEffect(() => {

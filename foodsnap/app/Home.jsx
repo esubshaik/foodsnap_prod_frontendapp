@@ -58,7 +58,7 @@ import NetInfo from '@react-native-community/netinfo';
 //           .then(response => {
 //             response.json()
 //               .then(data => { 
-//                 console.log(data);
+//                 // console.log(data);
 //               });
 //           })
 //       }
@@ -91,6 +91,9 @@ export default function TabsLayout() {
       username: username,
     }));
     setuser(user);
+    checkProfileStatus();
+    
+    
   }
   const [sploading, setsploading] = useState(false);
 
@@ -455,6 +458,8 @@ export default function TabsLayout() {
     } else {
       // console.log('Media Permissions are granted')
     }
+    ReloadProfile();
+    
   }
  
   useEffect(() => {
@@ -471,15 +476,10 @@ export default function TabsLayout() {
 
      }, 1000);
     },[]);
-    
-    setsUser();
+
+    cloudCheck();
     unsubscribe();
-    checkProfileStatus();
-    getStoredImage();
-    getuserPermission();
-    ReloadProfile();
-    getUsers();
-    getstatus();
+    
     const backAction = () => {
       BackHandler.exitApp();
       return true;
@@ -487,7 +487,7 @@ export default function TabsLayout() {
 
     BackHandler.addEventListener('hardwareBackPress', backAction);
     return () => BackHandler.removeEventListener('hardwareBackPress', backAction);
-  },[]);
+  },[isConnected]);
   
 
   // useEffect(() => {
@@ -531,6 +531,10 @@ export default function TabsLayout() {
       }
     } catch (error) {
       // console.log(error);
+    }
+    finally{
+    getuserPermission();
+   
     }
   }
 
@@ -589,6 +593,8 @@ export default function TabsLayout() {
       height: _height,
       weight: _weight
     })
+    getUsers();
+    
   };
   const [statuses, setstatuses] = useState([0, 0, 0, 0, 0]);
 
@@ -617,6 +623,10 @@ export default function TabsLayout() {
     } catch (error) {
       // console.log(error);
     }
+    finally{
+      getStoredImage();
+    
+    }
   }
   const [users, setusers] = useState([]);
   const getUsers = async () => {
@@ -634,6 +644,9 @@ export default function TabsLayout() {
       setusers(response.data.users);
     } catch (error) {
       console.error(error);
+    }
+    finally{
+      getstatus();
     }
   }
   const getArray = async (key) => {
@@ -769,10 +782,12 @@ export default function TabsLayout() {
       if(oldcount.length > 0){
         setpeek(true);
       }
+      setsUser();
+    
   }
-  useEffect(()=>{
-    cloudCheck();
-  },[isConnected])
+  // useEffect(()=>{
+    
+  // },[isConnected])
 
   return (
     <View style={[t.wFull, t.flex, t.flexCol, t.hFull, t.bg = ['#F7FCFF']]}>

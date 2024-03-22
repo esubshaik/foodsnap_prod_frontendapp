@@ -13,7 +13,7 @@ const getRandomColor = () => {
 };
 
 const PieChartExample = ({ data,foodname }) => {
-  console.log(data);
+  // console.log(data);
   const nutrientData = data?.data;
   // console.log(nutrientData);
   return (

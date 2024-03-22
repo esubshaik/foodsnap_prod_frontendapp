@@ -249,7 +249,7 @@ function TriceModal({ modalVisible, closeModal, ItemName }) {
   const [currweight, setcurrweight] = useState(0);
   const reloader = async () => {
     const weight = await AsyncStorage.getItem('weight');
-    setcurrweight(weight);
+    setcurrweight(parseInt(weight));
     // settarget(weight);
   }
 
@@ -391,7 +391,7 @@ function TriceModal({ modalVisible, closeModal, ItemName }) {
       ToastAndroid.show(response.data.message, ToastAndroid.SHORT);
       
     } catch (error) {
-      // console.error(error);
+      console.error(error);
     }
     finally{
       getIssues();
@@ -633,7 +633,7 @@ function TriceModal({ modalVisible, closeModal, ItemName }) {
                       keyboardType="numeric"
                       autoCapitalize="none"
                       placeholderTextColor="gray"
-                      value={target}
+                      value={String(target)}
                       onChangeText={(text) => settarget(text)}
                     />
                   </View>
@@ -718,7 +718,7 @@ function TriceModal({ modalVisible, closeModal, ItemName }) {
                   style={{ textAlignVertical: 'top', padding: 6, fontSize: 16 }}
                   value={issue}
                   placeholder='Describe Health Issues (Comma Seperated).. eg: fever,cough'
-                  onChange={(event) => setIssue(event.nativeEvent.text)}
+                  onChangeText={(text) => setIssue(text)}
                 />
               </View>
               <TouchableOpacity

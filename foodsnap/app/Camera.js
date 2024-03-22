@@ -150,7 +150,7 @@ export default function ScanFood() {
         },
       });
       const responseData = await response.json();
-      console.log(responseData.data.results);
+      // console.log(responseData.data.results);
       if (responseData.data.results){
         const nextdata = await responseData.data.results ;
         setresults(responseData);
@@ -229,7 +229,7 @@ const showfAlert = (data) => {
     // console.log(foodid);
     // const foodid = foodn ;
     const token = await AsyncStorage.getItem('token');
-    console.log(foodn);
+    // console.log(foodn);
 
     
     const requestOptions = {
@@ -247,14 +247,14 @@ const showfAlert = (data) => {
         .then(response => {
           response.json()
             .then(data => {
-              console.log(data);
+              // console.log(data);
               if (data['data']['CALORIES(G)']) {
                 if (data.alert === "no") {
                   showfAlert(data);
                 }
                 setclassresult(prevItems => [...prevItems,data])
                 // setclassresult([...classresult,data])
-                console.log(data);
+                // console.log(data);
                 
               }
 
@@ -263,7 +263,7 @@ const showfAlert = (data) => {
 
     }
     catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
   const sendAllDataToBackend = async (items) => {
@@ -272,7 +272,7 @@ const showfAlert = (data) => {
       
       const promises = await items.map(getnutriinfo);
       await Promise.all(promises);
-      console.log('All requests completed successfully.');
+      // console.log('All requests completed successfully.');
 
     } catch (error) {
       console.error('Error sending data:', error);

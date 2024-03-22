@@ -6,7 +6,7 @@ import {t} from 'react-native-tailwindcss';
 //       return null;
 //     }
 //     const result  = results['data']['results'];
-//     console.log(result);
+//     // console.log(result);
 //     return Object.entries(result).map(([className, boundingBox],index) => {
 //       if (!Array.isArray(boundingBox) || boundingBox.length !== 4) {
 //         // Handle the case where boundingBox is not a valid array with four elements

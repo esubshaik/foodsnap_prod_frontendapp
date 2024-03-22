@@ -214,7 +214,7 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, image, chec
     // console.log(response.json());
     // if (response) {
     //   const responseData = await response.data;
-    //   console.log('Transcription Response:', responseData);
+    //   // console.log('Transcription Response:', responseData);
     // }
     /// 
 
@@ -225,7 +225,7 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, image, chec
     //   // console.log(audioUri);
     //   const { uri } = await FileSystem.getInfoAsync(audioUri);
     //   const audioData = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
-    //   console.log(audioData);
+    //   // console.log(audioData);
     //   const apiUrl = `https://${region}.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=en-US`;
 
     //   const headers = {
@@ -233,7 +233,7 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, image, chec
     //     'Ocp-Apim-Subscription-Key': subscriptionKey,
     //   };
     //   const response = await axios.post(apiUrl, audioData, { headers });
-    //   console.log(response.data);
+    //   // console.log(response.data);
     //   // setTranscription(response.data);
     // }
     // catch (error) {
@@ -344,7 +344,7 @@ const MainHome = ({ fetchNutri, formdata, calculateHydra, sploading, image, chec
     updatedTriceModal[index] = true;
     setthree(updatedTriceModal);
   };
-  const closeTriceModal = () => {
+  const closeTriceModal = () => { 
     setthree([false, false, false]);
   };
   // const imageSource = Image.resolveAssetSource(require('./assets/defaultuser.png'));

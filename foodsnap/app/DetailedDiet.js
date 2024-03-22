@@ -39,7 +39,7 @@ const DetailedDiet = ({ modalVisible, closeModal, recommendInfo, findex }) => {
           response.json()
             .then(data => {
               if (data) {
-                //  console.log();
+                //  // console.log();
                 setmoredata(data.data.data.split(/\.\s+/).map((sentence, index) => (index % 3 === 0 && index !== 0) ? `\n\n${sentence}` : sentence).join('. '));
               }
 

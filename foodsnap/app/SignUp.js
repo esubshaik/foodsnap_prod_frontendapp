@@ -109,8 +109,8 @@ const SignUp = ({ modalVisible, closeModal, data, isCollapsed, setCollapsed }) =
     try {
       setLoading(true);
       if (otp !== recotp) {
-        console.log(otp);
-        console.log(recotp);
+        // console.log(otp);
+        // console.log(recotp);
         ToastAndroid.show('OTP is wrong', ToastAndroid.SHORT);
         return;
       }
@@ -268,7 +268,7 @@ const SignUp = ({ modalVisible, closeModal, data, isCollapsed, setCollapsed }) =
                         style={[t.border, t.borderGray100, t.rounded, t.pY2, t.pT1, t.pX4, t.textWhite, t.textBase, t.textCenter, t.flex, t.wFull]}
                         placeholder="Enter OTP"
                         placeholderTextColor="white"
-                        value={otp}
+                        value={String(otp)}
                         onChangeText={(text) => {
                           setotp(text); // Update the 'otp' state with the new value
                         }}
@@ -324,7 +324,7 @@ const SignUp = ({ modalVisible, closeModal, data, isCollapsed, setCollapsed }) =
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <CheckBox style={[t.mL1, t.textTeal800, t.textWhite]}
                         // color={'#072e33'}
-                        value={isChecked}
+                        value={String(isChecked)}
                         onValueChange={(newValue) => setIsChecked(newValue)}
                       />
                       <Text style={[t.textSm, t.fontBold, t.mB1, t.textGray100, t.mL4, t.mR4, t.mT1]}>
