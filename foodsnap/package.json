@@ -42,6 +42,7 @@
     "expo-status-bar": "~1.6.0",
     "expo-task-manager": "^11.3.0",
     "expo-vector-icons": "^10.0.1",
+    "firebase": "^10.9.0",
     "flatted": "^3.2.9",
     "gluestack": "^0.1.1",
     "install": "^0.13.0",
@@ -58,7 +59,8 @@
     "react-native-select-dropdown": "^3.4.0",
     "react-native-svg": "^13.9.0",
     "react-native-tailwindcss": "^1.1.11",
-    "react-papaparse": "^4.4.0"
+    "react-papaparse": "^4.4.0",
+    "undefined": "firebase/messaging"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

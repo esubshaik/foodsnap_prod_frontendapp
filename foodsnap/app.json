@@ -22,6 +22,14 @@
       "eas": {
         "projectId": "9a74c053-51ce-4647-96c0-e3d8d923f47e"
       }
+    },
+    "android": {
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.codewithesub.foodeye"
     }
   }
 }
