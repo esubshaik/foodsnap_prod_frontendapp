@@ -7,38 +7,15 @@
 
 ## 🌟 Key Features
 
-- **Deep Learning-Powered Food Analysis:** Food-eye utilizes advanced Deep Learning algorithms to analyze a vast food database, offering users detailed nutritional information, including calories.
-  
-- **User-Friendly Dashboard:**
-    - **Donut Chart:** Displays the proportional breakdown of calories, proteins, fats, carbohydrates, and water consumed throughout the day.
-    - **Bar Chart:** Presents a graphical representation of the quantity of food consumed at different times during the day.
-
-- **Meal History and Tracking:**
-    - **Intake History:** Seamlessly integrates with MongoDB to record and organize user-generated data, providing a dynamic and real-time reflection of the user's dietary journey.
-    - **User-Generated Data:** Includes food item names, quantities, date, and time of consumption, facilitating easy review and analysis of past food entries.
-
-- **Food Entry Options:**
-    - **Manual Entry via Search:** Allows users to search for and add food items directly, ideal for precise meal recording.
-    - **Image Recognition with YOLOv8:** Automates meal logging by identifying and categorizing food items from images, enhancing user experience, particularly for users on-the-go.
-
-- **Gamification Feature:**
-    - **Point-Based Reward System:** Users earn points for each food entry, incentivizing consistent and accurate dietary recording.
-    - **Streaks:** Users are rewarded for maintaining consistent engagement with the application, fostering positive behavior patterns.
-
-- **Personalized Diet Recommendations:**
-    - **BMI Calculation:** Calculates Body Mass Index (BMI) based on user-entered details like age, weight, height, and gender, guiding tailored meal plans aligned with individual health goals.
-    - **Caloric Intake Calculation:** Computes daily caloric intake using Harris-Benedict equations and activity factors, providing personalized estimations for optimal nutrition.
-
-- **Report Generation:**
-    - **Customized Insights:** Provides personalized insights into dietary patterns, including unique ID, user details, required calories per day, weekly caloric balance, and macronutrient distribution.
-    - **Seamless Integration with MongoDB:** Fetches and compiles user-specific data for insightful reports, ensuring real-time accuracy and personalization.
-
-- **Goal Setting and Tracking:**
-    - **Unique Physical Characteristics:** Utilizes Harris-Benedict equations to estimate Basal Metabolic Rate (BMR) and compute total daily calories based on activity factors, enabling effective goal setting and monitoring for weight management.
-
-- **Allergen Alerts:**
-    - **Google's Gemini API Integration:** Checks food items against user-recorded health issues to notify whether a particular food item is recommended or not, ensuring safety and peace of mind.
-
+- **Deep Learning-Powered Food Analysis:** Analyzes food items using advanced Deep Learning algorithms to provide detailed nutritional information.
+- **User-Friendly Dashboard:** Offers intuitive visual representations of dietary data for easy understanding and tracking.
+- **Meal History and Tracking:** Records and organizes user-generated dietary data in real-time for insightful analysis.
+- **Food Entry Options:** Provides flexible methods for users to input their dietary intake, including manual search and image recognition.
+- **Gamification Feature:** Motivates users to maintain consistent dietary tracking through point-based rewards and streaks.
+- **Personalized Diet Recommendations:** Generates tailored meal plans based on user-specific characteristics and nutritional needs.
+- **Report Generation:** Generates customized reports to provide users with detailed insights into their dietary patterns.
+- **Goal Setting and Tracking:** Enables users to set and monitor dietary goals based on individual physical characteristics and activity levels.
+- **Allergen Alerts:** Alerts users of potential allergens in food items based on their recorded health issues.
 
 ## 🔧 Technologies Used
 
