@@ -1,5 +1,6 @@
 # FoodSnap - Revolutionizing Dietary Management
-
+ **Demo Link* : [https://drive.google.com/file/d/1-ibci9r5GXCnlhYjsnXtQvmplgimcD-Z/view?usp=drive_link](https://drive.google.com/file/d/1-ibci9r5GXCnlhYjsnXtQvmplgimcD-Z/view?usp=drive_link)
+ 
 ![foodsnap logo](https://github.com/EsubShaik/foodsnap_app/blob/main/git_assets/foodsnap.jpg)
 
 ## 🎯Overview
