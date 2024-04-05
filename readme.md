@@ -2,47 +2,43 @@
 
 ![foodsnap logo](https://github.com/EsubShaik/foodsnap_app/blob/main/git_assets/foodsnap.jpg)
 
-The **"Food-eye"** project is a groundbreaking and comprehensive initiative aimed at transforming dietary management through the application of cutting-edge Deep Learning and Natural Language Processing (NLP) techniques. This AI-powered smart food analyzer and dietary tracking tool empowers users to effortlessly record and monitor their food intake while providing detailed nutritional information, personalized dietary recommendations, meal suggestions, and advanced analytics.
+## 🎯Overview
+**FOODSNAP** is a comprehensive dietary management application designed to revolutionize the way individuals manage their nutritional intake. Leveraging advanced technologies such as Deep Learning, Natural Language Processing (NLP), and gamification, FOODSNAP offers users a seamless and personalized experience to track, analyze, and improve their dietary habits.
 
 ## 🌟 Key Features
 
-- **Deep Learning-Powered Food Analysis:** Food-eye utilizes advanced Deep Learning algorithms to analyze a vast food database, offering users detailed nutritional information, including calories, carbohydrates, fats, proteins, vitamins, minerals, and Ayurvedic elements.
+- **Deep Learning-Powered Food Analysis:** Food-eye utilizes advanced Deep Learning algorithms to analyze a vast food database, offering users detailed nutritional information, including calories.
+  
+- **User-Friendly Dashboard:**
+    - **Donut Chart:** Displays the proportional breakdown of calories, proteins, fats, carbohydrates, and water consumed throughout the day.
+    - **Bar Chart:** Presents a graphical representation of the quantity of food consumed at different times during the day.
 
-- **User-Friendly Diet Recall:** Say goodbye to manual food recording! Our image recognition technology allows users to simply take a picture of their meals, eliminating the need for tedious data entry.
+- **Meal History and Tracking:**
+    - **Intake History:** Seamlessly integrates with MongoDB to record and organize user-generated data, providing a dynamic and real-time reflection of the user's dietary journey.
+    - **User-Generated Data:** Includes food item names, quantities, date, and time of consumption, facilitating easy review and analysis of past food entries.
 
-- **Natural Language Processing (NLP):** Food-eye understands food names pronounced in regional languages, ensuring inclusivity and ease of use.
+- **Food Entry Options:**
+    - **Manual Entry via Search:** Allows users to search for and add food items directly, ideal for precise meal recording.
+    - **Image Recognition with YOLOv8:** Automates meal logging by identifying and categorizing food items from images, enhancing user experience, particularly for users on-the-go.
 
-- **Diet Tracking Alerts:** Receive alerts related to dietary tracking and allergens, promoting user safety and awareness.
+- **Gamification Feature:**
+    - **Point-Based Reward System:** Users earn points for each food entry, incentivizing consistent and accurate dietary recording.
+    - **Streaks:** Users are rewarded for maintaining consistent engagement with the application, fostering positive behavior patterns.
 
-- **Ayurvedic Tailored Recommendations:** Based on individual body constitutions, Food-eye offers personalized and well-balanced diet plans.
+- **Personalized Diet Recommendations:**
+    - **BMI Calculation:** Calculates Body Mass Index (BMI) based on user-entered details like age, weight, height, and gender, guiding tailored meal plans aligned with individual health goals.
+    - **Caloric Intake Calculation:** Computes daily caloric intake using Harris-Benedict equations and activity factors, providing personalized estimations for optimal nutrition.
 
-## 🚀 Problem Statement
+- **Report Generation:**
+    - **Customized Insights:** Provides personalized insights into dietary patterns, including unique ID, user details, required calories per day, weekly caloric balance, and macronutrient distribution.
+    - **Seamless Integration with MongoDB:** Fetches and compiles user-specific data for insightful reports, ensuring real-time accuracy and personalization.
 
-The existing dietary management systems face several challenges:
+- **Goal Setting and Tracking:**
+    - **Unique Physical Characteristics:** Utilizes Harris-Benedict equations to estimate Basal Metabolic Rate (BMR) and compute total daily calories based on activity factors, enabling effective goal setting and monitoring for weight management.
 
-- **Manual Data Entry:** Traditional calorie trackers rely on manual food recording, which can be time-consuming and tedious for users.
+- **Allergen Alerts:**
+    - **Google's Gemini API Integration:** Checks food items against user-recorded health issues to notify whether a particular food item is recommended or not, ensuring safety and peace of mind.
 
-- **Inaccurate Data Input:** The lack of ease-of-use in entering food names or recording unnamed foods hinders data accuracy.
-
-- **Language Barrier:** The application's inability to handle regional language pronunciations limits accessibility to users from diverse linguistic backgrounds.
-
-- **Lack of Alerts:** The current system lacks crucial alerts related to dietary tracking and allergens, compromising user safety and awareness.
-
-- **Missed Ayurvedic Insights:** The application overlooks Ayurvedic principles, missing an opportunity to provide tailored dietary recommendations.
-
-## 🌐 Proposed Solution
-
-Food-eye's proposed solution comprehensively addresses these challenges:
-
-- **Effortless Meal Recording:** Employing Deep Learning and image recognition, users can record their meals effortlessly by taking pictures.
-
-- **Optimized Text Input:** The app's auto-suggestion feature streamlines food recording with optimized text input.
-
-- **Inclusivity:** Integration of NLP enables the app to understand food names pronounced in regional languages, ensuring inclusivity and ease of use.
-
-- **Safety Alerts:** Implementing diet tracking alerts and allergen alerts promotes user safety and health-conscious decision-making.
-
-- **Ayurvedic Insights:** Incorporating Ayurvedic principles, the app tailors dietary recommendations based on individual body constitutions.
 
 ## 🔧 Technologies Used
 
@@ -50,13 +46,15 @@ Food-eye's proposed solution comprehensively addresses these challenges:
 - **React Native Expo:** Frontend development.
 - **Python Flask API:** Hosting NLP and DL models.
 - **Database:** MongoDB.
-- **Cloud Services:** AWS, Microsoft Azure, etc.
+- **Cloud Services:** Microsoft Azure, etc.
 
 ## 📆 Project Status
 
-This project is still under development, and our team is working diligently to bring it to fruition as soon as possible. Your support and contributions are greatly appreciated!
+The project has been successfully developed, and our team has worked diligently to bring it to fruition. We greatly appreciate your support and contributions towards further improvements!
+
+## License
+
+This project is licensed under the Apache License 2.0.
 
 ## 👏 Thank You!
-
-Thank you for taking an interest in our repository. Your feedback and collaboration are invaluable as we work towards revolutionizing dietary management and promoting healthier eating habits and improved well-being for users.
 
